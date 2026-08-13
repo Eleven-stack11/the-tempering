@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { fetchTrades, getWeeksOfMonth } from "@/lib/notion";
+import { fetchTrades, getWeekNumber, getWeeksOfMonth } from "@/lib/notion";
 
 export const revalidate = 60;
 
@@ -24,8 +24,7 @@ const MONTHLY_NOTES: Record<string, string> = {
   "june": "⚠️ Perhatian: Liburan musim panas di Eropa/US — volume rendah, pergerakan liar. Kurangi size.",
   "july": "🔥 Bulan dengan pelanggaran limit sesi. Harus lebih disiplin.",
   "august": "🌊 Bulan range. Fokus pada konfirmasi BMS sebelum entry.",
-  // Tambahkan bulan lain, misal:
-  // "september": "✏️ Catatan untuk September...",
+  // Tambahkan bulan lain jika perlu
 };
 // ----------------------------------------------------
 
@@ -34,7 +33,10 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
   const [year, month] = slug.split("-");
   const yearNum = parseInt(year);
   const monthIndex = parseInt(month) - 1;
-  const monthName = monthNames[Object.keys(monthNames)[monthIndex]];
+  const monthKey = Object.keys(monthNames)[monthIndex];
+  const monthName = monthNames[monthKey];
+
+  if (!monthName) notFound();
 
   const allTrades = await fetchTrades();
   const trades = allTrades.filter(t => {
@@ -42,18 +44,16 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
     return d.getFullYear() === yearNum && d.getMonth() === monthIndex;
   });
 
-  if (trades.length === 0) notFound();
-
   // Group trades by week number
   const weekMap: Record<number, any[]> = {};
   for (const t of trades) {
     const d = new Date(t.date);
-    const weekNum = getWeekNumber(d); // pakai fungsi yang sudah ada di notion.ts
+    const weekNum = getWeekNumber(d);
     if (!weekMap[weekNum]) weekMap[weekNum] = [];
     weekMap[weekNum].push(t);
   }
 
-  // Dapatkan semua minggu dalam bulan ini
+  // Dapatkan semua minggu dalam bulan ini (termasuk yang tanpa trade)
   const allWeeks = getWeeksOfMonth(yearNum, monthIndex);
   
   // Statistik
@@ -62,9 +62,7 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
   const violations = trades.filter(t => t.notes?.toLowerCase().includes("pelanggaran")).length;
   const netR = trades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
 
-  // Ambil catatan bulanan
-  const monthKey = Object.keys(monthNames)[monthIndex];
-  const monthlyNote = MONTHLY_NOTES[monthKey] || "✏️ Tulis catatan bulanan di sini — misal: 'Juni: perhatikan summer vacation'.";
+  const monthlyNote = MONTHLY_NOTES[monthKey] || "✏️ Tulis catatan bulanan di sini.";
 
   return (
     <>
@@ -113,21 +111,16 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
             {allWeeks.map((week) => {
               const weekTrades = weekMap[week.weekNumber] || [];
               const weekR = weekTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
-              const startDate = week.start;
-              const endDate = week.end;
-              const startDay = startDate.getDate();
-              const endDay = endDate.getDate();
+              const startDay = week.start.getDate();
+              const endDay = week.end.getDate();
               const monthLabel = monthName.slice(0, 3).toUpperCase();
               const dateRange = `${startDay}–${endDay} ${monthName} ${year}`;
-
-              // Tentukan apakah minggu ini memiliki trade
               const hasTrade = weekTrades.length > 0;
-              const linkHref = hasTrade ? `/month/${slug}/week/${week.weekNumber}` : "#";
 
               return (
                 <Link
                   key={week.weekNumber}
-                  href={linkHref}
+                  href={hasTrade ? `/month/${slug}/week/${week.weekNumber}` : "#"}
                   className={`rail-row ${hasTrade ? "linked" : "locked"}`}
                 >
                   <div className="rail-day">
