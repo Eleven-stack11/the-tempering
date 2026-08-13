@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { fetchTrades, getWeekNumber } from "@/lib/notion";
+import { fetchTrades, getWeeksOfMonth } from "@/lib/notion";
 
 export const revalidate = 60;
 
@@ -19,34 +19,54 @@ const monthNames: Record<string, string> = {
   december: "Desember",
 };
 
+// ---------- CATATAN BULANAN (EDIT DI SINI) ----------
+const MONTHLY_NOTES: Record<string, string> = {
+  "june": "⚠️ Perhatian: Liburan musim panas di Eropa/US — volume rendah, pergerakan liar. Kurangi size.",
+  "july": "🔥 Bulan dengan pelanggaran limit sesi. Harus lebih disiplin.",
+  "august": "🌊 Bulan range. Fokus pada konfirmasi BMS sebelum entry.",
+  // Tambahkan bulan lain sesuai kebutuhan
+};
+// ----------------------------------------------------
+
 export default async function MonthPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const [year, month] = slug.split("-");
+  const yearNum = parseInt(year);
   const monthIndex = parseInt(month) - 1;
   const monthName = monthNames[Object.keys(monthNames)[monthIndex]];
 
   const allTrades = await fetchTrades();
   const trades = allTrades.filter(t => {
     const d = new Date(t.date);
-    return d.getFullYear() === parseInt(year) && d.getMonth() === monthIndex;
+    return d.getFullYear() === yearNum && d.getMonth() === monthIndex;
   });
 
   if (trades.length === 0) notFound();
 
-  // Group by week
+  // Group trades by week (based on date)
   const weekMap: Record<number, any[]> = {};
   for (const t of trades) {
     const d = new Date(t.date);
-    const w = getWeekNumber(d);
-    if (!weekMap[w]) weekMap[w] = [];
-    weekMap[w].push(t);
+    // Cari minggu ke berapa dalam bulan
+    const firstDayOfMonth = new Date(yearNum, monthIndex, 1);
+    const diff = d.getDate() - firstDayOfMonth.getDate();
+    const weekNum = Math.floor((diff + firstDayOfMonth.getDay()) / 7) + 1; // Minggu dimulai Minggu
+    if (!weekMap[weekNum]) weekMap[weekNum] = [];
+    weekMap[weekNum].push(t);
   }
-  const weekKeys = Object.keys(weekMap).map(Number).sort((a, b) => a - b);
 
-  const netR = trades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
+  // Generate semua minggu dalam bulan (tanpa trade pun tetap muncul)
+  const allWeeks = getWeeksOfMonth(yearNum, monthIndex);
+  
+  // Statistik
   const totalSessions = trades.length;
-  const setupA = trades.filter((t) => t.grade === "A").length;
-  const violations = trades.filter((t) => t.notes?.toLowerCase().includes("pelanggaran")).length;
+  const setupA = trades.filter(t => t.grade === "A").length;
+  const violations = trades.filter(t => t.notes?.toLowerCase().includes("pelanggaran")).length;
+  const netR = trades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
+
+  // Ambil catatan bulanan
+  const monthKey = Object.keys(monthNames)[monthIndex];
+  const monthlyNote = MONTHLY_NOTES[monthKey] || "✏️ Tulis catatan bulanan di sini — misal: 'Juni: perhatikan summer vacation'.";
 
   return (
     <>
@@ -92,26 +112,40 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
           </div>
 
           <div className="rail">
-            {weekKeys.map((weekNum) => {
-              const weekTrades = weekMap[weekNum];
-              const first = new Date(weekTrades[0].date);
-              const last = new Date(weekTrades[weekTrades.length - 1].date);
+            {allWeeks.map((week) => {
+              const weekTrades = weekMap[week.weekNumber] || [];
               const weekR = weekTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
+              const startDay = week.start.getDate();
+              const endDay = week.end.getDate();
               const monthLabel = monthName.slice(0, 3).toUpperCase();
+              const dateRange = `${startDay}–${endDay} ${monthName} ${year}`;
 
               return (
-                <Link key={weekNum} href={`/month/${slug}/week/${weekNum}`} className="rail-row linked">
+                <Link
+                  key={week.weekNumber}
+                  href={weekTrades.length > 0 ? `/month/${slug}/week/${week.weekNumber}` : "#"}
+                  className={`rail-row ${weekTrades.length > 0 ? "linked" : "locked"}`}
+                >
                   <div className="rail-day">
-                    {monthLabel}<b>{first.getDate()}–{last.getDate()}</b>
+                    {monthLabel}<b>{startDay}–{endDay}</b>
                   </div>
                   <div className="rail-body">
-                    <h4>Minggu {weekNum}</h4>
-                    <p>{weekTrades.length} trade</p>
+                    <h4>Minggu {week.weekNumber}</h4>
+                    <p>{dateRange} · {weekTrades.length} trade</p>
                   </div>
-                  <div className="rail-tag">{weekTrades.length} TRADE</div>
-                  <div className={`rail-tag ${weekR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>
-                    {weekR >= 0 ? "+" : ""}{weekR.toFixed(1)}R
-                  </div>
+                  {weekTrades.length > 0 ? (
+                    <>
+                      <div className="rail-tag">{weekTrades.length} TRADE</div>
+                      <div className={`rail-tag ${weekR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>
+                        {weekR >= 0 ? "+" : ""}{weekR.toFixed(1)}R
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="rail-tag"></div>
+                      <div className="rail-tag"></div>
+                    </>
+                  )}
                 </Link>
               );
             })}
@@ -123,9 +157,14 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
       <section>
         <div className="wrap">
-          <div className="sec-head"><h2>Catatan Bulanan</h2></div>
+          <div className="sec-head">
+            <h2>Catatan Bulanan</h2>
+          </div>
           <div style={{ maxWidth: 640, color: "var(--text-muted)", fontSize: 16, lineHeight: 1.85, marginBottom: 60 }}>
-            <p>✏️ Tuliskan alur cerita bulan ini di sini — atau tambahkan sebagai properti di Notion.</p>
+            <p>{monthlyNote}</p>
+            <div className="placeholder-note" style={{ marginTop: 12 }}>
+              ✏️ Untuk mengubah catatan, edit variabel <code>MONTHLY_NOTES</code> di <code>app/month/[slug]/page.tsx</code>.
+            </div>
           </div>
         </div>
       </section>
