@@ -1,0 +1,23 @@
+.env.local              ← isi dengan token Notion Anda
+app/
+  layout.tsx
+  page.tsx
+  globals.css
+  month/
+    [slug]/
+      page.tsx
+      week/
+        [weekNum]/
+          page.tsx
+          day/
+            [day]/
+              page.tsx
+lib/
+  notion.ts
+  types.ts
+package.json
+pnpm-lock.yaml
+next.config.mjs
+tsconfig.json
+postcss.config.mjs
+.gitignore
