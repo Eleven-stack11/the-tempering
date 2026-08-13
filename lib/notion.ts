@@ -104,6 +104,34 @@ export function getMonthWeeks(year: number, month: number) {
   return weeks;
 }
 
+// lib/notion.ts — tambahkan di bagian bawah
+
+export function getWeeksOfMonth(year: number, monthIndex: number): Array<{ weekNumber: number; start: Date; end: Date }> {
+  const firstDay = new Date(year, monthIndex, 1);
+  const lastDay = new Date(year, monthIndex + 1, 0);
+  
+  // Cari hari Minggu pertama di bulan ini (atau hari pertama jika bukan Minggu)
+  let start = new Date(firstDay);
+  start.setDate(start.getDate() - start.getDay()); // mundur ke Minggu sebelumnya
+  
+  const weeks = [];
+  let weekNum = 1;
+  while (start <= lastDay) {
+    const end = new Date(start);
+    end.setDate(end.getDate() + 6);
+    // Potong akhir minggu jika melewati akhir bulan
+    const weekEnd = end > lastDay ? new Date(lastDay) : end;
+    weeks.push({
+      weekNumber: weekNum,
+      start: new Date(start),
+      end: weekEnd,
+    });
+    start.setDate(start.getDate() + 7);
+    weekNum++;
+  }
+  return weeks;
+}
+
 function getMonthName(month: number): string {
   const names = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
   return names[month];
