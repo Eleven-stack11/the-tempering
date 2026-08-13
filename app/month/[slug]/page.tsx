@@ -45,28 +45,6 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
   // Dapatkan minggu-minggu dalam bulan ini
   const weeks = getWeeksOfMonth(yearNum, monthIndex);
 
-  // Jika weeks kosong (misal karena bug), beri fallback
-  if (weeks.length === 0) {
-    return (
-      <>
-        <nav className="site-nav">
-          <div className="wrap">
-            <div className="brand"><span className="mark"></span> THE TEMPERING</div>
-            <div className="crumbs">
-              <Link href="/">2026</Link>
-              <span className="sep">/</span>
-              <span className="here">{monthName}</span>
-            </div>
-          </div>
-        </nav>
-        <div className="wrap" style={{ padding: "40px 28px" }}>
-          <h2>Error: Tidak ada minggu yang ditemukan untuk bulan ini.</h2>
-          <p>Periksa fungsi getWeeksOfMonth di lib/notion.ts</p>
-        </div>
-      </>
-    );
-  }
-
   // Group trades berdasarkan minggu (menggunakan tanggal Monday)
   const tradeGroups: Record<number, any[]> = {};
   for (const t of trades) {
