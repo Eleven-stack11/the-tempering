@@ -49,6 +49,8 @@ export async function fetchTrades(): Promise<any[]> {
   }
 }
 
+// ---- Fungsi Pembantu ----
+
 export function getWeekNumber(date: Date): number {
   const d = new Date(date);
   d.setHours(0, 0, 0, 0);
@@ -87,103 +89,6 @@ export function getWeeksOfMonth(year: number, monthIndex: number): Array<{ weekN
       end: new Date(end),
     });
     current.setDate(current.getDate() + 7);
-  }
-  return weeks;
-}
-// Helper: Get week ranges for a month
-export function getMonthWeeks(year: number, month: number) {
-  const weeks: { weekNumber: number; start: Date; end: Date; label: string }[] = [];
-  
-  // Find first Sunday of the month
-  const firstDay = new Date(year, month, 1);
-  const firstSunday = new Date(firstDay);
-  firstSunday.setDate(firstDay.getDate() - firstDay.getDay()); // Go back to Sunday
-  
-  // Find last Friday of the month
-  const lastDay = new Date(year, month + 1, 0);
-  const lastFriday = new Date(lastDay);
-  lastFriday.setDate(lastDay.getDate() - (lastDay.getDay() === 6 ? 0 : lastDay.getDay() + 1)); // Go to Friday
-  
-  let current = new Date(firstSunday);
-  let weekNum = 1;
-  
-  while (current <= lastFriday) {
-    const start = new Date(current);
-    const end = new Date(current);
-    end.setDate(current.getDate() + 5); // Friday
-    
-    // Only include weeks that overlap with the month
-    if (end >= firstDay) {
-      weeks.push({
-        weekNumber: weekNum,
-        start: new Date(start),
-        end: new Date(end),
-        label: `Minggu ${weekNum} · ${start.getDate()}–${end.getDate()} ${getMonthName(end.getMonth())} ${end.getFullYear()}`
-      });
-      weekNum++;
-    }
-    
-    current.setDate(current.getDate() + 7); // Next Sunday
-  }
-  
-  return weeks;
-}
-
-// lib/notion.ts — tambahkan di bagian bawah
-
-export function getWeeksOfMonth(year: number, monthIndex: number): Array<{ weekNumber: number; start: Date; end: Date }> {
-  const firstDay = new Date(year, monthIndex, 1);
-  const lastDay = new Date(year, monthIndex + 1, 0);
-  
-  // Cari hari Minggu pertama di bulan ini (atau hari pertama jika bukan Minggu)
-  let start = new Date(firstDay);
-  start.setDate(start.getDate() - start.getDay()); // mundur ke Minggu sebelumnya
-  
-  const weeks = [];
-  let weekNum = 1;
-  while (start <= lastDay) {
-    const end = new Date(start);
-    end.setDate(end.getDate() + 6);
-    // Potong akhir minggu jika melewati akhir bulan
-    const weekEnd = end > lastDay ? new Date(lastDay) : end;
-    weeks.push({
-      weekNumber: weekNum,
-      start: new Date(start),
-      end: weekEnd,
-    });
-    start.setDate(start.getDate() + 7);
-    weekNum++;
-  }
-  return weeks;
-}
-
-function getMonthName(month: number): string {
-  const names = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-  return names[month];
-}
-
-export function getWeeksOfMonth(year: number, monthIndex: number): Array<{ weekNumber: number; start: Date; end: Date }> {
-  const firstDay = new Date(year, monthIndex, 1);
-  const lastDay = new Date(year, monthIndex + 1, 0);
-  
-  // Cari hari Minggu pertama di bulan ini (atau hari pertama jika bukan Minggu)
-  let start = new Date(firstDay);
-  start.setDate(start.getDate() - start.getDay()); // mundur ke Minggu sebelumnya
-  
-  const weeks = [];
-  let weekNum = 1;
-  while (start <= lastDay) {
-    const end = new Date(start);
-    end.setDate(end.getDate() + 6);
-    // Potong akhir minggu jika melewati akhir bulan
-    const weekEnd = end > lastDay ? new Date(lastDay) : end;
-    weeks.push({
-      weekNumber: weekNum,
-      start: new Date(start),
-      end: weekEnd,
-    });
-    start.setDate(start.getDate() + 7);
-    weekNum++;
   }
   return weeks;
 }
