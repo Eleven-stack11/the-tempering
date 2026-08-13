@@ -49,11 +49,8 @@ export async function fetchTrades(): Promise<any[]> {
   }
 }
 
-// ============================================================
-// FUNGSI MINGGU YANG SUDAH DIUJI UNTUK AGUSTUS 2026
-// ============================================================
+// ---------- WEEK FUNCTIONS ----------
 
-// Fungsi ini tetap dipakai
 export function getWeekNumber(date: Date): number {
   const d = new Date(date);
   d.setHours(0, 0, 0, 0);
@@ -71,31 +68,25 @@ export function getWeekNumber(date: Date): number {
 }
 
 /**
- * Menghasilkan minggu-minggu (Senin–Jumat) dalam satu bulan.
- * Aturan: minggu dianggap milik bulan jika memiliki minimal 3 hari kerja di bulan tersebut.
- * Contoh Agustus 2026:
- *   Minggu 1: 3–7 Agustus
- *   Minggu 2: 10–14 Agustus
- *   Minggu 3: 17–21 Agustus
- *   Minggu 4: 24–28 Agustus
- *   (Minggu 31 Agustus – 4 September tidak masuk Agustus)
+ * Menghasilkan minggu (Senin–Jumat) dalam satu bulan.
+ * Hanya minggu dengan minimal 3 hari kerja di bulan tersebut yang dimasukkan.
+ * Contoh Agustus 2026: 3–7, 10–14, 17–21, 24–28
  */
 export function getWeeksOfMonth(year: number, monthIndex: number): Array<{ weekNumber: number; start: Date; end: Date }> {
   const firstDayOfMonth = new Date(year, monthIndex, 1);
   const lastDayOfMonth = new Date(year, monthIndex + 1, 0);
 
   // Cari Senin pertama yang <= firstDayOfMonth
-  let startMonday = new Date(firstDayOfMonth);
-  while (startMonday.getDay() !== 1) {
-    startMonday.setDate(startMonday.getDate() - 1);
+  let monday = new Date(firstDayOfMonth);
+  while (monday.getDay() !== 1) {
+    monday.setDate(monday.getDate() - 1);
   }
 
   const weeks = [];
   let weekNumber = 1;
-  let currentMonday = new Date(startMonday);
+  let currentMonday = new Date(monday);
 
   while (currentMonday <= lastDayOfMonth) {
-    // Jumat = Senin + 4 hari
     const friday = new Date(currentMonday);
     friday.setDate(friday.getDate() + 4);
 
