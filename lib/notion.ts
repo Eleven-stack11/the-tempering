@@ -70,25 +70,43 @@ export function getWeekNumber(date: Date): number {
 export function getWeeksOfMonth(year: number, monthIndex: number): Array<{ weekNumber: number; start: Date; end: Date }> {
   const firstDayOfMonth = new Date(year, monthIndex, 1);
   const lastDayOfMonth = new Date(year, monthIndex + 1, 0);
-  
-  // Cari Senin pertama yang <= firstDayOfMonth
-  let start = new Date(firstDayOfMonth);
-  const day = start.getDay();
-  const diff = (day === 0 ? 6 : day - 1); // Senin = 1, Minggu = 0
-  start.setDate(start.getDate() - diff);
-  
-  const weeks = [];
-  let current = new Date(start);
-  while (current <= lastDayOfMonth) {
-    const end = new Date(current);
-    end.setDate(end.getDate() + 6);
-    const weekNumber = getWeekNumber(current);
-    weeks.push({
-      weekNumber,
-      start: new Date(current),
-      end: new Date(end),
-    });
-    current.setDate(current.getDate() + 7);
+
+  // Cari Senin PERTAMA yang >= firstDayOfMonth
+  let currentMonday = new Date(firstDayOfMonth);
+  while (currentMonday.getDay() !== 1) {
+    currentMonday.setDate(currentMonday.getDate() + 1);
   }
+
+  const weeks = [];
+  let weekNumber = 1;
+
+  while (currentMonday <= lastDayOfMonth) {
+    const friday = new Date(currentMonday);
+    friday.setDate(friday.getDate() + 4);
+
+    // Hitung berapa hari (Senin–Jumat) yang termasuk dalam bulan ini
+    let daysInMonth = 0;
+    let day = new Date(currentMonday);
+    while (day <= friday) {
+      if (day >= firstDayOfMonth && day <= lastDayOfMonth) {
+        daysInMonth++;
+      }
+      day.setDate(day.getDate() + 1);
+    }
+
+    // Jika minimal 3 hari di bulan ini, masukkan ke daftar
+    if (daysInMonth >= 3) {
+      weeks.push({
+        weekNumber,
+        start: new Date(currentMonday),
+        end: new Date(friday),
+      });
+      weekNumber++;
+    }
+
+    // Lanjut ke Senin berikutnya (TANPA BREAK)
+    currentMonday.setDate(currentMonday.getDate() + 7);
+  }
+
   return weeks;
 }
