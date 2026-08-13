@@ -49,7 +49,7 @@ export async function fetchTrades(): Promise<any[]> {
   }
 }
 
-// ---- Fungsi Pembantu ----
+// --- Week calculation functions ---
 
 export function getWeekNumber(date: Date): number {
   const d = new Date(date);
