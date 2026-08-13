@@ -65,6 +65,31 @@ export function getWeekNumber(date: Date): number {
   );
 }
 
+export function getWeeksOfMonth(year: number, monthIndex: number): Array<{ weekNumber: number; start: Date; end: Date }> {
+  const firstDayOfMonth = new Date(year, monthIndex, 1);
+  const lastDayOfMonth = new Date(year, monthIndex + 1, 0);
+  
+  // Cari Senin pertama yang <= firstDayOfMonth
+  let start = new Date(firstDayOfMonth);
+  const day = start.getDay();
+  const diff = (day === 0 ? 6 : day - 1); // Senin = 1, Minggu = 0
+  start.setDate(start.getDate() - diff);
+  
+  const weeks = [];
+  let current = new Date(start);
+  while (current <= lastDayOfMonth) {
+    const end = new Date(current);
+    end.setDate(end.getDate() + 6);
+    const weekNumber = getWeekNumber(current);
+    weeks.push({
+      weekNumber,
+      start: new Date(current),
+      end: new Date(end),
+    });
+    current.setDate(current.getDate() + 7);
+  }
+  return weeks;
+}
 // Helper: Get week ranges for a month
 export function getMonthWeeks(year: number, month: number) {
   const weeks: { weekNumber: number; start: Date; end: Date; label: string }[] = [];
