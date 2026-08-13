@@ -24,7 +24,8 @@ const MONTHLY_NOTES: Record<string, string> = {
   "june": "⚠️ Perhatian: Liburan musim panas di Eropa/US — volume rendah, pergerakan liar. Kurangi size.",
   "july": "🔥 Bulan dengan pelanggaran limit sesi. Harus lebih disiplin.",
   "august": "🌊 Bulan range. Fokus pada konfirmasi BMS sebelum entry.",
-  // Tambahkan bulan lain sesuai kebutuhan
+  // Tambahkan bulan lain, misal:
+  // "september": "✏️ Catatan untuk September...",
 };
 // ----------------------------------------------------
 
@@ -43,19 +44,16 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
   if (trades.length === 0) notFound();
 
-  // Group trades by week (based on date)
+  // Group trades by week number
   const weekMap: Record<number, any[]> = {};
   for (const t of trades) {
     const d = new Date(t.date);
-    // Cari minggu ke berapa dalam bulan
-    const firstDayOfMonth = new Date(yearNum, monthIndex, 1);
-    const diff = d.getDate() - firstDayOfMonth.getDate();
-    const weekNum = Math.floor((diff + firstDayOfMonth.getDay()) / 7) + 1; // Minggu dimulai Minggu
+    const weekNum = getWeekNumber(d); // pakai fungsi yang sudah ada di notion.ts
     if (!weekMap[weekNum]) weekMap[weekNum] = [];
     weekMap[weekNum].push(t);
   }
 
-  // Generate semua minggu dalam bulan (tanpa trade pun tetap muncul)
+  // Dapatkan semua minggu dalam bulan ini
   const allWeeks = getWeeksOfMonth(yearNum, monthIndex);
   
   // Statistik
@@ -115,16 +113,22 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
             {allWeeks.map((week) => {
               const weekTrades = weekMap[week.weekNumber] || [];
               const weekR = weekTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
-              const startDay = week.start.getDate();
-              const endDay = week.end.getDate();
+              const startDate = week.start;
+              const endDate = week.end;
+              const startDay = startDate.getDate();
+              const endDay = endDate.getDate();
               const monthLabel = monthName.slice(0, 3).toUpperCase();
               const dateRange = `${startDay}–${endDay} ${monthName} ${year}`;
+
+              // Tentukan apakah minggu ini memiliki trade
+              const hasTrade = weekTrades.length > 0;
+              const linkHref = hasTrade ? `/month/${slug}/week/${week.weekNumber}` : "#";
 
               return (
                 <Link
                   key={week.weekNumber}
-                  href={weekTrades.length > 0 ? `/month/${slug}/week/${week.weekNumber}` : "#"}
-                  className={`rail-row ${weekTrades.length > 0 ? "linked" : "locked"}`}
+                  href={linkHref}
+                  className={`rail-row ${hasTrade ? "linked" : "locked"}`}
                 >
                   <div className="rail-day">
                     {monthLabel}<b>{startDay}–{endDay}</b>
@@ -133,7 +137,7 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
                     <h4>Minggu {week.weekNumber}</h4>
                     <p>{dateRange} · {weekTrades.length} trade</p>
                   </div>
-                  {weekTrades.length > 0 ? (
+                  {hasTrade ? (
                     <>
                       <div className="rail-tag">{weekTrades.length} TRADE</div>
                       <div className={`rail-tag ${weekR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>
