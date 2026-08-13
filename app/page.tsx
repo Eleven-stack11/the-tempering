@@ -58,8 +58,8 @@ export default async function HomePage() {
         <div className="wrap">
           <div className="eyebrow">SEBUAH CATATAN, BUKAN SEKADAR SOROTAN</div>
           <h1>
-            The<br />
-            <em>Tempering</em>
+            EL<br />
+            <em>Documentary</em>
           </h1>
           <p className="lede">
             Bongkahan besi tidak berubah jadi pedang secara kebetulan. Ia masuk ke dalam api,
