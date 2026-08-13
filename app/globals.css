@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0f0f0e;
+  --color-bg-raised: #171614;
+  --color-surface: #1a1918;
+  --color-surface-2: #201f1c;
+  --color-border: #2c2a27;
+  --color-border-soft: #221f1c;
+  --color-water: #1b3e73;
+  --color-water-bright: #2e5695;
+  --color-steel: #8a8a87;
+  --color-steel-dim: #56534e;
+  --color-gold: #c49a3c;
+  --color-gold-soft: #8a6b28;
+  --color-rust: #8b3a1f;
+  --color-text: #e8e6e1;
+  --color-text-muted: #a6a39c;
+  --color-text-faint: #6e6b65;
+  --font-display: "Big Shoulders", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: "IBM Plex Sans", sans-serif;
+  line-height: 1.7;
+  font-size: 16px;
+  background-image: radial-gradient(
+      ellipse 900px 500px at 15% -10%,
+      rgba(12, 31, 63, 0.35),
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 700px 500px at 100% 10%,
+      rgba(196, 154, 60, 0.05),
+      transparent 55%
+    );
+  background-attachment: fixed;
+}
+
+::selection {
+  background: var(--color-gold-soft);
+  color: var(--color-text);
+}
