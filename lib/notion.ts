@@ -49,8 +49,9 @@ export async function fetchTrades(): Promise<any[]> {
   }
 }
 
-// --- Week calculation functions ---
+// ---------- WEEK FUNCTIONS ----------
 
+// Fungsi ini tetap dipakai untuk keperluan lain
 export function getWeekNumber(date: Date): number {
   const d = new Date(date);
   d.setHours(0, 0, 0, 0);
@@ -67,28 +68,59 @@ export function getWeekNumber(date: Date): number {
   );
 }
 
+/**
+ * Menghasilkan minggu-minggu dalam sebulan (Senin–Jumat)
+ * Aturan: minggu dianggap milik bulan jika memiliki ≥3 hari kerja dalam bulan tersebut.
+ * Contoh Agustus 2026:
+ *   Minggu 1: 3–7 Agustus
+ *   Minggu 2: 10–14 Agustus
+ *   Minggu 3: 17–21 Agustus
+ *   Minggu 4: 24–28 Agustus
+ *   Minggu 5: 31 Agustus – 4 September → TIDAK termasuk Agustus (hanya 1 hari di Agustus)
+ */
 export function getWeeksOfMonth(year: number, monthIndex: number): Array<{ weekNumber: number; start: Date; end: Date }> {
   const firstDayOfMonth = new Date(year, monthIndex, 1);
   const lastDayOfMonth = new Date(year, monthIndex + 1, 0);
-  
-  // Cari Senin pertama yang <= firstDayOfMonth
+
+  // Cari Senin pertama yang ≤ firstDayOfMonth
   let start = new Date(firstDayOfMonth);
-  const day = start.getDay();
-  const diff = (day === 0 ? 6 : day - 1); // Senin = 1, Minggu = 0
-  start.setDate(start.getDate() - diff);
-  
-  const weeks = [];
-  let current = new Date(start);
-  while (current <= lastDayOfMonth) {
-    const end = new Date(current);
-    end.setDate(end.getDate() + 6);
-    const weekNumber = getWeekNumber(current);
-    weeks.push({
-      weekNumber,
-      start: new Date(current),
-      end: new Date(end),
-    });
-    current.setDate(current.getDate() + 7);
+  while (start.getDay() !== 1) {
+    start.setDate(start.getDate() - 1);
   }
+
+  const weeks = [];
+  let weekNumber = 1;
+  let currentMonday = new Date(start);
+
+  while (currentMonday <= lastDayOfMonth) {
+    const friday = new Date(currentMonday);
+    friday.setDate(friday.getDate() + 4);
+
+    // Hitung berapa hari (Senin–Jumat) yang termasuk dalam bulan ini
+    let daysInMonth = 0;
+    let currentDay = new Date(currentMonday);
+    while (currentDay <= friday) {
+      if (currentDay >= firstDayOfMonth && currentDay <= lastDayOfMonth) {
+        daysInMonth++;
+      }
+      currentDay.setDate(currentDay.getDate() + 1);
+    }
+
+    // Jika ≥3 hari di bulan ini, minggu ini milik bulan ini
+    if (daysInMonth >= 3) {
+      weeks.push({
+        weekNumber,
+        start: new Date(currentMonday),
+        end: new Date(friday),
+      });
+      weekNumber++;
+    } else {
+      // Jika <3 hari, minggu ini milik bulan berikutnya → stop
+      break;
+    }
+
+    currentMonday.setDate(currentMonday.getDate() + 7);
+  }
+
   return weeks;
 }
