@@ -45,7 +45,7 @@ export default async function HomePage() {
       <nav className="site-nav">
         <div className="wrap">
           <div className="brand">
-            <span className="mark"></span> THE TEMPERING
+            <span className="mark"></span> EL-DOCUMENTARY
           </div>
           <div className="crumbs">
             <span className="here">2026</span>
