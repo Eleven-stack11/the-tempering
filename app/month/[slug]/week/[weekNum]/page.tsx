@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { fetchTrades, getWeekNumber } from "@/lib/notion";
+import { fetchTrades } from "@/lib/notion";
 
 export const revalidate = 60;
 
@@ -23,30 +23,45 @@ const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"
 export default async function WeekPage({ params }: { params: Promise<{ slug: string; weekNum: string }> }) {
   const { slug, weekNum } = await params;
   const [year, month] = slug.split("-");
+  const yearNum = parseInt(year);
   const monthIndex = parseInt(month) - 1;
   const monthName = monthNames[Object.keys(monthNames)[monthIndex]];
   const weekNumber = parseInt(weekNum);
 
   const allTrades = await fetchTrades();
-  const trades = allTrades.filter(t => {
+
+  // Filter trades for this specific week
+  const weekTrades = allTrades.filter((t) => {
     const d = new Date(t.date);
-    return d.getFullYear() === parseInt(year) && d.getMonth() === monthIndex && getWeekNumber(d) === weekNumber;
+    if (d.getFullYear() !== yearNum || d.getMonth() !== monthIndex) return false;
+
+    // Cari Senin minggu ini
+    const monday = new Date(d);
+    while (monday.getDay() !== 1) {
+      monday.setDate(monday.getDate() - 1);
+    }
+    // Hitung minggu ke berapa dalam bulan
+    const firstDayOfMonth = new Date(yearNum, monthIndex, 1);
+    const diff = d.getDate() - firstDayOfMonth.getDate();
+    const weekOfMonth = Math.floor((diff + firstDayOfMonth.getDay()) / 7) + 1;
+
+    return weekOfMonth === weekNumber;
   });
 
-  if (trades.length === 0) notFound();
+  if (weekTrades.length === 0) notFound();
 
   // Group by day
   const dayMap: Record<string, any[]> = {};
-  for (const t of trades) {
+  for (const t of weekTrades) {
     const key = new Date(t.date).toISOString().split("T")[0];
     if (!dayMap[key]) dayMap[key] = [];
     dayMap[key].push(t);
   }
   const dayKeys = Object.keys(dayMap).sort();
 
-  const netR = trades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
-  const first = new Date(trades[0].date);
-  const last = new Date(trades[trades.length - 1].date);
+  const netR = weekTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
+  const first = new Date(weekTrades[0].date);
+  const last = new Date(weekTrades[weekTrades.length - 1].date);
   const monthLabel = monthName.slice(0, 3).toUpperCase();
 
   return (
@@ -68,7 +83,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
         <div className="wrap">
           <div className="eyebrow water">MINGGU {weekNumber} · {monthLabel} {first.getDate()} – {monthLabel} {last.getDate()}</div>
           <h1 style={{ fontSize: "clamp(40px, 6.5vw, 72px)" }}>Bacaan Hari Minggu</h1>
-          <p className="lede">{trades.length} trade tercatat minggu ini. Net R {netR >= 0 ? "+" : ""}{netR.toFixed(1)}R</p>
+          <p className="lede">{weekTrades.length} trade tercatat minggu ini. Net R {netR >= 0 ? "+" : ""}{netR.toFixed(1)}R</p>
         </div>
       </header>
 
@@ -121,6 +136,26 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
               );
             })}
 
+            {/* Locked days with no trades */}
+            {[0, 1, 2, 3, 4].map((i) => {
+              const d = new Date(first);
+              d.setDate(d.getDate() + i);
+              const dayKey = d.toISOString().split("T")[0];
+              if (dayMap[dayKey]) return null;
+              const dayName = dayNames[d.getDay()];
+              if (d.getMonth() !== monthIndex) return null;
+              return (
+                <div key={i} className="rail-row locked">
+                  <div className="rail-day">
+                    {dayName}<b>{d.getDate()}</b>
+                  </div>
+                  <div className="rail-body"><h4>Tidak ada sesi tercatat</h4></div>
+                  <div className="rail-tag"></div>
+                  <div className="rail-tag"></div>
+                </div>
+              );
+            })}
+
             <div className="rail-row review">
               <div className="rail-day" style={{ color: "var(--gold)" }}>SAB</div>
               <div className="rail-body">
@@ -170,8 +205,8 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           <div className="journal-section">
             <div className="eyebrow">HASIL</div>
             <div className="stat-strip" style={{ marginTop: 8 }}>
-              <div className="stat"><div className="stat-label">Trade Diambil</div><div className="stat-value">{trades.length}</div></div>
-              <div className="stat"><div className="stat-label">Grade</div><div className="stat-value gold">{trades[0]?.grade || "B"}</div></div>
+              <div className="stat"><div className="stat-label">Trade Diambil</div><div className="stat-value">{weekTrades.length}</div></div>
+              <div className="stat"><div className="stat-label">Grade</div><div className="stat-value gold">{weekTrades[0]?.grade || "B"}</div></div>
               <div className="stat"><div className="stat-label">Net R</div><div className={`stat-value ${netR >= 0 ? "water" : "rust"}`}>{netR >= 0 ? "+" : ""}{netR.toFixed(1)}R</div></div>
               <div className="stat"><div className="stat-label">Pelanggaran Aturan</div><div className="stat-value">0</div></div>
             </div>
