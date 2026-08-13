@@ -31,6 +31,9 @@ export default async function HomePage() {
     "12": "Desember",
   };
 
+  const totalSessions = trades.length;
+  const setupA = trades.filter((t) => t.grade === "A").length;
+  const violations = trades.filter((t) => t.notes?.toLowerCase().includes("pelanggaran")).length;
   const netR = trades.reduce(
     (sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0),
     0
@@ -39,84 +42,56 @@ export default async function HomePage() {
   return (
     <>
       {/* Nav */}
-      <nav className="border-b border-[#221F1C] py-5 px-6">
-        <div className="max-w-[1080px] mx-auto flex justify-between items-center">
-          <div className="font-mono text-xs text-[#A6A39C] uppercase flex items-center gap-2.5">
-            <span className="w-1.5 h-1.5 bg-[#C49A3C] rotate-45 inline-block"></span>
-            THE TEMPERING
+      <nav className="site-nav">
+        <div className="wrap">
+          <div className="brand">
+            <span className="mark"></span> THE TEMPERING
           </div>
-          <div className="font-mono text-xs text-[#6E6B65]">
-            <span className="text-[#E8E6E1]">2026</span>
+          <div className="crumbs">
+            <span className="here">2026</span>
           </div>
         </div>
       </nav>
 
       {/* Hero */}
-      <header className="py-20 px-6">
-        <div className="max-w-[1080px] mx-auto">
-          <div className="font-mono text-xs text-[#C49A3C] uppercase tracking-[0.18em] flex items-center gap-2.5 mb-4">
-            <span className="w-[22px] h-px bg-[#C49A3C]"></span>
-            SEBUAH CATATAN, BUKAN SEKADAR SOROTAN
-          </div>
-          <h1 className="font-['Big_Shoulders'] font-black text-[clamp(48px,8vw,96px)] leading-[0.92] mb-5">
-            The <em className="text-[#2E5695] not-italic">Tempering</em>
+      <header className="hero">
+        <div className="wrap">
+          <div className="eyebrow">SEBUAH CATATAN, BUKAN SEKADAR SOROTAN</div>
+          <h1>
+            The<br />
+            <em>Tempering</em>
           </h1>
-          <p className="text-[#A6A39C] text-lg max-w-[560px] leading-relaxed font-light">
+          <p className="lede">
             Bongkahan besi tidak berubah jadi pedang secara kebetulan. Ia masuk ke dalam api,
             ditempa, didinginkan, lalu dimasukkan lagi.{" "}
-            <strong className="text-[#E8E6E1] font-medium">
-              Inilah proses itu, dituliskan
-            </strong>{" "}
-            — pembacaan pasar setiap minggu, di mana bacaan itu keliru, dan apa yang berubah
-            sesudahnya.
+            <strong>Inilah proses itu, dituliskan</strong> — pembacaan pasar setiap minggu, di
+            mana bacaan itu keliru, dan apa yang berubah sesudahnya.
           </p>
         </div>
       </header>
 
-      {/* Blade rule */}
-      <div className="max-w-[1080px] mx-auto px-6">
-        <div className="h-px bg-gradient-to-r from-transparent via-[#56534E] to-transparent relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#C49A3C] to-transparent opacity-55"></div>
-        </div>
-      </div>
+      {/* Blade Rule */}
+      <div className="blade-rule on-scroll wrap" style={{ maxWidth: 1080 }}></div>
 
-      {/* Stats */}
-      <section className="px-6 py-8">
-        <div className="max-w-[1080px] mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[#221F1C] border border-[#221F1C]">
-            <div className="bg-[#1A1918] p-5">
-              <div className="font-mono text-xs text-[#6E6B65] uppercase tracking-[0.1em] mb-2.5">
-                Sesi Tercatat
-              </div>
-              <div className="font-['Big_Shoulders'] text-3xl font-extrabold">
-                {trades.length}
-              </div>
+      {/* Stat Strip */}
+      <section>
+        <div className="wrap">
+          <div className="stat-strip">
+            <div className="stat">
+              <div className="stat-label">Sesi Tercatat</div>
+              <div className="stat-value">{totalSessions}</div>
             </div>
-            <div className="bg-[#1A1918] p-5">
-              <div className="font-mono text-xs text-[#6E6B65] uppercase tracking-[0.1em] mb-2.5">
-                Setup A+ / A
-              </div>
-              <div className="font-['Big_Shoulders'] text-3xl font-extrabold text-[#C49A3C]">
-                {trades.filter((t) => t.grade === "A").length}
-              </div>
+            <div className="stat">
+              <div className="stat-label">Setup A+ / A</div>
+              <div className="stat-value gold">{setupA}</div>
             </div>
-            <div className="bg-[#1A1918] p-5">
-              <div className="font-mono text-xs text-[#6E6B65] uppercase tracking-[0.1em] mb-2.5">
-                Pelanggaran
-              </div>
-              <div className="font-['Big_Shoulders'] text-3xl font-extrabold text-[#8B3A1F]">
-                {trades.filter((t) => t.notes?.includes("pelanggaran")).length}
-              </div>
+            <div className="stat">
+              <div className="stat-label">Pelanggaran Aturan Tertangkap</div>
+              <div className="stat-value rust">{violations}</div>
             </div>
-            <div className="bg-[#1A1918] p-5">
-              <div className="font-mono text-xs text-[#6E6B65] uppercase tracking-[0.1em] mb-2.5">
-                Net R
-              </div>
-              <div
-                className={`font-['Big_Shoulders'] text-3xl font-extrabold ${
-                  netR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"
-                }`}
-              >
+            <div className="stat">
+              <div className="stat-label">Net R</div>
+              <div className={`stat-value ${netR >= 0 ? "water" : "rust"}`}>
                 {netR >= 0 ? "+" : ""}
                 {netR.toFixed(1)}R
               </div>
@@ -125,74 +100,104 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Months grid */}
-      <section className="px-6">
-        <div className="max-w-[1080px] mx-auto">
-          <div className="py-14">
-            <h2 className="font-['Big_Shoulders'] font-extrabold text-[clamp(28px,4vw,40px)]">
-              2026
-            </h2>
-            <p className="text-[#A6A39C] text-sm max-w-[520px]">
+      {/* Months Grid */}
+      <section>
+        <div className="wrap">
+          <div className="sec-head">
+            <h2>2026</h2>
+            <p>
               Setiap bulan menyimpan minggu-minggunya. Setiap minggu menyimpan hari-harinya.
-              Tidak ada yang dilewatkan.
+              Tidak ada yang dilewatkan, termasuk minggu-minggu yang berjalan buruk.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[#221F1C] border border-[#221F1C]">
+          <div className="grid cols-3">
             {monthKeys.map((key) => {
               const [year, month] = key.split("-");
               const monthName = monthNames[month] || month;
               const monthTrades = monthMap[key];
               return (
-                <Link
-                  key={key}
-                  href={`/month/${year}-${month}`}
-                  className="bg-[#1A1918] p-7 hover:bg-[#201F1C] transition-colors group"
-                >
-                  <div className="font-mono text-xs text-[#6E6B65] uppercase flex justify-between">
+                <Link key={key} href={`/month/${year}-${month}`} className="tile">
+                  <div className="tile-eyebrow">
                     <span>BULAN {month}</span>
-                    <span className="text-[#C49A3C] opacity-0 group-hover:opacity-100 transition">
-                      →
-                    </span>
+                    <span className="tile-arrow">→</span>
                   </div>
-                  <h3 className="font-['Big_Shoulders'] font-bold text-2xl text-[#E8E6E1] my-3">
-                    {monthName}
-                  </h3>
-                  <p className="text-[#A6A39C] text-sm">{monthTrades.length} trade tercatat</p>
-                  <div className="font-mono text-xs text-[#6E6B65] border-t border-[#221F1C] pt-3.5 mt-4 flex gap-4">
+                  <h3>{monthName}</h3>
+                  <p>{monthTrades.length} trade tercatat</p>
+                  <div className="tile-stats">
                     <span>
-                      <b className="text-[#E8E6E1] font-medium">{monthTrades.length}</b> trade
+                      <b>{monthTrades.length}</b> trade
                     </span>
                     <span>
-                      <b className="text-[#E8E6E1] font-medium">NQ / ES</b>
+                      <b>NQ / ES</b>
                     </span>
                   </div>
                 </Link>
               );
             })}
-            <div className="bg-[#1A1918] p-7 opacity-45 cursor-default">
-              <div className="font-mono text-xs text-[#6E6B65] uppercase flex justify-between">
+
+            {/* Locked future month */}
+            <div className="tile locked">
+              <div className="tile-eyebrow">
                 <span>BULAN 09</span>
-                <span className="text-[#6E6B65]">🔒</span>
+                <span className="lock-icon">🔒</span>
               </div>
-              <h3 className="font-['Big_Shoulders'] font-bold text-2xl text-[#6E6B65] my-3">
-                September
-              </h3>
-              <p className="text-[#A6A39C] text-sm">Belum ditempa.</p>
+              <h3>September</h3>
+              <p>Belum ditempa.</p>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Ink Divider */}
+      <div className="ink-divider"></div>
+
+      {/* About Section */}
+      <section>
+        <div className="wrap">
+          <div className="sec-head">
+            <h2>Mengapa Ini Dibuat</h2>
+          </div>
+          <div
+            style={{
+              maxWidth: 640,
+              color: "var(--text-muted)",
+              fontSize: 16,
+              lineHeight: 1.85,
+              marginBottom: 60,
+            }}
+          >
+            <p style={{ margin: "0 0 16px" }}>
+              Yang Metal ingin memotong bersih lalu melangkah pergi. Ia tidak secara alami mau
+              berdiam dengan sebuah trade yang rugi dan menuliskan, dalam kalimat penuh,
+              tepatnya di mana pembacaan itu keliru. Ketidaknyamanan itu justru adalah intinya.
+            </p>
+            <p style={{ margin: "0 0 16px" }}>
+              Setiap entri di sini mengikuti bentuk yang sama: apa yang saya harapkan sebelum
+              sesi, apa yang sebenarnya dilakukan pasar, di mana keduanya berbeda, dan apa yang
+              saya ubah karenanya. Tidak ada entri yang dihapus karena memalukan.{" "}
+              <strong style={{ color: "var(--text)" }}>
+                Kerugian tetap ditampilkan. Itulah yang membuat catatan ini jujur.
+              </strong>
+            </p>
+            <p style={{ margin: 0 }}>
+              Air adalah elemen yang masih kurang dalam diri saya — mengalir, beradaptasi,
+              membiarkan rencana melentur tanpa patah. Seluruh proyek ini adalah usaha untuk
+              membangunnya.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className="py-12 px-6 mt-10">
-        <div className="max-w-[1080px] mx-auto">
-          <div className="h-px bg-gradient-to-r from-transparent via-[#56534E] to-transparent mb-9"></div>
-          <div className="font-['Big_Shoulders'] font-semibold text-xl text-[#A6A39C] max-w-[480px] leading-relaxed mb-6">
+      <footer className="site-footer">
+        <div className="wrap">
+          <div className="blade-rule static" style={{ marginBottom: 36 }}></div>
+          <div className="quote">
             "Pedang tidak mengingat dulunya ia besi.<br />Catatan ini yang mengingatnya."
           </div>
-          <div className="font-mono text-xs text-[#6E6B65]">
-            THE TEMPERING · JURNAL TRADING · DIPERBARUI DARI NOTION
+          <div className="foot-meta">
+            THE TEMPERING · JURNAL TRADING · DIPERBARUI SETIAP MINGGU
           </div>
         </div>
       </footer>
