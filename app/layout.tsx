@@ -48,8 +48,18 @@ export default async function RootLayout({
     <html lang="id">
       <body className="bg-[#0F0F0E] text-[#E8E6E1] antialiased">
         <Sidebar months={monthList} />
-        <main className="min-h-screen pl-20 pt-4 pr-6 pb-6 md:pl-24">
-          {children}
+        {/* Main content — margin-left mengikuti lebar sidebar */}
+        <main
+          className="min-h-screen transition-all duration-300 ease-in-out"
+          style={{
+            marginLeft: "var(--sidebar-width, 256px)",
+            padding: "1.5rem 2rem 1.5rem 3rem",
+            maxWidth: "calc(100% - var(--sidebar-width, 256px) + 40px)",
+          }}
+        >
+          <div className="max-w-6xl mx-auto">
+            {children}
+          </div>
         </main>
       </body>
     </html>
