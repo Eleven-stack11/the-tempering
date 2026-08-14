@@ -49,8 +49,10 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
   if (weekTrades.length === 0) notFound();
 
-  // Ambil weekly thesis dari trade pertama (asumsi semua trade dalam minggu punya thesis sama)
+  // Ambil data dari trade pertama (asumsi satu minggu punya isi yang sama)
   const weeklyThesis = weekTrades[0]?.weeklyThesis || '';
+  const psychology = weekTrades[0]?.psychology || '';
+  const chartLesson = weekTrades[0]?.chartLesson || '';
 
   // Group by day
   const dayMap: Record<string, any[]> = {};
@@ -123,6 +125,8 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           <div className="wrap" style={{ padding: 0 }}>
             <div className="sec-head">
               <h2>Minggu Ini</h2>
+              <p>Lima sesi kontak dengan rencana di atas. Hari yang terkunci adalah hari yang tidak dicatat — itu juga adalah data.</p>
+            </div>
 
             <div className="rail">
               {dayKeys.map((dayKey) => {
@@ -194,30 +198,50 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
               <p>Tesis hari Minggu dibandingkan dengan apa yang benar-benar terjadi. Tidak ada revisi rencana setelah kejadian.</p>
             </div>
 
-            <div className="journal-section" style={{ paddingTop: 0 }}>
-              <div className="eyebrow gold">TESIS VS. REALITA</div>
-              <div className="body-copy">
-                <p>✏️ Bandingkan rencana hari Minggu dengan apa yang sebenarnya terjadi sepanjang minggu.</p>
-              </div>
-            </div>
+            {/* --- TESIS VS REALITA --- dihapus sesuai permintaan, tidak ditampilkan --- */}
 
+            {/* --- PSIKOLOGI --- */}
             <div className="journal-section">
               <div className="eyebrow">PSIKOLOGI</div>
               <div className="pull">
-                <p>✏️ Satu kalimat kunci soal psikologi minggu ini.</p>
+                {psychology ? (
+                  <p>{psychology}</p>
+                ) : (
+                  <p className="text-[#6E6B65] italic">✏️ Isi properti <code>Psikologi</code> di Notion untuk refleksi minggu ini.</p>
+                )}
               </div>
               <div className="body-copy">
-                <p>✏️ Refleksi lebih panjang — apa yang dirasakan, apa polanya, apa yang perlu diperhatikan minggu depan.</p>
+                {psychology ? (
+                  <div className="whitespace-pre-wrap text-[#E8E6E1]">{psychology}</div>
+                ) : (
+                  <p className="text-[#6E6B65] italic">Belum ada catatan psikologi.</p>
+                )}
+              </div>
+              <div className="placeholder-note">
+                ✏️ Untuk mengedit, isi properti <code>Psikologi</code> (Rich Text) di database Notion.
               </div>
             </div>
 
+            {/* --- PELAJARAN CHART --- */}
             <div className="journal-section">
               <div className="eyebrow steel">PELAJARAN CHART</div>
               <div className="body-copy">
-                <p><strong>✏️ Satu pelajaran utama, jangan lebih dari itu.</strong> ✏️ Jelaskan pelajarannya dalam 2-3 kalimat.</p>
+                {chartLesson ? (
+                  <div className="whitespace-pre-wrap text-[#E8E6E1]">
+                    <p><strong>✏️ Satu pelajaran utama:</strong> {chartLesson}</p>
+                  </div>
+                ) : (
+                  <p className="text-[#6E6B65] italic">
+                    <strong>✏️ Satu pelajaran utama, jangan lebih dari itu.</strong> Isi properti <code>Pelajaran Chart</code> di Notion.
+                  </p>
+                )}
+              </div>
+              <div className="placeholder-note">
+                ✏️ Untuk mengedit, isi properti <code>Pelajaran Chart</code> (Rich Text) di database Notion.
               </div>
             </div>
 
+            {/* --- HASIL (tetap hardcode, tidak dari Notion) --- */}
             <div className="journal-section">
               <div className="eyebrow">HASIL</div>
               <div className="stat-strip" style={{ marginTop: 8 }}>
