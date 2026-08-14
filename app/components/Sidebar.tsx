@@ -63,11 +63,19 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
         }`}
       >
         <div className={`${isOpen ? "block" : "hidden"} h-full flex flex-col`}>
-          <div className="flex items-center justify-between mb-6 pt-2">
+          {/* ========== BRAND DENGAN LOGO ========== */}
+          <div className="flex items-center gap-2 mb-6 pt-2">
+            {/* Logo — pastikan file logo.svg ada di folder public/ */}
+            <img
+              src="/logo.svg"
+              alt="EL-DOCUMENTARY Logo"
+              className="h-6 w-auto object-contain"
+            />
             <span className="font-mono text-sm text-[#aaa] uppercase tracking-widest">
               EL-DOCUMENTARY
             </span>
           </div>
+          {/* ====================================== */}
 
           <nav className="flex-1 overflow-y-auto">
             <h3 className="text-xs font-mono text-[#666] uppercase tracking-wider mb-3">
