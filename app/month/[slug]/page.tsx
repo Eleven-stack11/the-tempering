@@ -86,7 +86,7 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      {/* ===== TOMBOL KEMBALI KE HOMEPAGE ===== */}
+      {/* Tombol kembali ke homepage */}
       <div className="mb-4">
         <Link
           href="/"
@@ -95,7 +95,6 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
           <span>←</span> Kembali ke 2026
         </Link>
       </div>
-      {/* ===================================== */}
 
       {/* Header */}
       <header className="mb-8">
@@ -143,7 +142,7 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
         </div>
 
         <div className="rail">
-          {weeks.map((week) => {
+          {weeks.map((week, idx) => {
             const weekTrades = tradeGroups[week.weekNumber] || [];
             const weekR = weekTrades.reduce(
               (sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0),
@@ -156,6 +155,9 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
             const hasTrade = weekTrades.length > 0;
             const linkHref = hasTrade ? `/month/${slug}/week/${week.weekNumber}` : "#";
+
+            // === Perubahan: nomor minggu lokal (1,2,3,4) ===
+            const localWeekNumber = idx + 1;
 
             return (
               <Link
@@ -170,7 +172,7 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
                   </b>
                 </div>
                 <div className="rail-body">
-                  <h4>Minggu {week.weekNumber}</h4>
+                  <h4>Minggu {localWeekNumber}</h4>
                   <p>
                     {dateRange} · {weekTrades.length} trade
                   </p>
