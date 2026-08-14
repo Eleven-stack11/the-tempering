@@ -75,13 +75,13 @@ export async function fetchTrades(): Promise<any[]> {
         }
       }
 
+      // Ambil Half risk (checkbox) — jika true, R dibagi 2
+      const halfRisk = page.properties['Half risk (if not...)']?.checkbox || false;
+
       const setupGrade = page.properties['Setup Grade']?.select?.name || 'B';
       const youtube = page.properties.YouTube?.url || '';
-
-      // Ambil status (Entered / Missed / Study Case)
       const status = page.properties.Status?.select?.name || 'Entered';
 
-      // Filter
       const dailyFilter = page.properties['Daily filter']?.select?.name || '';
       const h4Filter = page.properties['4H filter']?.select?.name || '';
       const h1Filter = page.properties['1H close filter']?.select?.name || '';
@@ -98,7 +98,11 @@ export async function fetchTrades(): Promise<any[]> {
       if (m3Filter) triggerParts.push(`3M:${m3Filter}`);
       const trigger = triggerParts.join(' · ') || '—';
 
-      const rrData = parseRR(rrRaw);
+      let rrData = parseRR(rrRaw);
+      // Jika half risk dicentang dan hasil bukan scratch, bagi nilai R menjadi setengah
+      if (halfRisk && rrData.result !== 'Scratch') {
+        rrData.value = rrData.value / 2;
+      }
 
       let grade = 'B';
       if (setupGrade === 'A+' || setupGrade === 'A') grade = 'A';
@@ -117,7 +121,7 @@ export async function fetchTrades(): Promise<any[]> {
         r: rrData.value,
         notes: details || monthlyNote || '',
         link: youtube || '',
-        status: status, // <-- status ditambahkan
+        status: status,
         createdAt: page.created_time,
       };
     });
