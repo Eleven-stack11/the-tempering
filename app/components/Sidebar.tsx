@@ -1,62 +1,71 @@
+'use client';
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { fetchTrades } from "@/lib/notion";
 
-export default async function Sidebar() {
-  const trades = await fetchTrades();
+interface MonthItem {
+  key: string;
+  name: string;
+  year: number;
+  count: number;
+}
 
-  // Filter trades dengan date valid
-  const validTrades = trades.filter((t) => {
-    const d = new Date(t.date);
-    return !isNaN(d.getTime()) && t.date && t.date.length > 0;
-  });
+export default function Sidebar({ months }: { months: MonthItem[] }) {
+  const [isOpen, setIsOpen] = useState(true);
 
-  const monthMap: Record<string, { year: number; month: number; name: string; count: number }> = {};
-  for (const t of validTrades) {
-    const d = new Date(t.date);
-    const year = d.getFullYear();
-    const month = d.getMonth() + 1;
-    const key = `${year}-${String(month).padStart(2, "0")}`;
-    if (!monthMap[key]) {
-      monthMap[key] = {
-        year,
-        month,
-        name: d.toLocaleString("id", { month: "long" }),
-        count: 0,
-      };
-    }
-    monthMap[key].count++;
-  }
+  // Load state dari localStorage agar ingat preferensi user
+  useEffect(() => {
+    const saved = localStorage.getItem("sidebarOpen");
+    if (saved !== null) setIsOpen(saved === "true");
+  }, []);
 
-  const sortedKeys = Object.keys(monthMap).sort().reverse();
+  const toggle = () => {
+    setIsOpen(!isOpen);
+    localStorage.setItem("sidebarOpen", String(!isOpen));
+  };
 
   return (
-    <aside className="w-64 min-h-screen bg-[#171614] border-r border-[#221F1C] p-6 flex-shrink-0 overflow-y-auto">
-      <div className="flex items-center gap-2.5 mb-8">
-        <span className="w-1.5 h-1.5 bg-[#C49A3C] rotate-45 inline-block"></span>
-        <span className="font-mono text-sm text-[#A6A39C] uppercase tracking-widest">EL-DOCUMENTARY</span>
+    <aside
+      className={`transition-all duration-300 ease-in-out ${
+        isOpen ? "w-64" : "w-16"
+      } bg-[#151515] border-r border-[#2a2a2a] flex-shrink-0 min-h-screen p-4 relative`}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        {isOpen ? (
+          <span className="font-mono text-sm text-[#aaa] uppercase tracking-widest">
+            EL-DOCUMENTARY
+          </span>
+        ) : (
+          <span className="font-mono text-sm text-[#aaa] uppercase">EL</span>
+        )}
+        <button
+          onClick={toggle}
+          className="text-[#888] hover:text-white transition text-lg focus:outline-none"
+        >
+          {isOpen ? "◀" : "☰"}
+        </button>
       </div>
 
+      {/* Daftar Bulan */}
       <nav>
-        <h3 className="text-xs font-mono text-[#6E6B65] uppercase tracking-wider mb-4">Bulan</h3>
-        {sortedKeys.length === 0 ? (
-          <p className="text-xs text-[#6E6B65]">Belum ada data bulan.</p>
-        ) : (
-          <div className="space-y-1">
-            {sortedKeys.map((key) => {
-              const { year, month, name, count } = monthMap[key];
-              return (
-                <Link
-                  key={key}
-                  href={`/month/${key}`}
-                  className="block py-1.5 px-3 rounded hover:bg-[#201F1C] text-[#A6A39C] hover:text-[#E8E6E1] transition text-sm"
-                >
-                  <span>{name} {year}</span>
-                  <span className="text-[#6E6B65] text-xs ml-2">({count})</span>
-                </Link>
-              );
-            })}
-          </div>
+        {isOpen && (
+          <h3 className="text-xs font-mono text-[#666] uppercase tracking-wider mb-3">
+            Bulan
+          </h3>
         )}
+        <div className="space-y-1">
+          {months.map(({ key, name, year, count }) => (
+            <Link
+              key={key}
+              href={`/month/${key}`}
+              className="block py-1.5 px-3 rounded hover:bg-[#2a2a2a] text-[#aaa] hover:text-white transition text-sm truncate"
+              title={isOpen ? `${name} ${year} (${count})` : `${year}`}
+            >
+              {isOpen ? `${name} ${year} (${count})` : `${year}`}
+            </Link>
+          ))}
+        </div>
       </nav>
     </aside>
   );
