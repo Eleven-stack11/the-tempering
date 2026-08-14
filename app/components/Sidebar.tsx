@@ -18,24 +18,6 @@ interface WeekItem {
   href: string;
 }
 
-// ---------- Ikon SVG (ditempel di dalam teks) ----------
-const IconCalendar = () => (
-  <svg className="w-4 h-4 inline-block mr-1.5 text-[#56534E]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-    <line x1="16" y1="2" x2="16" y2="6" />
-    <line x1="8" y1="2" x2="8" y2="6" />
-    <line x1="3" y1="10" x2="21" y2="10" />
-  </svg>
-);
-
-const IconFile = () => (
-  <svg className="w-4 h-4 inline-block mr-1.5 text-[#56534E]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-    <polyline points="14 2 14 8 20 8" />
-  </svg>
-);
-// -------------------------------------------------------
-
 export default function Sidebar({ months }: { months: MonthItem[] }) {
   const [isOpen, setIsOpen] = useState(true);
 
@@ -100,10 +82,7 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
                       onClick={() => toggleMonth(month.key)}
                       className="w-full flex items-center justify-between py-1.5 px-3 rounded hover:bg-[#2a2a2a] text-[#aaa] hover:text-white transition text-sm"
                     >
-                      <span>
-                        <IconCalendar />
-                        {month.name} {month.year} ({month.count})
-                      </span>
+                      <span>{month.name} {month.year} ({month.count})</span>
                       <span className="text-[#666] text-xs">
                         {isCollapsed ? "▶" : "▼"}
                       </span>
@@ -116,7 +95,6 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
                             href={week.href}
                             className="block py-1 px-3 rounded hover:bg-[#2a2a2a] text-[#888] hover:text-white transition text-xs"
                           >
-                            <IconFile />
                             Minggu {week.number} ({week.count})
                           </Link>
                         ))}
