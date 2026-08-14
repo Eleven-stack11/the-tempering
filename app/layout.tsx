@@ -15,8 +15,17 @@ export default async function RootLayout({
 }) {
   const trades = await fetchTrades();
 
-  // Bangun data bulan & minggu
-  const monthMap: Record<string, { year: number; month: number; name: string; count: number; weeks: Record<number, number> }> = {};
+  // Bangun data: bulan → minggu → hari
+  const monthMap: Record<
+    string,
+    {
+      year: number;
+      month: number;
+      name: string;
+      count: number;
+      weeks: Record<number, { count: number; days: Record<number, { count: number; grade?: string; result?: string }> }>;
+    }
+  > = {};
 
   for (const t of trades) {
     const d = new Date(t.date);
@@ -34,8 +43,30 @@ export default async function RootLayout({
       };
     }
     monthMap[key].count++;
+
     const weekNum = getWeekNumber(d);
-    monthMap[key].weeks[weekNum] = (monthMap[key].weeks[weekNum] || 0) + 1;
+    if (!monthMap[key].weeks[weekNum]) {
+      monthMap[key].weeks[weekNum] = { count: 0, days: {} };
+    }
+    monthMap[key].weeks[weekNum].count++;
+
+    const day = d.getDate();
+    if (!monthMap[key].weeks[weekNum].days[day]) {
+      const grade = t.grade || 'B';
+      const isWin = t.result === 'Win';
+      const isLoss = t.result === 'Loss';
+      let gradeColor = 'steel';
+      if (grade === 'A' || grade === 'A+') gradeColor = 'gold';
+      else if (isLoss) gradeColor = 'rust';
+      else if (isWin) gradeColor = 'gold';
+
+      monthMap[key].weeks[weekNum].days[day] = {
+        count: 0,
+        grade: gradeColor,
+        result: isWin ? 'win' : isLoss ? 'loss' : 'be',
+      };
+    }
+    monthMap[key].weeks[weekNum].days[day].count++;
   }
 
   const monthList = Object.keys(monthMap)
@@ -50,12 +81,24 @@ export default async function RootLayout({
         count: data.count,
         weeks: Object.keys(data.weeks)
           .sort((a, b) => Number(a) - Number(b))
-          .map((w) => ({
-            key: `${key}-week-${w}`,
-            number: Number(w),
-            count: data.weeks[Number(w)],
-            href: `/month/${key}/week/${w}`,
-          })),
+          .map((w) => {
+            const weekData = data.weeks[Number(w)];
+            return {
+              key: `${key}-week-${w}`,
+              number: Number(w),
+              count: weekData.count,
+              href: `/month/${key}/week/${w}`,
+              days: Object.keys(weekData.days)
+                .sort((a, b) => Number(a) - Number(b))
+                .map((d) => ({
+                  key: `${key}-week-${w}-day-${d}`,
+                  date: Number(d),
+                  href: `/month/${key}/week/${w}/day/${d}`,
+                  grade: weekData.days[Number(d)].grade,
+                  result: weekData.days[Number(d)].result,
+                })),
+            };
+          }),
       };
     });
 
@@ -71,9 +114,7 @@ export default async function RootLayout({
             maxWidth: "calc(100% - var(--sidebar-width, 256px) + 40px)",
           }}
         >
-          <div className="max-w-6xl mx-auto">
-            {children}
-          </div>
+          <div className="max-w-6xl mx-auto">{children}</div>
         </main>
       </body>
     </html>
