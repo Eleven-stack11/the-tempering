@@ -62,18 +62,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
   return (
     <>
-      <nav className="site-nav">
-        <div className="wrap">
-          <div className="brand"><span className="mark"></span> THE TEMPERING</div>
-          <div className="crumbs">
-            <Link href="/">2026</Link>
-            <span className="sep">/</span>
-            <Link href={`/month/${slug}`}>{monthName}</Link>
-            <span className="sep">/</span>
-            <span className="here">Minggu {weekNumber}</span>
-          </div>
-        </div>
-      </nav>
 
       <header className="hero" style={{ padding: "64px 0 40px" }}>
         <div className="wrap">
