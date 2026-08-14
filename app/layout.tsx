@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   description: "Jurnal trading yang jujur.",
 };
 
+// ---------- Build Tree ----------
 function buildTree(trades: any[]) {
   const validTrades = trades.filter(t => {
     const d = new Date(t.date);
@@ -83,7 +84,6 @@ function buildTree(trades: any[]) {
             icon: 'file',
             count: dayTrades.length,
             grade: gradeColor,
-            gradeLabel: grade,
             result: isWin ? 'win' : isLoss ? 'loss' : 'be',
           };
           weekNode.children.push(dayNode);
