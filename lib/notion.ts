@@ -1,31 +1,19 @@
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
 const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID;
 
-// ---------- Parsing RR (paling kuat) ----------
 function parseRR(value: any): { value: number; result: 'Win' | 'Loss' | 'Scratch' } {
-  console.log("🔍 parseRR received:", value, "type:", typeof value);
-  
   if (value === undefined || value === null || value === '') {
     return { value: 0, result: 'Scratch' };
   }
-
-  // Jika value adalah number
   if (typeof value === 'number') {
     if (value > 0) return { value, result: 'Win' };
     if (value < 0) return { value: Math.abs(value), result: 'Loss' };
     return { value: 0, result: 'Scratch' };
   }
-
-  // Ubah ke string
   const str = String(value).trim().toUpperCase();
-  console.log("🔍 parsed string:", str);
-
-  // BE / Scratch
   if (['BE', 'B/E', 'SCRATCH', '0', '0R', '0 R'].includes(str)) {
     return { value: 0, result: 'Scratch' };
   }
-
-  // Format: 2R, +2R, -1R, +1.5R, 2.5R
   const match = str.match(/^([+-]?(\d+(\.\d+)?))R?$/);
   if (match) {
     const num = parseFloat(match[1]);
@@ -33,15 +21,11 @@ function parseRR(value: any): { value: number; result: 'Win' | 'Loss' | 'Scratch
     if (num < 0) return { value: Math.abs(num), result: 'Loss' };
     return { value: 0, result: 'Scratch' };
   }
-
-  // Kata Win/Loss
   if (str.includes('WIN')) return { value: 1, result: 'Win' };
   if (str.includes('LOSS')) return { value: 1, result: 'Loss' };
-
   return { value: 0, result: 'Scratch' };
 }
 
-// ---------- Fetch Trades ----------
 export async function fetchTrades(): Promise<any[]> {
   if (!NOTION_TOKEN || !NOTION_DATABASE_ID) {
     console.warn("Notion credentials missing");
@@ -68,41 +52,34 @@ export async function fetchTrades(): Promise<any[]> {
 
     const data = await res.json();
 
-    // ===== LOG: Cetak semua properti dari record pertama =====
-    if (data.results && data.results.length > 0) {
-      const first = data.results[0];
-      console.log("🔍 Properti tersedia:", Object.keys(first.properties).join(', '));
-      
-      // Coba akses RR langsung
-      const rrProp = first.properties.RR;
-      console.log("🔍 RR property:", rrProp);
-      if (rrProp) {
-        console.log("🔍 RR type:", rrProp.type);
-        console.log("🔍 RR value:", rrProp.select?.name || rrProp.rich_text?.[0]?.plain_text || rrProp.number);
-      }
-    }
-    // ==================================================
-
     return data.results.map((page: any) => {
-      // --- Ambil properti ---
       const date = page.properties.Date?.date?.start || '';
       const details = page.properties.Details?.rich_text?.[0]?.plain_text || '';
       const monthlyNote = page.properties['Monthly Note']?.rich_text?.[0]?.plain_text || '';
       const position = page.properties.Position?.select?.name || 'Long';
-      
-      // ===== AKSES RR LANGSUNG (paling penting) =====
-      let rrRaw = undefined;
+
+      // Ambil RR (support multi_select & select)
+      let rrRaw = null;
       const rrProp = page.properties.RR;
       if (rrProp) {
-        if (rrProp.type === 'select') rrRaw = rrProp.select?.name;
-        else if (rrProp.type === 'rich_text') rrRaw = rrProp.rich_text?.[0]?.plain_text;
-        else if (rrProp.type === 'number') rrRaw = rrProp.number;
-        else if (rrProp.type === 'title') rrRaw = rrProp.title?.[0]?.plain_text;
+        if (rrProp.type === 'select') {
+          rrRaw = rrProp.select?.name;
+        } else if (rrProp.type === 'multi_select') {
+          rrRaw = rrProp.multi_select?.[0]?.name || null;
+        } else if (rrProp.type === 'rich_text') {
+          rrRaw = rrProp.rich_text?.[0]?.plain_text;
+        } else if (rrProp.type === 'number') {
+          rrRaw = rrProp.number;
+        } else if (rrProp.type === 'title') {
+          rrRaw = rrProp.title?.[0]?.plain_text;
+        }
       }
-      console.log(`🔍 Trade ${page.id.slice(0,6)}: RR raw =`, rrRaw);
 
       const setupGrade = page.properties['Setup Grade']?.select?.name || 'B';
       const youtube = page.properties.YouTube?.url || '';
+
+      // Ambil status (Entered / Missed / Study Case)
+      const status = page.properties.Status?.select?.name || 'Entered';
 
       // Filter
       const dailyFilter = page.properties['Daily filter']?.select?.name || '';
@@ -121,11 +98,8 @@ export async function fetchTrades(): Promise<any[]> {
       if (m3Filter) triggerParts.push(`3M:${m3Filter}`);
       const trigger = triggerParts.join(' · ') || '—';
 
-      // Parse RR
       const rrData = parseRR(rrRaw);
-      console.log(`🔍 Trade ${page.id.slice(0,6)}: RR result =`, rrData);
 
-      // Grade
       let grade = 'B';
       if (setupGrade === 'A+' || setupGrade === 'A') grade = 'A';
       else if (setupGrade === 'B' || setupGrade === 'B+') grade = 'B';
@@ -143,6 +117,7 @@ export async function fetchTrades(): Promise<any[]> {
         r: rrData.value,
         notes: details || monthlyNote || '',
         link: youtube || '',
+        status: status, // <-- status ditambahkan
         createdAt: page.created_time,
       };
     });
@@ -152,7 +127,6 @@ export async function fetchTrades(): Promise<any[]> {
   }
 }
 
-// ---------- Fungsi Minggu (tetap) ----------
 export function getWeekNumber(date: Date): number {
   const d = new Date(date);
   d.setHours(0, 0, 0, 0);
