@@ -85,7 +85,18 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
   const monthlyNote = MONTHLY_NOTES[monthKey] || "✏️ Tulis catatan bulanan di sini.";
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 max-w-6xl mx-auto">
+      {/* ===== TOMBOL KEMBALI KE HOMEPAGE ===== */}
+      <div className="mb-4">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1 text-sm font-mono text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 uppercase tracking-wider"
+        >
+          <span>←</span> Kembali ke 2026
+        </Link>
+      </div>
+      {/* ===================================== */}
+
       {/* Header */}
       <header className="mb-8">
         <div className="eyebrow steel">BULAN {String(monthIndex + 1).padStart(2, "0")} · {year}</div>
