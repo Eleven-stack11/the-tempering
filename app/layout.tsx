@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Sidebar from "./components/Sidebar";
+import TopNav from "./components/TopNav";
 import { fetchTrades, getWeekNumber } from "@/lib/notion";
 
 export const metadata: Metadata = {
@@ -15,7 +16,17 @@ export default async function RootLayout({
 }) {
   const trades = await fetchTrades();
 
-  const monthMap: Record<string, { year: number; month: number; name: string; count: number; weeks: Record<number, number> }> = {};
+  // Bangun data bulan + minggu
+  const monthMap: Record<
+    string,
+    {
+      year: number;
+      month: number;
+      name: string;
+      count: number;
+      weeks: Record<number, number>;
+    }
+  > = {};
 
   for (const t of trades) {
     const d = new Date(t.date);
@@ -70,7 +81,11 @@ export default async function RootLayout({
             maxWidth: "calc(100% - var(--sidebar-width, 256px) + 40px)",
           }}
         >
-          <div className="max-w-6xl mx-auto">{children}</div>
+          <div className="max-w-6xl mx-auto">
+            {/* TopNav — muncul di semua halaman kecuali homepage */}
+            <TopNav />
+            {children}
+          </div>
         </main>
       </body>
     </html>
