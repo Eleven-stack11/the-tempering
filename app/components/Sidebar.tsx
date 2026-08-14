@@ -23,12 +23,20 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
     localStorage.setItem("sidebarOpen", String(!isOpen));
   };
 
+  // Set CSS variable untuk lebar sidebar
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--sidebar-width",
+      isOpen ? "256px" : "0px"
+    );
+  }, [isOpen]);
+
   return (
     <>
-      {/* Tombol Toggle — selalu terlihat di pojok kiri */}
+      {/* Tombol Toggle — selalu di pojok kiri atas */}
       <button
         onClick={toggle}
-        className="fixed top-4 left-4 z-50 bg-[#151515] border border-[#2a2a2a] rounded p-2 text-[#aaa] hover:text-white transition text-xl w-10 h-10 flex items-center justify-center"
+        className="fixed top-4 left-4 z-50 bg-[#151515] border border-[#2a2a2a] rounded-lg p-2 text-[#aaa] hover:text-white transition text-xl w-10 h-10 flex items-center justify-center"
         aria-label="Toggle Sidebar"
       >
         {isOpen ? "◀" : "☰"}
