@@ -41,21 +41,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
 
   return (
     <>
-      <nav className="site-nav">
-        <div className="wrap">
-          <div className="brand"><span className="mark"></span> THE TEMPERING</div>
-          <div className="crumbs">
-            <Link href="/">2026</Link>
-            <span className="sep">/</span>
-            <Link href={`/month/${slug}`}>{monthName}</Link>
-            <span className="sep">/</span>
-            <Link href={`/month/${slug}/week/${weekNum}`}>Minggu {weekNum}</Link>
-            <span className="sep">/</span>
-            <span className="here">{dayNames[d.getDay()]} {d.getDate()}</span>
-          </div>
-        </div>
-      </nav>
-
+      
       <header className="day-hero">
         <div className="wrap">
           <div className="day-hero-top">
