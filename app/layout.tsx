@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Sidebar from "./components/Sidebar";
 
 export const metadata: Metadata = {
-  title: "The Tempering — 2026",
+  title: "EL-Documentary — Trading Journal",
   description: "Jurnal trading yang jujur.",
 };
 
@@ -13,32 +14,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id">
-      <head>
-        {/* Script untuk animasi blade-rule (sweep once when scrolled into view) */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              document.addEventListener('DOMContentLoaded', () => {
-                const rules = document.querySelectorAll('.blade-rule.on-scroll');
-                if ('IntersectionObserver' in window && rules.length){
-                  const io = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                      if (entry.isIntersecting){
-                        entry.target.classList.add('lit');
-                        io.unobserve(entry.target);
-                      }
-                    });
-                  }, { threshold: 0.4 });
-                  rules.forEach(r => io.observe(r));
-                } else {
-                  rules.forEach(r => r.classList.add('static'));
-                }
-              });
-            `,
-          }}
-        />
-      </head>
-      <body>{children}</body>
+      <body className="bg-[#0F0F0E] text-[#E8E6E1] antialiased flex">
+        <Sidebar />
+        <main className="flex-1 overflow-auto min-h-screen">{children}</main>
+      </body>
     </html>
   );
 }
