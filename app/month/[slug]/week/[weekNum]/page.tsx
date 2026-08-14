@@ -28,15 +28,18 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const monthName = monthNames[Object.keys(monthNames)[monthIndex]];
   const weekNumber = parseInt(weekNum);
 
-  // Ambil semua trade dari Notion
   const allTrades = await fetchTrades();
 
-  // Dapatkan daftar minggu untuk bulan ini (sama seperti halaman bulan)
+  // Dapatkan semua minggu dalam bulan ini
   const weeks = getWeeksOfMonth(yearNum, monthIndex);
 
   // Cari minggu yang sesuai dengan weekNumber
   const targetWeek = weeks.find((w) => w.weekNumber === weekNumber);
   if (!targetWeek) notFound();
+
+  // Cari urutan minggu lokal (1,2,3,4)
+  const localWeekIndex = weeks.findIndex((w) => w.weekNumber === weekNumber);
+  const localWeekNumber = localWeekIndex !== -1 ? localWeekIndex + 1 : weekNumber;
 
   // Filter trades yang jatuh di antara start dan end minggu tersebut
   const weekTrades = allTrades.filter((t) => {
@@ -62,150 +65,164 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
   return (
     <>
+      {/* Tombol kembali ke homepage */}
+      <div className="flex justify-end items-center py-3 px-4 border-b border-[#221F1C] mb-4">
+        <Link
+          href="/"
+          className="font-mono text-xs uppercase tracking-widest text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 flex items-center gap-1.5"
+        >
+          <span>←</span> Beranda
+        </Link>
+      </div>
 
-      <header className="hero" style={{ padding: "64px 0 40px" }}>
-        <div className="wrap">
-          <div className="eyebrow water">
-            MINGGU {weekNumber} · {monthLabel} {first.getDate()} – {monthLabel} {last.getDate()}
-          </div>
-          <h1 style={{ fontSize: "clamp(40px, 6.5vw, 72px)" }}>Bacaan Hari Minggu</h1>
-          <p className="lede">{weekTrades.length} trade tercatat minggu ini. Net R {netR >= 0 ? "+" : ""}{netR.toFixed(1)}R</p>
+      <div className="p-6 max-w-6xl mx-auto">
+        {/* Tombol kembali ke bulan */}
+        <div className="mb-4">
+          <Link
+            href={`/month/${slug}`}
+            className="inline-flex items-center gap-1 text-sm font-mono text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 uppercase tracking-wider"
+          >
+            <span>←</span> Kembali ke {monthName}
+          </Link>
         </div>
-      </header>
 
-      <section>
-        <div className="wrap">
-          <div className="journal-section" style={{ paddingTop: 0, borderBottom: "1px solid var(--border-soft)" }}>
-            <div className="eyebrow water">TESIS PRA-PASAR</div>
-            <div className="body-copy">
-              <p>✏️ Tulis tesis hari Minggu di sini — atau tambahkan sebagai properti di Notion.</p>
+        <header className="hero" style={{ padding: "64px 0 40px" }}>
+          <div className="wrap" style={{ padding: 0 }}>
+            <div className="eyebrow water">
+              MINGGU {localWeekNumber} · {monthLabel} {first.getDate()} – {monthLabel} {last.getDate()}
             </div>
-            <div className="placeholder-note">✏️ Isi kotak ini setiap hari Minggu sebelum minggu dimulai. Tempelkan screenshot daily/4H kalau perlu.</div>
+            <h1 style={{ fontSize: "clamp(40px, 6.5vw, 72px)" }}>Bacaan Hari Minggu</h1>
+            <p className="lede">{weekTrades.length} trade tercatat minggu ini. Net R {netR >= 0 ? "+" : ""}{netR.toFixed(1)}R</p>
           </div>
-        </div>
-      </section>
+        </header>
 
-      <div className="blade-rule on-scroll wrap" style={{ maxWidth: 1080 }}></div>
-
-      <section>
-        <div className="wrap">
-          <div className="sec-head">
-            <h2>Minggu Ini</h2>
-            <p>Lima sesi kontak dengan rencana di atas. Hari yang terkunci adalah hari yang tidak dicatat — itu juga adalah data.</p>
-          </div>
-
-          <div className="rail">
-            {dayKeys.map((dayKey) => {
-              const d = new Date(dayKey);
-              const dayName = dayNames[d.getDay()];
-              const dayTrades = dayMap[dayKey];
-              const dayR = dayTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
-              const grade = dayTrades[0]?.grade || "B";
-              const daySlug = dayKey;
-
-              return (
-                <Link key={dayKey} href={`/month/${slug}/week/${weekNum}/day/${daySlug}`} className="rail-row linked">
-                  <div className="rail-day">
-                    {dayName}<b>{d.getDate()}</b>
-                  </div>
-                  <div className="rail-body">
-                    <h4>{dayTrades.length} trade — {dayTrades.map(t => t.title).join(", ")}</h4>
-                    <p>{dayTrades.map(t => `${t.instrument} ${t.direction}`).join(" · ")}</p>
-                  </div>
-                  <div className={`seal ${dayR >= 0 ? "win" : "loss"}`}>
-                    <span>{grade}</span>
-                  </div>
-                  <div className={`rail-tag ${dayR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>
-                    {dayR >= 0 ? "+" : ""}{dayR.toFixed(1)}R
-                  </div>
-                </Link>
-              );
-            })}
-
-            {/* Tampilkan hari Senin–Jumat yang tidak ada trade */}
-            {[0, 1, 2, 3, 4].map((i) => {
-              const d = new Date(targetWeek.start);
-              d.setDate(d.getDate() + i);
-              if (d > targetWeek.end) return null;
-              const dayKey = d.toISOString().split("T")[0];
-              if (dayMap[dayKey]) return null;
-              const dayName = dayNames[d.getDay()];
-              return (
-                <div key={i} className="rail-row locked">
-                  <div className="rail-day">
-                    {dayName}<b>{d.getDate()}</b>
-                  </div>
-                  <div className="rail-body"><h4>Tidak ada sesi tercatat</h4></div>
-                  <div className="rail-tag"></div>
-                  <div className="rail-tag"></div>
-                </div>
-              );
-            })}
-
-            <div className="rail-row review">
-              <div className="rail-day" style={{ color: "var(--gold)" }}>SAB</div>
-              <div className="rail-body">
-                <h4 style={{ color: "var(--gold)" }}>Review Mingguan</h4>
-                <p>Rincian lengkap di bawah — tidak ada halaman terpisah, semuanya ada di halaman ini</p>
+        <section>
+          <div className="wrap" style={{ padding: 0 }}>
+            <div className="journal-section" style={{ paddingTop: 0, borderBottom: "1px solid var(--border-soft)" }}>
+              <div className="eyebrow water">TESIS PRA-PASAR</div>
+              <div className="body-copy">
+                <p>✏️ Tulis tesis hari Minggu di sini — atau tambahkan sebagai properti di Notion.</p>
               </div>
-              <div className="rail-tag"></div>
-              <div className="rail-tag"></div>
+              <div className="placeholder-note">✏️ Isi kotak ini setiap hari Minggu sebelum minggu dimulai. Tempelkan screenshot daily/4H kalau perlu.</div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <div className="ink-divider"></div>
+        <div className="blade-rule on-scroll" style={{ maxWidth: "100%", margin: "20px 0" }}></div>
 
-      <section>
-        <div className="wrap">
-          <div className="sec-head">
-            <h2>Sabtu — Rincian Lengkap</h2>
-            <p>Tesis hari Minggu dibandingkan dengan apa yang benar-benar terjadi. Tidak ada revisi rencana setelah kejadian.</p>
-          </div>
+        <section>
+          <div className="wrap" style={{ padding: 0 }}>
+            <div className="sec-head">
+              <h2>Minggu Ini</h2>
+              <p>Lima sesi kontak dengan rencana di atas. Hari yang terkunci adalah hari yang tidak dicatat — itu juga adalah data.</p>
+            </div>
 
-          <div className="journal-section" style={{ paddingTop: 0 }}>
-            <div className="eyebrow gold">TESIS VS. REALITA</div>
-            <div className="body-copy">
-              <p>✏️ Bandingkan rencana hari Minggu dengan apa yang sebenarnya terjadi sepanjang minggu.</p>
+            <div className="rail">
+              {dayKeys.map((dayKey) => {
+                const d = new Date(dayKey);
+                const dayName = dayNames[d.getDay()];
+                const dayTrades = dayMap[dayKey];
+                const dayR = dayTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
+                const grade = dayTrades[0]?.grade || "B";
+                const daySlug = dayKey;
+
+                return (
+                  <Link key={dayKey} href={`/month/${slug}/week/${weekNum}/day/${daySlug}`} className="rail-row linked">
+                    <div className="rail-day">
+                      {dayName}<b>{d.getDate()}</b>
+                    </div>
+                    <div className="rail-body">
+                      <h4>{dayTrades.length} trade — {dayTrades.map(t => t.title).join(", ")}</h4>
+                      <p>{dayTrades.map(t => `${t.instrument} ${t.direction}`).join(" · ")}</p>
+                    </div>
+                    <div className={`seal ${dayR >= 0 ? "win" : "loss"}`}>
+                      <span>{grade}</span>
+                    </div>
+                    <div className={`rail-tag ${dayR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>
+                      {dayR >= 0 ? "+" : ""}{dayR.toFixed(1)}R
+                    </div>
+                  </Link>
+                );
+              })}
+
+              {/* Tampilkan hari Senin–Jumat yang tidak ada trade */}
+              {[0, 1, 2, 3, 4].map((i) => {
+                const d = new Date(targetWeek.start);
+                d.setDate(d.getDate() + i);
+                if (d > targetWeek.end) return null;
+                const dayKey = d.toISOString().split("T")[0];
+                if (dayMap[dayKey]) return null;
+                const dayName = dayNames[d.getDay()];
+                return (
+                  <div key={i} className="rail-row locked">
+                    <div className="rail-day">
+                      {dayName}<b>{d.getDate()}</b>
+                    </div>
+                    <div className="rail-body"><h4>Tidak ada sesi tercatat</h4></div>
+                    <div className="rail-tag"></div>
+                    <div className="rail-tag"></div>
+                  </div>
+                );
+              })}
+
+              <div className="rail-row review">
+                <div className="rail-day" style={{ color: "var(--gold)" }}>SAB</div>
+                <div className="rail-body">
+                  <h4 style={{ color: "var(--gold)" }}>Review Mingguan</h4>
+                  <p>Rincian lengkap di bawah — tidak ada halaman terpisah, semuanya ada di halaman ini</p>
+                </div>
+                <div className="rail-tag"></div>
+                <div className="rail-tag"></div>
+              </div>
             </div>
           </div>
+        </section>
 
-          <div className="journal-section">
-            <div className="eyebrow">PSIKOLOGI</div>
-            <div className="pull">
-              <p>✏️ Satu kalimat kunci soal psikologi minggu ini.</p>
+        <div className="ink-divider"></div>
+
+        <section>
+          <div className="wrap" style={{ padding: 0 }}>
+            <div className="sec-head">
+              <h2>Sabtu — Rincian Lengkap</h2>
+              <p>Tesis hari Minggu dibandingkan dengan apa yang benar-benar terjadi. Tidak ada revisi rencana setelah kejadian.</p>
             </div>
-            <div className="body-copy">
-              <p>✏️ Refleksi lebih panjang — apa yang dirasakan, apa polanya, apa yang perlu diperhatikan minggu depan.</p>
+
+            <div className="journal-section" style={{ paddingTop: 0 }}>
+              <div className="eyebrow gold">TESIS VS. REALITA</div>
+              <div className="body-copy">
+                <p>✏️ Bandingkan rencana hari Minggu dengan apa yang sebenarnya terjadi sepanjang minggu.</p>
+              </div>
+            </div>
+
+            <div className="journal-section">
+              <div className="eyebrow">PSIKOLOGI</div>
+              <div className="pull">
+                <p>✏️ Satu kalimat kunci soal psikologi minggu ini.</p>
+              </div>
+              <div className="body-copy">
+                <p>✏️ Refleksi lebih panjang — apa yang dirasakan, apa polanya, apa yang perlu diperhatikan minggu depan.</p>
+              </div>
+            </div>
+
+            <div className="journal-section">
+              <div className="eyebrow steel">PELAJARAN CHART</div>
+              <div className="body-copy">
+                <p><strong>✏️ Satu pelajaran utama, jangan lebih dari itu.</strong> ✏️ Jelaskan pelajarannya dalam 2-3 kalimat.</p>
+              </div>
+            </div>
+
+            <div className="journal-section">
+              <div className="eyebrow">HASIL</div>
+              <div className="stat-strip" style={{ marginTop: 8 }}>
+                <div className="stat"><div className="stat-label">Trade Diambil</div><div className="stat-value">{weekTrades.length}</div></div>
+                <div className="stat"><div className="stat-label">Grade</div><div className="stat-value gold">{weekTrades[0]?.grade || "B"}</div></div>
+                <div className="stat"><div className="stat-label">Net R</div><div className={`stat-value ${netR >= 0 ? "water" : "rust"}`}>{netR >= 0 ? "+" : ""}{netR.toFixed(1)}R</div></div>
+                <div className="stat"><div className="stat-label">Pelanggaran Aturan</div><div className="stat-value">0</div></div>
+              </div>
             </div>
           </div>
-
-          <div className="journal-section">
-            <div className="eyebrow steel">PELAJARAN CHART</div>
-            <div className="body-copy">
-              <p><strong>✏️ Satu pelajaran utama, jangan lebih dari itu.</strong> ✏️ Jelaskan pelajarannya dalam 2-3 kalimat.</p>
-            </div>
-          </div>
-
-          <div className="journal-section">
-            <div className="eyebrow">HASIL</div>
-            <div className="stat-strip" style={{ marginTop: 8 }}>
-              <div className="stat"><div className="stat-label">Trade Diambil</div><div className="stat-value">{weekTrades.length}</div></div>
-              <div className="stat"><div className="stat-label">Grade</div><div className="stat-value gold">{weekTrades[0]?.grade || "B"}</div></div>
-              <div className="stat"><div className="stat-label">Net R</div><div className={`stat-value ${netR >= 0 ? "water" : "rust"}`}>{netR >= 0 ? "+" : ""}{netR.toFixed(1)}R</div></div>
-              <div className="stat"><div className="stat-label">Pelanggaran Aturan</div><div className="stat-value">0</div></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <footer className="site-footer">
-        <div className="wrap">
-          <div className="blade-rule static" style={{ marginBottom: 36 }}></div>
-          <div className="foot-meta">THE TEMPERING · MINGGU {weekNumber} · <Link href={`/month/${slug}`} style={{ color: "var(--gold)" }}>↑ KEMBALI KE {monthName}</Link></div>
-        </div>
-      </footer>
+        </section>
+      </div>
     </>
   );
 }
