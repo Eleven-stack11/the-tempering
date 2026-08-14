@@ -29,7 +29,16 @@ const MONTHLY_NOTES: Record<string, string> = {
 
 export default async function MonthPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const [year, month] = slug.split("-");
+  const parts = slug.split("-");
+if (parts.length !== 2) {
+  return <div>Format bulan tidak valid.</div>;
+}
+const [year, month] = parts;
+const yearNum = parseInt(year);
+const monthIndex = parseInt(month) - 1;
+if (isNaN(yearNum) || isNaN(monthIndex) || monthIndex < 0 || monthIndex > 11) {
+  return <div>Bulan tidak valid.</div>;
+}
   const yearNum = parseInt(year);
   const monthIndex = parseInt(month) - 1;
   const monthName = monthNames[Object.keys(monthNames)[monthIndex]];
