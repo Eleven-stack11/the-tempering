@@ -56,16 +56,14 @@ export default async function HomePage() {
       {/* Hero */}
       <header className="hero">
         <div className="wrap">
-          <div className="eyebrow">SEBUAH CATATAN, BUKAN SEKADAR SOROTAN</div>
+          <div className="eyebrow">Kumpulan seluruh data</div>
           <h1>
-            EL<br />
-            <em>Documentary</em>
+            The<br />
+            <em>Journey</em>
           </h1>
           <p className="lede">
-            Bongkahan besi tidak berubah jadi pedang secara kebetulan. Ia masuk ke dalam api,
-            ditempa, didinginkan, lalu dimasukkan lagi.{" "}
-            <strong>Inilah proses itu, dituliskan</strong> — pembacaan pasar setiap minggu, di
-            mana bacaan itu keliru, dan apa yang berubah sesudahnya.
+            Semua hasil backtest, fronttest dan juga eksekusi trade secara real tersimpan dalam satu journal{" "}
+            <strong>konsistensi persiapan dari pra week</strong> — adaptasi di minggu tersebut hingga review ulang kembali di hari sabtu
           </p>
         </div>
       </header>
@@ -78,7 +76,7 @@ export default async function HomePage() {
         <div className="wrap">
           <div className="stat-strip">
             <div className="stat">
-              <div className="stat-label">Sesi Tercatat</div>
+              <div className="stat-label">Jumlah Trade</div>
               <div className="stat-value">{totalSessions}</div>
             </div>
             <div className="stat">
@@ -86,7 +84,7 @@ export default async function HomePage() {
               <div className="stat-value gold">{setupA}</div>
             </div>
             <div className="stat">
-              <div className="stat-label">Pelanggaran Aturan Tertangkap</div>
+              <div className="stat-label">Pelanggaran</div>
               <div className="stat-value rust">{violations}</div>
             </div>
             <div className="stat">
@@ -197,7 +195,7 @@ export default async function HomePage() {
             "Pedang tidak mengingat dulunya ia besi.<br />Catatan ini yang mengingatnya."
           </div>
           <div className="foot-meta">
-            THE TEMPERING · JURNAL TRADING · DIPERBARUI SETIAP MINGGU
+            EL Documentary · JURNAL TRADING · DIPERBARUI SETIAP MINGGU
           </div>
         </div>
       </footer>
