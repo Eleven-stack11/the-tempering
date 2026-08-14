@@ -75,16 +75,6 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
   return (
     <>
-      <nav className="site-nav">
-        <div className="wrap">
-          <div className="brand"><span className="mark"></span> THE TEMPERING</div>
-          <div className="crumbs">
-            <Link href="/">2026</Link>
-            <span className="sep">/</span>
-            <span className="here">{monthName}</span>
-          </div>
-        </div>
-      </nav>
 
       <header className="hero" style={{ padding: "64px 0 48px" }}>
         <div className="wrap">
