@@ -58,6 +58,9 @@ export async function fetchTrades(): Promise<any[]> {
       const monthlyNote = page.properties['Monthly Note']?.rich_text?.[0]?.plain_text || '';
       const position = page.properties.Position?.select?.name || 'Long';
 
+      // === WEEKLY THESIS ===
+      const weeklyThesis = page.properties['Weekly Thesis']?.rich_text?.[0]?.plain_text || '';
+
       // Ambil RR (support multi_select & select)
       let rrRaw = null;
       const rrProp = page.properties.RR;
@@ -75,9 +78,7 @@ export async function fetchTrades(): Promise<any[]> {
         }
       }
 
-      // Ambil Half risk (checkbox) — jika true, R dibagi 2
       const halfRisk = page.properties['Half risk (if not...)']?.checkbox || false;
-
       const setupGrade = page.properties['Setup Grade']?.select?.name || 'B';
       const youtube = page.properties.YouTube?.url || '';
       const status = page.properties.Status?.select?.name || 'Entered';
@@ -99,7 +100,6 @@ export async function fetchTrades(): Promise<any[]> {
       const trigger = triggerParts.join(' · ') || '—';
 
       let rrData = parseRR(rrRaw);
-      // Jika half risk dicentang dan hasil bukan scratch, bagi nilai R menjadi setengah
       if (halfRisk && rrData.result !== 'Scratch') {
         rrData.value = rrData.value / 2;
       }
@@ -122,6 +122,7 @@ export async function fetchTrades(): Promise<any[]> {
         notes: details || monthlyNote || '',
         link: youtube || '',
         status: status,
+        weeklyThesis: weeklyThesis, // <-- INI TAMBAHAN
         createdAt: page.created_time,
       };
     });
