@@ -54,12 +54,6 @@ export default async function HomePage() {
         <h1 className="font-['Big_Shoulders'] font-black text-[clamp(48px,8vw,96px)] leading-[0.92] mb-4">
           <em className="text-[#2E5695] not-italic">Journey</em>
         </h1>
-        <p className="text-[#A6A39C] text-lg max-w-2xl leading-relaxed">
-          Bongkahan besi tidak berubah jadi pedang secara kebetulan. Ia masuk ke dalam api,
-          ditempa, didinginkan, lalu dimasukkan lagi.{" "}
-          <strong className="text-[#E8E6E1]">Inilah proses itu, dituliskan</strong> — pembacaan
-          pasar setiap minggu, di mana bacaan itu keliru, dan apa yang berubah sesudahnya.
-        </p>
       </header>
 
       {/* Blade Rule */}
