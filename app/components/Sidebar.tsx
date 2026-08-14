@@ -4,13 +4,12 @@ import { fetchTrades } from "@/lib/notion";
 export default async function Sidebar() {
   const trades = await fetchTrades();
 
-  // Filter trades yang memiliki date valid
+  // Filter trades dengan date valid
   const validTrades = trades.filter((t) => {
     const d = new Date(t.date);
     return !isNaN(d.getTime()) && t.date && t.date.length > 0;
   });
 
-  // Kelompokkan berdasarkan bulan
   const monthMap: Record<string, { year: number; month: number; name: string; count: number }> = {};
   for (const t of validTrades) {
     const d = new Date(t.date);
@@ -32,13 +31,11 @@ export default async function Sidebar() {
 
   return (
     <aside className="w-64 min-h-screen bg-[#171614] border-r border-[#221F1C] p-6 flex-shrink-0 overflow-y-auto">
-      {/* Brand */}
       <div className="flex items-center gap-2.5 mb-8">
         <span className="w-1.5 h-1.5 bg-[#C49A3C] rotate-45 inline-block"></span>
         <span className="font-mono text-sm text-[#A6A39C] uppercase tracking-widest">EL-DOCUMENTARY</span>
       </div>
 
-      {/* Daftar Bulan */}
       <nav>
         <h3 className="text-xs font-mono text-[#6E6B65] uppercase tracking-wider mb-4">Bulan</h3>
         {sortedKeys.length === 0 ? (
