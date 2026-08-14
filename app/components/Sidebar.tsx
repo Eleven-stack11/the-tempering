@@ -3,19 +3,20 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
+interface WeekItem {
+  key: string;
+  number: number;
+  localNumber?: number; // tambahan
+  count: number;
+  href: string;
+}
+
 interface MonthItem {
   key: string;
   name: string;
   year: number;
   count: number;
   weeks?: WeekItem[];
-}
-
-interface WeekItem {
-  key: string;
-  number: number;
-  count: number;
-  href: string;
 }
 
 export default function Sidebar({ months }: { months: MonthItem[] }) {
@@ -95,7 +96,7 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
                             href={week.href}
                             className="block py-1 px-3 rounded hover:bg-[#2a2a2a] text-[#888] hover:text-white transition text-xs"
                           >
-                            Minggu {week.number} ({week.count})
+                            Minggu {week.localNumber || week.number} ({week.count})
                           </Link>
                         ))}
                       </div>
