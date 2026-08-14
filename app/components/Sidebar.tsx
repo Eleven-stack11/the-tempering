@@ -69,38 +69,31 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
             </span>
           </div>
 
-          <nav className="flex-1 overflow-y-auto scrollbar-thin">
+          <nav className="flex-1 overflow-y-auto">
             <h3 className="text-xs font-mono text-[#666] uppercase tracking-wider mb-3">
               Bulan
             </h3>
             <div className="space-y-1">
               {months.map((month) => {
                 const isCollapsed = collapsedMonths[month.key] !== false;
-                const hasWeeks = month.weeks && month.weeks.length > 0;
-
                 return (
                   <div key={month.key}>
-                    <div
-                      className="flex items-center justify-between py-1.5 px-3 rounded-sm cursor-pointer hover:bg-[#1A1918] text-[#A6A39C] hover:text-[#E8E6E1] transition-colors duration-200"
-                      onClick={() => hasWeeks && toggleMonth(month.key)}
+                    <button
+                      onClick={() => toggleMonth(month.key)}
+                      className="w-full flex items-center justify-between py-1.5 px-3 rounded hover:bg-[#2a2a2a] text-[#aaa] hover:text-white transition text-sm"
                     >
-                      <span className="truncate text-sm">
-                        {month.name} {month.year} ({month.count})
+                      <span>{month.name} {month.year} ({month.count})</span>
+                      <span className="text-[#666] text-xs">
+                        {isCollapsed ? "▶" : "▼"}
                       </span>
-                      {hasWeeks && (
-                        <span className="text-[#666] text-xs">
-                          {isCollapsed ? "▶" : "▼"}
-                        </span>
-                      )}
-                    </div>
-
-                    {hasWeeks && !isCollapsed && (
+                    </button>
+                    {month.weeks && month.weeks.length > 0 && !isCollapsed && (
                       <div className="ml-4 mt-1 space-y-1 border-l border-[#2a2a2a] pl-2">
                         {month.weeks.map((week) => (
                           <Link
                             key={week.key}
                             href={week.href}
-                            className="block py-1 px-3 rounded-sm hover:bg-[#1A1918] text-[#888] hover:text-[#E8E6E1] transition-colors duration-200 text-xs"
+                            className="block py-1 px-3 rounded hover:bg-[#2a2a2a] text-[#888] hover:text-white transition text-xs"
                           >
                             Minggu {week.number} ({week.count})
                           </Link>
