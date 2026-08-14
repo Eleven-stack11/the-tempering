@@ -46,9 +46,11 @@ export default async function RootLayout({
 
   return (
     <html lang="id">
-      <body className="bg-[#0F0F0E] text-[#E8E6E1] antialiased flex">
+      <body className="bg-[#0F0F0E] text-[#E8E6E1] antialiased">
         <Sidebar months={monthList} />
-        <main className="flex-1 overflow-auto min-h-screen">{children}</main>
+        <main className="min-h-screen pl-20 pt-4 pr-6 pb-6 md:pl-24">
+          {children}
+        </main>
       </body>
     </html>
   );
