@@ -3,13 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-interface WeekItem {
-  key: string;
-  number: number;
-  count: number;
-  href: string;
-}
-
 interface MonthItem {
   key: string;
   name: string;
@@ -18,16 +11,22 @@ interface MonthItem {
   weeks?: WeekItem[];
 }
 
+interface WeekItem {
+  key: string;
+  number: number;
+  count: number;
+  href: string;
+}
+
 export default function Sidebar({ months }: { months: MonthItem[] }) {
   const [isOpen, setIsOpen] = useState(true);
-  const [collapsedMonths, setCollapsedMonths] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const saved = localStorage.getItem("sidebarOpen");
     if (saved !== null) setIsOpen(saved === "true");
   }, []);
 
-  const toggleSidebar = () => {
+  const toggle = () => {
     setIsOpen(!isOpen);
     localStorage.setItem("sidebarOpen", String(!isOpen));
   };
@@ -39,6 +38,8 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
     );
   }, [isOpen]);
 
+  const [collapsedMonths, setCollapsedMonths] = useState<Record<string, boolean>>({});
+
   const toggleMonth = (key: string) => {
     setCollapsedMonths(prev => ({
       ...prev,
@@ -49,7 +50,7 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
   return (
     <>
       <button
-        onClick={toggleSidebar}
+        onClick={toggle}
         className="fixed top-4 left-4 z-50 bg-[#151515] border border-[#2a2a2a] rounded-lg p-2 text-[#aaa] hover:text-white transition text-xl w-10 h-10 flex items-center justify-center"
         aria-label="Toggle Sidebar"
       >
@@ -75,23 +76,18 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
             <div className="space-y-1">
               {months.map((month) => {
                 const isCollapsed = collapsedMonths[month.key] !== false;
-                const hasWeeks = month.weeks && month.weeks.length > 0;
-
                 return (
                   <div key={month.key}>
                     <button
-                      onClick={() => hasWeeks && toggleMonth(month.key)}
+                      onClick={() => toggleMonth(month.key)}
                       className="w-full flex items-center justify-between py-1.5 px-3 rounded hover:bg-[#2a2a2a] text-[#aaa] hover:text-white transition text-sm"
                     >
                       <span>{month.name} {month.year} ({month.count})</span>
-                      {hasWeeks && (
-                        <span className="text-[#666] text-xs">
-                          {isCollapsed ? "▶" : "▼"}
-                        </span>
-                      )}
+                      <span className="text-[#666] text-xs">
+                        {isCollapsed ? "▶" : "▼"}
+                      </span>
                     </button>
-
-                    {hasWeeks && !isCollapsed && (
+                    {month.weeks && month.weeks.length > 0 && !isCollapsed && (
                       <div className="ml-4 mt-1 space-y-1 border-l border-[#2a2a2a] pl-2">
                         {month.weeks.map((week) => (
                           <Link
