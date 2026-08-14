@@ -49,6 +49,9 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
   if (weekTrades.length === 0) notFound();
 
+  // Ambil weekly thesis dari trade pertama (asumsi semua trade dalam minggu punya thesis sama)
+  const weeklyThesis = weekTrades[0]?.weeklyThesis || '';
+
   // Group by day
   const dayMap: Record<string, any[]> = {};
   for (const t of weekTrades) {
@@ -101,9 +104,15 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
             <div className="journal-section" style={{ paddingTop: 0, borderBottom: "1px solid var(--border-soft)" }}>
               <div className="eyebrow water">TESIS PRA-PASAR</div>
               <div className="body-copy">
-                <p>✏️ Tulis tesis hari Minggu di sini — atau tambahkan sebagai properti di Notion.</p>
+                {weeklyThesis ? (
+                  <div className="whitespace-pre-wrap text-[#E8E6E1]">{weeklyThesis}</div>
+                ) : (
+                  <p className="text-[#6E6B65] italic">Belum ada tesis untuk minggu ini. Tambahkan properti <code>Weekly Thesis</code> di Notion.</p>
+                )}
               </div>
-              <div className="placeholder-note">✏️ Isi kotak ini setiap hari Minggu sebelum minggu dimulai. Tempelkan screenshot daily/4H kalau perlu.</div>
+              <div className="placeholder-note">
+                ✏️ Untuk mengedit, isi properti <code>Weekly Thesis</code> (Rich Text) di database Notion.
+              </div>
             </div>
           </div>
         </section>
