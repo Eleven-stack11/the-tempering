@@ -4,7 +4,19 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-// ---------- Ikon SVG ----------
+// ---------- Tipe ----------
+interface TreeNode {
+  key: string;
+  label: string;
+  href?: string;
+  icon?: 'folder' | 'calendar' | 'file';
+  count?: number;
+  grade?: string;
+  result?: string;
+  children?: TreeNode[];
+}
+
+// ---------- Ikon ----------
 const Icons = {
   folder: () => (
     <svg className="w-4 h-4 text-[#56534E]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -25,15 +37,15 @@ const Icons = {
       <polyline points="14 2 14 8 20 8" />
     </svg>
   ),
-  chevron: ({ open }: { open: boolean }) => (
+  chevron: ({ open = false }: { open?: boolean }) => (
     <svg className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? 'rotate-90' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="9 18 15 12 9 6" />
     </svg>
   ),
 };
 
-// ---------- Badge Grade ----------
-function GradeBadge({ grade, result }: { grade: string; result?: string }) {
+// ---------- Badge ----------
+function GradeBadge({ grade, result }: { grade?: string; result?: string }) {
   let color = 'text-[#56534E] border-[#56534E]';
   if (grade === 'gold' || result === 'win') color = 'text-[#C49A3C] border-[#C49A3C]';
   else if (grade === 'rust' || result === 'loss') color = 'text-[#8B3A1F] border-[#8B3A1F]';
@@ -45,16 +57,15 @@ function GradeBadge({ grade, result }: { grade: string; result?: string }) {
   );
 }
 
-// ---------- Tree Item (Recursive) ----------
-function TreeItem({ node, level, pathname }: { node: any; level: number; pathname: string }) {
+// ---------- Tree Item ----------
+function TreeItem({ node, level, pathname }: { node: TreeNode; level: number; pathname: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const hasChildren = node.children && node.children.length > 0;
   const isActive = node.href === pathname || (node.href && pathname.startsWith(node.href));
 
-  // Auto-expand jika ada anak yang aktif
   useEffect(() => {
     if (hasChildren && node.children) {
-      const childActive = node.children.some((child: any) =>
+      const childActive = node.children.some((child: TreeNode) =>
         child.href === pathname || (child.href && pathname.startsWith(child.href))
       );
       if (childActive) setIsOpen(true);
@@ -62,25 +73,20 @@ function TreeItem({ node, level, pathname }: { node: any; level: number; pathnam
   }, [pathname, node.children, hasChildren]);
 
   const toggleOpen = () => setIsOpen(!isOpen);
-
   const paddingLeft = 8 + level * 18;
-  const IconComponent = Icons[node.icon as keyof typeof Icons] || Icons.file;
+  const IconComponent = node.icon ? Icons[node.icon] : Icons.file;
 
   return (
     <div className="relative">
-      {/* Garis vertikal active state */}
       {isActive && (
         <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#C49A3C]" style={{ left: '4px' }} />
       )}
-
       <div
         className={`flex items-center py-1.5 px-2 rounded-sm cursor-pointer hover:bg-[#1A1918] transition-colors duration-200 ${
           isActive ? 'bg-[#201F1C] text-[#E8E6E1]' : 'text-[#A6A39C]'
         }`}
         style={{ paddingLeft: paddingLeft }}
-        onClick={() => {
-          if (hasChildren) toggleOpen();
-        }}
+        onClick={() => { if (hasChildren) toggleOpen(); }}
         role="treeitem"
         aria-expanded={hasChildren ? isOpen : undefined}
       >
@@ -109,10 +115,9 @@ function TreeItem({ node, level, pathname }: { node: any; level: number; pathnam
           </button>
         )}
       </div>
-
       {hasChildren && isOpen && (
         <div className="ml-2">
-          {node.children.map((child: any) => (
+          {node.children.map((child: TreeNode) => (
             <TreeItem key={child.key} node={child} level={level + 1} pathname={pathname} />
           ))}
         </div>
@@ -121,19 +126,16 @@ function TreeItem({ node, level, pathname }: { node: any; level: number; pathnam
   );
 }
 
-// ---------- Sidebar Utama ----------
-export default function Sidebar({ treeData }: { treeData: any[] }) {
+// ---------- Sidebar ----------
+export default function Sidebar({ treeData }: { treeData: TreeNode[] }) {
   const pathname = usePathname();
 
   return (
     <aside className="w-64 h-screen bg-[#171614] border-r border-[#2C2A27] flex flex-col overflow-hidden fixed top-0 left-0 z-40">
-      {/* Header */}
       <div className="p-4 border-b border-[#2C2A27] flex items-center gap-2">
         <span className="w-1.5 h-1.5 bg-[#C49A3C] rotate-45 inline-block"></span>
         <span className="text-sm font-mono uppercase tracking-widest text-[#A6A39C]">EL-DOCUMENTARY</span>
       </div>
-
-      {/* Scrollable Tree */}
       <nav className="flex-1 overflow-y-auto py-2 scrollbar-thin scrollbar-thumb-[#56534E] scrollbar-track-transparent" role="tree">
         {treeData.map((node) => (
           <TreeItem key={node.key} node={node} level={0} pathname={pathname} />
