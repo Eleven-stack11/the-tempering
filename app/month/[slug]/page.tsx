@@ -29,32 +29,36 @@ const MONTHLY_NOTES: Record<string, string> = {
 
 export default async function MonthPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+
+  // Validasi slug
   const parts = slug.split("-");
-if (parts.length !== 2) {
-  return <div>Format bulan tidak valid.</div>;
-}
-const [year, month] = parts;
-const yearNum = parseInt(year);
-const monthIndex = parseInt(month) - 1;
-if (isNaN(yearNum) || isNaN(monthIndex) || monthIndex < 0 || monthIndex > 11) {
-  return <div>Bulan tidak valid.</div>;
-}
+  if (parts.length !== 2) {
+    return <div className="p-8 text-[#A6A39C]">Format bulan tidak valid.</div>;
+  }
+  const [year, month] = parts;
   const yearNum = parseInt(year);
   const monthIndex = parseInt(month) - 1;
-  const monthName = monthNames[Object.keys(monthNames)[monthIndex]];
+  if (isNaN(yearNum) || isNaN(monthIndex) || monthIndex < 0 || monthIndex > 11) {
+    return <div className="p-8 text-[#A6A39C]">Bulan tidak valid.</div>;
+  }
+
+  const monthKey = Object.keys(monthNames)[monthIndex];
+  const monthName = monthNames[monthKey];
 
   const allTrades = await fetchTrades();
+
+  // Filter trades bulan ini
   const trades = allTrades.filter((t) => {
     const d = new Date(t.date);
-    return d.getFullYear() === yearNum && d.getMonth() === monthIndex;
+    return !isNaN(d.getTime()) && d.getFullYear() === yearNum && d.getMonth() === monthIndex;
   });
 
   if (trades.length === 0) notFound();
 
-  // Dapatkan minggu-minggu dalam bulan ini
+  // Dapatkan minggu-minggu
   const weeks = getWeeksOfMonth(yearNum, monthIndex);
 
-  // Group trades berdasarkan minggu (menggunakan tanggal Monday)
+  // Kelompokkan trade per minggu
   const tradeGroups: Record<number, any[]> = {};
   for (const t of trades) {
     const d = new Date(t.date);
@@ -63,7 +67,6 @@ if (isNaN(yearNum) || isNaN(monthIndex) || monthIndex < 0 || monthIndex > 11) {
     while (monday.getDay() !== 1) {
       monday.setDate(monday.getDate() - 1);
     }
-    // Cari minggu yang sesuai di daftar weeks
     for (const w of weeks) {
       if (w.start.toISOString().split("T")[0] === monday.toISOString().split("T")[0]) {
         if (!tradeGroups[w.weekNumber]) tradeGroups[w.weekNumber] = [];
@@ -79,107 +82,123 @@ if (isNaN(yearNum) || isNaN(monthIndex) || monthIndex < 0 || monthIndex > 11) {
   const violations = trades.filter((t) => t.notes?.toLowerCase().includes("pelanggaran")).length;
   const netR = trades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
 
-  const monthKey = Object.keys(monthNames)[monthIndex];
   const monthlyNote = MONTHLY_NOTES[monthKey] || "✏️ Tulis catatan bulanan di sini.";
 
   return (
-    <>
-
-      <header className="hero" style={{ padding: "64px 0 48px" }}>
-        <div className="wrap">
-          <div className="eyebrow steel">BULAN {String(monthIndex + 1).padStart(2, "0")} · {year}</div>
-          <h1 style={{ fontSize: "clamp(44px, 7vw, 80px)" }}>{monthName}</h1>
-          <p className="lede">
-            {trades.length} trade tercatat · Net R {netR >= 0 ? "+" : ""}{netR.toFixed(1)}R
-          </p>
-        </div>
+    <div className="p-6 max-w-4xl mx-auto">
+      {/* Header */}
+      <header className="mb-8">
+        <div className="eyebrow steel">BULAN {String(monthIndex + 1).padStart(2, "0")} · {year}</div>
+        <h1 className="font-['Big_Shoulders'] font-black text-[clamp(44px,7vw,80px)] leading-tight">
+          {monthName}
+        </h1>
+        <p className="text-[#A6A39C] text-lg">
+          {totalSessions} trade tercatat · Net R {netR >= 0 ? "+" : ""}{netR.toFixed(1)}R
+        </p>
       </header>
 
-      <section>
-        <div className="wrap">
-          <div className="stat-strip">
-            <div className="stat"><div className="stat-label">Sesi Tercatat</div><div className="stat-value">{totalSessions}</div></div>
-            <div className="stat"><div className="stat-label">Setup A+ / A</div><div className="stat-value gold">{setupA}</div></div>
-            <div className="stat"><div className="stat-label">Pelanggaran Aturan Tertangkap</div><div className="stat-value rust">{violations}</div></div>
-            <div className="stat"><div className="stat-label">Net R</div><div className={`stat-value ${netR >= 0 ? "water" : "rust"}`}>{netR >= 0 ? "+" : ""}{netR.toFixed(1)}R</div></div>
+      {/* Stat Strip */}
+      <section className="mb-8">
+        <div className="stat-strip">
+          <div className="stat">
+            <div className="stat-label">Sesi Tercatat</div>
+            <div className="stat-value">{totalSessions}</div>
           </div>
-        </div>
-      </section>
-
-      <div className="blade-rule on-scroll wrap" style={{ maxWidth: 1080, marginTop: 20 }}></div>
-
-      <section>
-        <div className="wrap">
-          <div className="sec-head">
-            <h2>Minggu-Minggu</h2>
-            <p>Bacaan hari Minggu, lima sesi kontak dengan pasar, dan pertanggungjawaban jujur hari Sabtu.</p>
+          <div className="stat">
+            <div className="stat-label">Setup A+ / A</div>
+            <div className="stat-value gold">{setupA}</div>
           </div>
-
-          <div className="rail">
-            {weeks.map((week) => {
-              const weekTrades = tradeGroups[week.weekNumber] || [];
-              const weekR = weekTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
-              const startDay = week.start.getDate();
-              const endDay = week.end.getDate();
-              const monthLabel = monthName.slice(0, 3).toUpperCase();
-              const dateRange = `${startDay}–${endDay} ${monthName} ${year}`;
-
-              const hasTrade = weekTrades.length > 0;
-              const linkHref = hasTrade ? `/month/${slug}/week/${week.weekNumber}` : "#";
-
-              return (
-                <Link
-                  key={week.weekNumber}
-                  href={linkHref}
-                  className={`rail-row ${hasTrade ? "linked" : "locked"}`}
-                >
-                  <div className="rail-day">
-                    {monthLabel}<b>{startDay}–{endDay}</b>
-                  </div>
-                  <div className="rail-body">
-                    <h4>Minggu {week.weekNumber}</h4>
-                    <p>{dateRange} · {weekTrades.length} trade</p>
-                  </div>
-                  {hasTrade ? (
-                    <>
-                      <div className="rail-tag">{weekTrades.length} TRADE</div>
-                      <div className={`rail-tag ${weekR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>
-                        {weekR >= 0 ? "+" : ""}{weekR.toFixed(1)}R
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="rail-tag"></div>
-                      <div className="rail-tag"></div>
-                    </>
-                  )}
-                </Link>
-              );
-            })}
+          <div className="stat">
+            <div className="stat-label">Pelanggaran</div>
+            <div className="stat-value rust">{violations}</div>
           </div>
-        </div>
-      </section>
-
-      <div className="ink-divider"></div>
-
-      <section>
-        <div className="wrap">
-          <div className="sec-head"><h2>Catatan Bulanan</h2></div>
-          <div style={{ maxWidth: 640, color: "var(--text-muted)", fontSize: 16, lineHeight: 1.85, marginBottom: 60 }}>
-            <p>{monthlyNote}</p>
-            <div className="placeholder-note" style={{ marginTop: 12 }}>
-              ✏️ Untuk mengubah catatan, edit variabel <code>MONTHLY_NOTES</code> di <code>app/month/[slug]/page.tsx</code>.
+          <div className="stat">
+            <div className="stat-label">Net R</div>
+            <div className={`stat-value ${netR >= 0 ? "water" : "rust"}`}>
+              {netR >= 0 ? "+" : ""}{netR.toFixed(1)}R
             </div>
           </div>
         </div>
       </section>
 
-      <footer className="site-footer">
-        <div className="wrap">
-          <div className="blade-rule static" style={{ marginBottom: 36 }}></div>
-          <div className="foot-meta">THE TEMPERING · {monthName} {year} · <Link href="/" style={{ color: "var(--gold)" }}>↑ KEMBALI KE 2026</Link></div>
+      {/* Blade Rule */}
+      <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
+
+      {/* Weeks List */}
+      <section>
+        <div className="sec-head">
+          <h2>Minggu-Minggu</h2>
+          <p>Bacaan hari Minggu, lima sesi kontak dengan pasar, dan pertanggungjawaban jujur hari Sabtu.</p>
         </div>
-      </footer>
-    </>
+
+        <div className="rail">
+          {weeks.map((week) => {
+            const weekTrades = tradeGroups[week.weekNumber] || [];
+            const weekR = weekTrades.reduce(
+              (sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0),
+              0
+            );
+            const startDay = week.start.getDate();
+            const endDay = week.end.getDate();
+            const monthLabel = monthName.slice(0, 3).toUpperCase();
+            const dateRange = `${startDay}–${endDay} ${monthName} ${year}`;
+
+            const hasTrade = weekTrades.length > 0;
+            const linkHref = hasTrade ? `/month/${slug}/week/${week.weekNumber}` : "#";
+
+            return (
+              <Link
+                key={week.weekNumber}
+                href={linkHref}
+                className={`rail-row ${hasTrade ? "linked" : "locked"}`}
+              >
+                <div className="rail-day">
+                  {monthLabel}
+                  <b>
+                    {startDay}–{endDay}
+                  </b>
+                </div>
+                <div className="rail-body">
+                  <h4>Minggu {week.weekNumber}</h4>
+                  <p>
+                    {dateRange} · {weekTrades.length} trade
+                  </p>
+                </div>
+                {hasTrade ? (
+                  <>
+                    <div className="rail-tag">{weekTrades.length} TRADE</div>
+                    <div className={`rail-tag ${weekR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>
+                      {weekR >= 0 ? "+" : ""}
+                      {weekR.toFixed(1)}R
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="rail-tag"></div>
+                    <div className="rail-tag"></div>
+                  </>
+                )}
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Divider */}
+      <div className="ink-divider"></div>
+
+      {/* Monthly Note */}
+      <section>
+        <div className="sec-head">
+          <h2>Catatan Bulanan</h2>
+        </div>
+        <div className="max-w-2xl text-[#A6A39C] text-base leading-relaxed mb-12">
+          <p>{monthlyNote}</p>
+          <div className="placeholder-note mt-3">
+            ✏️ Untuk mengubah catatan, edit variabel <code>MONTHLY_NOTES</code> di file ini.
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
