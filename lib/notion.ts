@@ -1,6 +1,19 @@
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
 const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID;
 
+// Helper aman untuk ambil rich text
+function getRichText(page: any, propName: string): string {
+  const prop = page.properties[propName];
+  if (!prop) return '';
+  if (prop.type === 'rich_text') {
+    return prop.rich_text?.[0]?.plain_text || '';
+  }
+  if (prop.type === 'title') {
+    return prop.title?.[0]?.plain_text || '';
+  }
+  return '';
+}
+
 function parseRR(value: any): { value: number; result: 'Win' | 'Loss' | 'Scratch' } {
   if (value === undefined || value === null || value === '') {
     return { value: 0, result: 'Scratch' };
@@ -52,34 +65,32 @@ export async function fetchTrades(): Promise<any[]> {
 
     const data = await res.json();
 
+    // Log properti yang tersedia (untuk debug)
+    if (data.results && data.results.length > 0) {
+      const first = data.results[0];
+      console.log("🔍 Properti tersedia:", Object.keys(first.properties).join(', '));
+    }
+
     return data.results.map((page: any) => {
       const date = page.properties.Date?.date?.start || '';
-      const details = page.properties.Details?.rich_text?.[0]?.plain_text || '';
-      const monthlyNote = page.properties['Monthly Note']?.rich_text?.[0]?.plain_text || '';
+      const details = getRichText(page, 'Details');
+      const monthlyNote = getRichText(page, 'Monthly Note');
       const position = page.properties.Position?.select?.name || 'Long';
 
-      // === WEEKLY THESIS ===
-      const weeklyThesis = page.properties['Weekly Thesis']?.rich_text?.[0]?.plain_text || '';
+      // === AMBIL TEKS DENGAN HELPER AMAN ===
+      const weeklyThesis = getRichText(page, 'Weekly Thesis');
+      const psychology = getRichText(page, 'Psikologi');
+      const chartLesson = getRichText(page, 'Pelajaran Chart');
 
-      // === PSIKOLOGI & PELAJARAN CHART ===
-      const psychology = page.properties['Psikologi']?.rich_text?.[0]?.plain_text || '';
-      const chartLesson = page.properties['Pelajaran Chart']?.rich_text?.[0]?.plain_text || '';
-
-      // Ambil RR (support multi_select & select)
+      // RR (support select & multi_select)
       let rrRaw = null;
       const rrProp = page.properties.RR;
       if (rrProp) {
-        if (rrProp.type === 'select') {
-          rrRaw = rrProp.select?.name;
-        } else if (rrProp.type === 'multi_select') {
-          rrRaw = rrProp.multi_select?.[0]?.name || null;
-        } else if (rrProp.type === 'rich_text') {
-          rrRaw = rrProp.rich_text?.[0]?.plain_text;
-        } else if (rrProp.type === 'number') {
-          rrRaw = rrProp.number;
-        } else if (rrProp.type === 'title') {
-          rrRaw = rrProp.title?.[0]?.plain_text;
-        }
+        if (rrProp.type === 'select') rrRaw = rrProp.select?.name;
+        else if (rrProp.type === 'multi_select') rrRaw = rrProp.multi_select?.[0]?.name;
+        else if (rrProp.type === 'rich_text') rrRaw = rrProp.rich_text?.[0]?.plain_text;
+        else if (rrProp.type === 'number') rrRaw = rrProp.number;
+        else if (rrProp.type === 'title') rrRaw = rrProp.title?.[0]?.plain_text;
       }
 
       const halfRisk = page.properties['Half risk (if not...)']?.checkbox || false;
@@ -115,20 +126,20 @@ export async function fetchTrades(): Promise<any[]> {
 
       return {
         id: page.id,
-        date: date,
+        date,
         title: details.slice(0, 60) || 'Untitled',
         instrument: 'NQ',
         direction: position === 'Short' ? 'Short' : 'Long',
-        trigger: trigger,
+        trigger,
         result: rrData.result,
-        grade: grade,
+        grade,
         r: rrData.value,
         notes: details || monthlyNote || '',
         link: youtube || '',
-        status: status,
-        weeklyThesis: weeklyThesis,
-        psychology: psychology,
-        chartLesson: chartLesson,
+        status,
+        weeklyThesis,
+        psychology,
+        chartLesson,
         createdAt: page.created_time,
       };
     });
