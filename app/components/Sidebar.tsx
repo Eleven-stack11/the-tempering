@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 
 interface MonthItem {
   key: string;
@@ -20,7 +19,6 @@ interface WeekItem {
 }
 
 export default function Sidebar({ months }: { months: MonthItem[] }) {
-  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
@@ -47,11 +45,6 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
       ...prev,
       [key]: !prev[key]
     }));
-  };
-
-  // Cek apakah link aktif
-  const isActive = (href: string) => {
-    return pathname === href || (href && pathname.startsWith(href));
   };
 
   return (
@@ -83,21 +76,14 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
             <div className="space-y-1">
               {months.map((month) => {
                 const isCollapsed = collapsedMonths[month.key] !== false;
-                const isMonthActive = isActive(`/month/${month.key}`);
                 const hasWeeks = month.weeks && month.weeks.length > 0;
 
                 return (
                   <div key={month.key}>
-                    {/* Bulan */}
                     <div
-                      className={`relative flex items-center justify-between py-1.5 px-3 rounded-sm cursor-pointer hover:bg-[#1A1918] transition-colors duration-200 ${
-                        isMonthActive ? 'bg-[#201F1C] text-[#E8E6E1]' : 'text-[#A6A39C]'
-                      }`}
+                      className="flex items-center justify-between py-1.5 px-3 rounded-sm cursor-pointer hover:bg-[#1A1918] text-[#A6A39C] hover:text-[#E8E6E1] transition-colors duration-200"
                       onClick={() => hasWeeks && toggleMonth(month.key)}
                     >
-                      {isMonthActive && (
-                        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#C49A3C]" style={{ left: '4px' }} />
-                      )}
                       <span className="truncate text-sm">
                         {month.name} {month.year} ({month.count})
                       </span>
@@ -108,26 +94,17 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
                       )}
                     </div>
 
-                    {/* Minggu (nested) */}
                     {hasWeeks && !isCollapsed && (
                       <div className="ml-4 mt-1 space-y-1 border-l border-[#2a2a2a] pl-2">
-                        {month.weeks.map((week) => {
-                          const isWeekActive = isActive(week.href);
-                          return (
-                            <Link
-                              key={week.key}
-                              href={week.href}
-                              className={`relative block py-1 px-3 rounded-sm hover:bg-[#1A1918] transition-colors duration-200 text-xs ${
-                                isWeekActive ? 'bg-[#201F1C] text-[#E8E6E1]' : 'text-[#888] hover:text-white'
-                              }`}
-                            >
-                              {isWeekActive && (
-                                <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#C49A3C]" style={{ left: '4px' }} />
-                              )}
-                              <span className="pl-2">Minggu {week.number} ({week.count})</span>
-                            </Link>
-                          );
-                        })}
+                        {month.weeks.map((week) => (
+                          <Link
+                            key={week.key}
+                            href={week.href}
+                            className="block py-1 px-3 rounded-sm hover:bg-[#1A1918] text-[#888] hover:text-[#E8E6E1] transition-colors duration-200 text-xs"
+                          >
+                            Minggu {week.number} ({week.count})
+                          </Link>
+                        ))}
                       </div>
                     )}
                   </div>
