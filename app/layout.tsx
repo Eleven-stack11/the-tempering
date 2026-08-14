@@ -8,7 +8,6 @@ export const metadata: Metadata = {
   description: "Jurnal trading yang jujur.",
 };
 
-// ---------- Build Tree dari Trades ----------
 function buildTree(trades: any[]) {
   const validTrades = trades.filter(t => {
     const d = new Date(t.date);
@@ -34,7 +33,6 @@ function buildTree(trades: any[]) {
     tree[year][month].weeks[weekNumber].days[day].push(trade);
   }
 
-  // Konversi ke array
   const result = Object.keys(tree).sort().reverse().map(year => {
     const yearNode: any = {
       key: year,
