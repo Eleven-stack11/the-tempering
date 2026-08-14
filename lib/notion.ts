@@ -61,6 +61,10 @@ export async function fetchTrades(): Promise<any[]> {
       // === WEEKLY THESIS ===
       const weeklyThesis = page.properties['Weekly Thesis']?.rich_text?.[0]?.plain_text || '';
 
+      // === PSIKOLOGI & PELAJARAN CHART ===
+      const psychology = page.properties['Psikologi']?.rich_text?.[0]?.plain_text || '';
+      const chartLesson = page.properties['Pelajaran Chart']?.rich_text?.[0]?.plain_text || '';
+
       // Ambil RR (support multi_select & select)
       let rrRaw = null;
       const rrProp = page.properties.RR;
@@ -122,7 +126,9 @@ export async function fetchTrades(): Promise<any[]> {
         notes: details || monthlyNote || '',
         link: youtube || '',
         status: status,
-        weeklyThesis: weeklyThesis, // <-- INI TAMBAHAN
+        weeklyThesis: weeklyThesis,
+        psychology: psychology,
+        chartLesson: chartLesson,
         createdAt: page.created_time,
       };
     });
