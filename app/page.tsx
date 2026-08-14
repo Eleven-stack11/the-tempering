@@ -19,18 +19,16 @@ const monthNames: Record<string, string> = {
 };
 
 export default async function HomePage() {
-  const trades = await fetchTrades();
+  const allTrades = await fetchTrades();
 
-  // Filter trades dengan date valid
-  const validTrades = trades.filter((t) => {
-    const d = new Date(t.date);
-    return !isNaN(d.getTime()) && t.date && t.date.length > 0;
-  });
+  // ===== FILTER: hanya trade dengan status "Entered" =====
+  const trades = allTrades.filter((t) => t.status === "Entered");
 
   // Kelompokkan berdasarkan bulan
   const monthMap: Record<string, any[]> = {};
-  for (const t of validTrades) {
+  for (const t of trades) {
     const d = new Date(t.date);
+    if (isNaN(d.getTime())) continue;
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
     if (!monthMap[key]) monthMap[key] = [];
     monthMap[key].push(t);
@@ -38,10 +36,10 @@ export default async function HomePage() {
 
   const monthKeys = Object.keys(monthMap).sort().reverse();
 
-  const totalSessions = validTrades.length;
-  const setupA = validTrades.filter((t) => t.grade === "A").length;
-  const violations = validTrades.filter((t) => t.notes?.toLowerCase().includes("pelanggaran")).length;
-  const netR = validTrades.reduce(
+  const totalSessions = trades.length;
+  const setupA = trades.filter((t) => t.grade === "A").length;
+  const violations = 0; // sesuaikan jika Anda punya properti violations
+  const netR = trades.reduce(
     (sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0),
     0
   );
@@ -54,6 +52,12 @@ export default async function HomePage() {
         <h1 className="font-['Big_Shoulders'] font-black text-[clamp(48px,8vw,96px)] leading-[0.92] mb-4">
           <em className="text-[#2E5695] not-italic">Journey</em>
         </h1>
+        <p className="text-[#A6A39C] text-lg max-w-2xl leading-relaxed">
+          Bongkahan besi tidak berubah jadi pedang secara kebetulan. Ia masuk ke dalam api,
+          ditempa, didinginkan, lalu dimasukkan lagi.{" "}
+          <strong className="text-[#E8E6E1]">Inilah proses itu, dituliskan</strong> — pembacaan
+          pasar setiap minggu, di mana bacaan itu keliru, dan apa yang berubah sesudahnya.
+        </p>
       </header>
 
       {/* Blade Rule */}
