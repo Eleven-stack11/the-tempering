@@ -15,17 +15,7 @@ export default async function RootLayout({
 }) {
   const trades = await fetchTrades();
 
-  // Bangun data bulan + minggu
-  const monthMap: Record<
-    string,
-    {
-      year: number;
-      month: number;
-      name: string;
-      count: number;
-      weeks: Record<number, number>; // weekNumber → count
-    }
-  > = {};
+  const monthMap: Record<string, { year: number; month: number; name: string; count: number; weeks: Record<number, number> }> = {};
 
   for (const t of trades) {
     const d = new Date(t.date);
