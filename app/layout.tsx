@@ -15,7 +15,7 @@ export default async function RootLayout({
 }) {
   const trades = await fetchTrades();
 
-  // Bangun data bulan + minggu (tanpa hari)
+  // Bangun data bulan + minggu
   const monthMap: Record<
     string,
     {
