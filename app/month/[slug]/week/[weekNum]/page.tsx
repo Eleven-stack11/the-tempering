@@ -123,8 +123,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           <div className="wrap" style={{ padding: 0 }}>
             <div className="sec-head">
               <h2>Minggu Ini</h2>
-              <p>Lima sesi kontak dengan rencana di atas. Hari yang terkunci adalah hari yang tidak dicatat — itu juga adalah data.</p>
-            </div>
 
             <div className="rail">
               {dayKeys.map((dayKey) => {
