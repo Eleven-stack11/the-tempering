@@ -259,50 +259,6 @@ body {
 .stat .stat-value.rust { color: var(--rust); }
 .stat .stat-value.water { color: var(--water-bright); }
 
-/* ---------- Nav ---------- */
-.site-nav {
-  border-bottom: 1px solid var(--border-soft);
-  padding: 22px 0;
-  position: relative;
-  z-index: 10;
-}
-.site-nav .wrap {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-.brand {
-  font-family: var(--mono);
-  font-size: 16px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.brand .mark {
-  width: 7px; height: 7px;
-  background: var(--gold);
-  transform: rotate(45deg);
-  flex-shrink: 0;
-}
-.crumbs {
-  font-family: var(--mono);
-  font-size: 16px;
-  letter-spacing: 0.06em;
-  color: var(--text-faint);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.crumbs a { color: var(--text-muted); transition: color 0.2s; }
-.crumbs a:hover { color: var(--gold); }
-.crumbs .sep { color: var(--border); }
-.crumbs .here { color: var(--text); }
-
 /* ---------- Rail ---------- */
 .rail {
   border: 1px solid var(--border-soft);
@@ -427,7 +383,7 @@ body {
 .day-meta-item.outcome-loss b { color: var(--rust); }
 .day-meta-item.outcome-win b { color: var(--gold); }
 
-/* ---------- Journal Section ---------- */
+/* ---------- Journal ---------- */
 .journal-section {
   padding: 52px 0;
   border-bottom: 1px solid var(--border-soft);
@@ -451,7 +407,6 @@ body {
 .journal-section .body-copy strong { color: var(--text); font-weight: 500; }
 .journal-section .body-copy em { color: var(--water-bright); font-style: normal; }
 
-/* ---------- Placeholder Note ---------- */
 .placeholder-note {
   font-family: var(--mono);
   font-size: 12px;
@@ -544,6 +499,50 @@ details.transcript .transcript-body {
   border-top: 1px solid var(--border-soft);
 }
 
+/* ---------- Nav ---------- */
+.site-nav {
+  border-bottom: 1px solid var(--border-soft);
+  padding: 22px 0;
+  position: relative;
+  z-index: 10;
+}
+.site-nav .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.brand {
+  font-family: var(--mono);
+  font-size: 16px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand .mark {
+  width: 7px; height: 7px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+.crumbs {
+  font-family: var(--mono);
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.crumbs a { color: var(--text-muted); transition: color 0.2s; }
+.crumbs a:hover { color: var(--gold); }
+.crumbs .sep { color: var(--border); }
+.crumbs .here { color: var(--text); }
+
 /* ---------- Entry Nav ---------- */
 .entry-nav {
   display: grid;
@@ -604,7 +603,7 @@ details.transcript .transcript-body {
   .hero { padding: 56px 0 44px; }
 }
 
-/* ---------- Custom Scrollbar Sidebar ---------- */
+/* ---------- Custom Scrollbar (Sidebar) ---------- */
 .scrollbar-thin::-webkit-scrollbar {
   width: 4px;
 }
