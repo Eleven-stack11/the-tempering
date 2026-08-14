@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Sidebar from "./components/Sidebar";
-import TopNav from "./components/TopNav";
 import { fetchTrades, getWeekNumber } from "@/lib/notion";
 
 export const metadata: Metadata = {
@@ -53,19 +52,22 @@ export default async function RootLayout({
     .reverse()
     .map((key) => {
       const data = monthMap[key];
+      // Urutkan minggu, lalu beri nomor lokal (1,2,3,4)
+      const weeksArray = Object.keys(data.weeks)
+        .sort((a, b) => Number(a) - Number(b))
+        .map((w, index) => ({
+          key: `${key}-week-${w}`,
+          number: Number(w),
+          localNumber: index + 1, // tambahkan nomor lokal
+          count: data.weeks[Number(w)],
+          href: `/month/${key}/week/${w}`,
+        }));
       return {
         key,
         name: data.name,
         year: data.year,
         count: data.count,
-        weeks: Object.keys(data.weeks)
-          .sort((a, b) => Number(a) - Number(b))
-          .map((w) => ({
-            key: `${key}-week-${w}`,
-            number: Number(w),
-            count: data.weeks[Number(w)],
-            href: `/month/${key}/week/${w}`,
-          })),
+        weeks: weeksArray,
       };
     });
 
@@ -81,11 +83,7 @@ export default async function RootLayout({
             maxWidth: "calc(100% - var(--sidebar-width, 256px) + 40px)",
           }}
         >
-          <div className="max-w-6xl mx-auto">
-            {/* TopNav — muncul di semua halaman kecuali homepage */}
-            <TopNav />
-            {children}
-          </div>
+          <div className="max-w-6xl mx-auto">{children}</div>
         </main>
       </body>
     </html>
