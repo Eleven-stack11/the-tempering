@@ -78,8 +78,13 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
   // Statistik
   const totalSessions = trades.length;
-  const setupA = trades.filter((t) => t.grade === "A").length;
-  const violations = trades.filter((t) => t.notes?.toLowerCase().includes("pelanggaran")).length;
+  // Hitung trade entered vs missed
+  const enteredCount = trades.filter((t) => t.status === "Entered").length;
+  const missedCount = trades.filter((t) => t.status === "Missed").length;
+  const studyCount = trades.filter((t) => t.status === "Study Case").length;
+  const totalConsidered = enteredCount + missedCount;
+  const executionRate = totalConsidered > 0 ? Math.round((enteredCount / totalConsidered) * 100) : 0;
+
   const netR = trades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
 
   const monthlyNote = MONTHLY_NOTES[monthKey] || "✏️ Tulis catatan bulanan di sini.";
@@ -115,12 +120,17 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
             <div className="stat-value">{totalSessions}</div>
           </div>
           <div className="stat">
-            <div className="stat-label">Setup A+ / A</div>
-            <div className="stat-value gold">{setupA}</div>
+            <div className="stat-label">Diambil vs Miss</div>
+            <div className="stat-value text-[#2E5695]">
+              {enteredCount} / {missedCount}
+            </div>
+            <div className="text-xs text-[#6E6B65] font-mono mt-1">
+              {executionRate}% diambil
+            </div>
           </div>
           <div className="stat">
-            <div className="stat-label">Pelanggaran</div>
-            <div className="stat-value rust">{violations}</div>
+            <div className="stat-label">Study Case</div>
+            <div className="stat-value text-[#C49A3C]">{studyCount}</div>
           </div>
           <div className="stat">
             <div className="stat-label">Net R</div>
@@ -155,8 +165,6 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
             const hasTrade = weekTrades.length > 0;
             const linkHref = hasTrade ? `/month/${slug}/week/${week.weekNumber}` : "#";
-
-            // === Perubahan: nomor minggu lokal (1,2,3,4) ===
             const localWeekNumber = idx + 1;
 
             return (
