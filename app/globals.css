@@ -597,6 +597,11 @@ details.transcript .transcript-body {
   .grid.cols-3 { grid-template-columns: 1fr; }
   .stat-strip { grid-template-columns: repeat(2, 1fr); }
   .rail-row { grid-template-columns: 1fr; gap: 8px; }
+
+  /* Sidebar transition */
+.sidebar-transition {
+  transition: width 0.3s ease-in-out;
+}
   .rail-tag { display: none; }
   .day-meta { gap: 20px; }
   .hero { padding: 56px 0 44px; }
