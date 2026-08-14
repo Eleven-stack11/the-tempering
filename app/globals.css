@@ -435,7 +435,21 @@ body {
   line-height: 1.6;
   margin: 0;
 }
-
+/* Custom scrollbar untuk sidebar */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #56534E;
+  border-radius: 0;
+}
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #56534E transparent;
+}
 /* ---------- Video Slot ---------- */
 .video-slot {
   aspect-ratio: 16/9;
