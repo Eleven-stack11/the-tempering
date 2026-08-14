@@ -13,7 +13,6 @@ interface MonthItem {
 export default function Sidebar({ months }: { months: MonthItem[] }) {
   const [isOpen, setIsOpen] = useState(true);
 
-  // Load state dari localStorage agar ingat preferensi user
   useEffect(() => {
     const saved = localStorage.getItem("sidebarOpen");
     if (saved !== null) setIsOpen(saved === "true");
@@ -55,16 +54,20 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
           </h3>
         )}
         <div className="space-y-1">
-          {months.map(({ key, name, year, count }) => (
-            <Link
-              key={key}
-              href={`/month/${key}`}
-              className="block py-1.5 px-3 rounded hover:bg-[#2a2a2a] text-[#aaa] hover:text-white transition text-sm truncate"
-              title={isOpen ? `${name} ${year} (${count})` : `${year}`}
-            >
-              {isOpen ? `${name} ${year} (${count})` : `${year}`}
-            </Link>
-          ))}
+          {months.length === 0 ? (
+            <p className="text-xs text-[#666]">Belum ada data</p>
+          ) : (
+            months.map(({ key, name, year, count }) => (
+              <Link
+                key={key}
+                href={`/month/${key}`}
+                className="block py-1.5 px-3 rounded hover:bg-[#2a2a2a] text-[#aaa] hover:text-white transition text-sm truncate"
+                title={isOpen ? `${name} ${year} (${count})` : `${year}`}
+              >
+                {isOpen ? `${name} ${year} (${count})` : `${year}`}
+              </Link>
+            ))
+          )}
         </div>
       </nav>
     </aside>
