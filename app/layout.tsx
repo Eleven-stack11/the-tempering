@@ -76,7 +76,7 @@ function buildTree(trades: any[]) {
           let gradeColor = 'steel';
           if (grade === 'A' || grade === 'A+') gradeColor = 'gold';
           else if (isLoss) gradeColor = 'rust';
-          else if (isWin) gradeColor = 'gold'; // win juga gold
+          else if (isWin) gradeColor = 'gold';
 
           const dayNode: any = {
             key: `${year}-${month}-week-${week}-day-${day}`,
