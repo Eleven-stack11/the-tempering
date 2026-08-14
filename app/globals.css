@@ -622,3 +622,18 @@ details.transcript .transcript-body {
   .day-meta { gap: 20px; }
   .hero { padding: 56px 0 44px; }
 }
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #56534E;
+  border-radius: 0;
+}
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #56534E transparent;
+}
