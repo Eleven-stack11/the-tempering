@@ -39,7 +39,6 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
   const isWin = trade.result === "Win";
   const isLoss = trade.result === "Loss";
 
-  // Ambil pra-pasar & eksekusi
   const praPasar = trade.praPasar || '';
   const eksekusi = trade.eksekusi || '';
 
@@ -57,7 +56,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
 
       <div className="p-6 max-w-6xl mx-auto">
         {/* Kembali ke minggu */}
-        <div className="mb-4">
+        <div className="mb-6">
           <Link
             href={`/month/${slug}/week/${weekNum}`}
             className="inline-flex items-center gap-1 text-sm font-mono text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 uppercase tracking-wider"
@@ -99,7 +98,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
         </div>
 
         {/* ===== BACAAN PRA-PASAR ===== */}
-        <section className="mb-8 border-b border-[#221F1C] pb-8">
+        <section className="mb-10 border-b border-[#221F1C] pb-8">
           <div className="eyebrow water text-base md:text-lg">BACAAN PRA-PASAR</div>
           <h3 className="font-['Big_Shoulders'] font-bold text-2xl md:text-3xl mb-4">Sebelum sesi dimulai</h3>
           <div className="body-copy text-base md:text-lg max-w-3xl">
@@ -114,8 +113,8 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </div>
         </section>
 
-        {/* ===== EKSEKUSI / APA YANG DILAKUKAN HARGA ===== */}
-        <section className="mb-8 border-b border-[#221F1C] pb-8">
+        {/* ===== EKSEKUSI ===== */}
+        <section className="mb-10 border-b border-[#221F1C] pb-8">
           <div className="eyebrow steel text-base md:text-lg">APA YANG DILAKUKAN HARGA — EKSEKUSI</div>
           <h3 className="font-['Big_Shoulders'] font-bold text-2xl md:text-3xl mb-4">Alasan Entry & Detail Eksekusi</h3>
           <div className="body-copy text-base md:text-lg max-w-3xl">
@@ -131,20 +130,20 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
         </section>
 
         {/* ===== BENAR / SALAH ===== */}
-        <section className="mb-8 border-b border-[#221F1C] pb-8">
+        <section className="mb-10 border-b border-[#221F1C] pb-8">
           <div className="eyebrow gold text-base md:text-lg">DI MANA BACAAN INI BENAR / SALAH</div>
           <h3 className="font-['Big_Shoulders'] font-bold text-2xl md:text-3xl mb-4">Pembagian yang jujur</h3>
-          <div className="body-copy text-base md:text-lg max-w-3xl">
+          <div className="body-copy text-base md:text-lg max-w-3xl space-y-4">
             <p><strong className="text-[#E8E6E1]">Benar:</strong> ✏️ Bagian mana dari bacaan/eksekusi yang benar.</p>
             <p><strong className="text-[#E8E6E1]">Salah:</strong> ✏️ Bagian mana yang meleset, sejujur mungkin.</p>
           </div>
-          <div className="pull">
+          <div className="pull mt-6">
             <p className="text-lg md:text-xl">✏️ Satu kalimat kunci — pelajaran psikologis dari trade ini.</p>
           </div>
         </section>
 
         {/* ===== ADAPTASI ===== */}
-        <section className="mb-8 border-b border-[#221F1C] pb-8">
+        <section className="mb-10 border-b border-[#221F1C] pb-8">
           <div className="eyebrow water text-base md:text-lg">ADAPTASI</div>
           <h3 className="font-['Big_Shoulders'] font-bold text-2xl md:text-3xl mb-4">Apa yang berubah</h3>
           <div className="body-copy text-base md:text-lg max-w-3xl">
@@ -153,7 +152,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
         </section>
 
         {/* ===== REKAMAN SESI ===== */}
-        <section className="mb-8 border-b border-[#221F1C] pb-8">
+        <section className="mb-10 border-b border-[#221F1C] pb-8">
           <div className="eyebrow steel text-base md:text-lg">REKAMAN SESI</div>
           <h3 className="font-['Big_Shoulders'] font-bold text-2xl md:text-3xl mb-4">Rekaman layar — dari pra-pasar sampai exit</h3>
           <div className="video-slot max-w-3xl">
@@ -173,7 +172,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
         </section>
 
         {/* ===== HASIL ===== */}
-        <section>
+        <section className="mb-10 pb-4">
           <div className="eyebrow text-base md:text-lg">HASIL</div>
           <h3 className="font-['Big_Shoulders'] font-bold text-2xl md:text-3xl mb-4">Grade & hasil akhir</h3>
 
