@@ -96,7 +96,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
             <div className="eyebrow water">
               MINGGU {localWeekNumber} · {monthLabel} {first.getDate()} – {monthLabel} {last.getDate()}
             </div>
-            <h1 style={{ fontSize: "clamp(40px, 6.5vw, 72px)" }}>Bacaan Hari Minggu</h1>
+            <h1 style={{ fontSize: "clamp(40px, 6.5vw, 72px)" }}>Trade log</h1>
             <p className="lede">{weekTrades.length} trade tercatat minggu ini. Net R {netR >= 0 ? "+" : ""}{netR.toFixed(1)}R</p>
           </div>
         </header>
@@ -125,8 +125,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           <div className="wrap" style={{ padding: 0 }}>
             <div className="sec-head">
               <h2>Minggu Ini</h2>
-              <p>Lima sesi kontak dengan rencana di atas. Hari yang terkunci adalah hari yang tidak dicatat — itu juga adalah data.</p>
-            </div>
 
             <div className="rail">
               {dayKeys.map((dayKey) => {
@@ -194,9 +192,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
         <section>
           <div className="wrap" style={{ padding: 0 }}>
             <div className="sec-head">
-              <h2>Sabtu — Rincian Lengkap</h2>
-              <p>Tesis hari Minggu dibandingkan dengan apa yang benar-benar terjadi. Tidak ada revisi rencana setelah kejadian.</p>
-            </div>
+              <h2>Sabtu — Review</h2>
 
             {/* --- TESIS VS REALITA --- dihapus sesuai permintaan, tidak ditampilkan --- */}
 
