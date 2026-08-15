@@ -65,7 +65,6 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
 
   const triggerDisplay = getLowestPassedTimeframe(trade);
 
-  // Session display
   let sessionDisplay = session;
   if (time && time !== session) {
     sessionDisplay = `${session} · ${time}`;
@@ -94,35 +93,43 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </Link>
         </div>
 
-        {/* ===== HEADER ===== */}
-        <header className="mb-10">
+        {/* ===== HEADER (eyebrow) ===== */}
+        <header className="mb-6">
           <div className="eyebrow water text-sm tracking-[0.2em]">
             {dayNames[d.getDay()].toUpperCase()} · {d.getDate()} {monthName} {year} · {sessionDisplay}
           </div>
         </header>
 
-        {/* ===== DATA TABLE — HIGHLIGHT UTAMA ===== */}
-        <div className="grid grid-cols-4 gap-6 mb-10 mt-8 p-8 bg-[#1A1918] border border-[#2C2A27] rounded-none">
+        {/* ===== DATA TABLE — HIGHLIGHT UTAMA (dengan jarak lebih besar) ===== */}
+        <div className="grid grid-cols-4 gap-6 mb-10 mt-16 p-8 bg-[#1A1918] border border-[#2C2A27] rounded-none">
           <div className="text-center">
-            <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider mb-2">Instrumen</div>
+            <div className="font-mono text-sm uppercase text-[#6E6B65] tracking-wider mb-2">
+              Instrumen
+            </div>
             <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#E8E6E1] tracking-wide">
               {trade.instrument}
             </div>
           </div>
           <div className="text-center">
-            <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider mb-2">Arah</div>
+            <div className="font-mono text-sm uppercase text-[#6E6B65] tracking-wider mb-2">
+              Arah
+            </div>
             <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#E8E6E1] tracking-wide">
               {trade.direction}
             </div>
           </div>
           <div className="text-center">
-            <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider mb-2">Trigger Entry</div>
+            <div className="font-mono text-sm uppercase text-[#6E6B65] tracking-wider mb-2">
+              Trigger Entry
+            </div>
             <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#E8E6E1] tracking-wide">
               {triggerDisplay}
             </div>
           </div>
           <div className="text-center">
-            <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider mb-2">Hasil</div>
+            <div className="font-mono text-sm uppercase text-[#6E6B65] tracking-wider mb-2">
+              Hasil
+            </div>
             <div className={`text-3xl md:text-4xl lg:text-5xl font-bold tracking-wide ${
               isWin ? "text-[#C49A3C]" : isLoss ? "text-[#8B3A1F]" : "text-[#E8E6E1]"
             }`}>
