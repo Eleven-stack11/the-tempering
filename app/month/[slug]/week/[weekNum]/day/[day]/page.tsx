@@ -20,7 +20,6 @@ const monthNames: Record<string, string> = {
 };
 const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
-// Helper: ekstrak ID YouTube
 function getYoutubeId(url: string): string | null {
   if (!url) return null;
   const patterns = [
@@ -36,7 +35,6 @@ function getYoutubeId(url: string): string | null {
   return null;
 }
 
-// Helper: timeframe terbawah
 function getLowestPassedTimeframe(trade: any): string {
   const filters = [
     { key: 'm3Filter', label: '3M' },
@@ -89,7 +87,6 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
 
   return (
     <>
-      {/* Beranda */}
       <div className="flex justify-end items-center py-3 px-6 border-b border-[#221F1C]">
         <Link
           href="/"
@@ -100,7 +97,6 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
       </div>
 
       <div className="p-6 max-w-6xl mx-auto">
-        {/* Kembali ke minggu */}
         <div className="mb-6">
           <Link
             href={`/month/${slug}/week/${weekNum}`}
@@ -110,7 +106,6 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </Link>
         </div>
 
-        {/* HEADER */}
         <header className="mb-6">
           <div className="eyebrow water text-sm tracking-[0.2em]">
             {dayNames[d.getDay()].toUpperCase()} · {d.getDate()} {monthName} {year} · {sessionDisplay}
@@ -147,9 +142,9 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </div>
         </div>
 
-        {/* ===== EMBED YOUTUBE — UKURAN KECIL, TIDAK MELEBAR ===== */}
+        {/* ===== EMBED YOUTUBE — JARAK KE BAWAH DIPERBESAR ===== */}
         {youtubeId && (
-          <div className="mx-auto max-w-xs mb-10 pb-4 border-b border-[#221F1C]">
+          <div className="mx-auto max-w-xs mb-20">   {/* ← jarak lebih besar */}
             <div className="aspect-video">
               <iframe
                 src={`https://www.youtube.com/embed/${youtubeId}`}
@@ -191,7 +186,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </div>
         </section>
 
-        {/* ===== HASIL (BAGIAN BAWAH) ===== */}
+        {/* ===== HASIL ===== */}
         <section className="pt-4 border-t border-[#221F1C]">
           <div className="eyebrow text-sm">HASIL</div>
           <h2 className="font-['Big_Shoulders'] font-bold text-2xl mb-6">Grade & hasil akhir</h2>
