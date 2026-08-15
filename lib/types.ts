@@ -9,9 +9,9 @@ export interface Trade {
   grade: "A" | "B" | "C";
   r: number;
   notes: string;
-  monthlyNote: string; // <-- TAMBAHKAN INI
+  monthlyNote: string;       // <-- WAJIB
   link?: string;
-  status?: string;
+  status: string;            // "Entered" | "Missed" | "Study Case"
   weeklyThesis?: string;
   psychology?: string;
   chartLesson?: string;
