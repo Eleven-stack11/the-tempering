@@ -22,7 +22,6 @@ const monthNames: Record<string, string> = {
 export default async function MonthPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  // Validasi slug
   const parts = slug.split("-");
   if (parts.length !== 2) {
     return <div className="p-8 text-[#A6A39C]">Format bulan tidak valid.</div>;
@@ -39,7 +38,6 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
   const allTrades = await fetchTrades();
 
-  // Filter trades bulan ini
   const trades = allTrades.filter((t) => {
     const d = new Date(t.date);
     return !isNaN(d.getTime()) && d.getFullYear() === yearNum && d.getMonth() === monthIndex;
@@ -47,10 +45,8 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
   if (trades.length === 0) notFound();
 
-  // Dapatkan minggu-minggu
   const weeks = getWeeksOfMonth(yearNum, monthIndex);
 
-  // Kelompokkan trade per minggu
   const tradeGroups: Record<number, any[]> = {};
   for (const t of trades) {
     const d = new Date(t.date);
@@ -67,7 +63,6 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
     }
   }
 
-  // Statistik
   const totalSessions = trades.length;
   const enteredCount = trades.filter((t) => t.status === "Entered").length;
   const missedCount = trades.filter((t) => t.status === "Missed").length;
@@ -77,7 +72,7 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
   const netR = trades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
 
-  // ===== AMBIL MONTHLY NOTE DARI PROPERTI YANG BENAR =====
+  // ===== AMBIL MONTHLY NOTE =====
   let monthlyNote = '';
   for (const t of trades) {
     if (t.monthlyNote && t.monthlyNote.trim().length > 0) {
