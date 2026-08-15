@@ -45,7 +45,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
   return (
     <>
       {/* Beranda */}
-      <div className="flex justify-end items-center py-3 px-4 border-b border-[#221F1C] mb-4">
+      <div className="flex justify-end items-center py-3 px-6 border-b border-[#221F1C]">
         <Link
           href="/"
           className="font-mono text-xs uppercase tracking-widest text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 flex items-center gap-1.5"
@@ -66,8 +66,8 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
         </div>
 
         {/* Header */}
-        <header className="mb-8">
-          <div className="eyebrow water text-base md:text-lg">
+        <header className="mb-10">
+          <div className="eyebrow water text-sm">
             {dayNames[d.getDay()].toUpperCase()} · {d.getDate()} {monthName} {year} · LONDON
           </div>
           <h1 className="font-['Big_Shoulders'] font-black text-[clamp(36px,5.5vw,60px)] leading-tight">
@@ -75,132 +75,84 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </h1>
         </header>
 
-        {/* Meta */}
-        <div className="day-meta flex flex-wrap gap-6 mb-8">
-          <div className="day-meta-item font-mono text-xs uppercase text-[#6E6B65]">
-            Instrumen
-            <b className="block font-sans text-[#E8E6E1] text-base font-medium">{trade.instrument}</b>
+        {/* Meta Info — lebih lebar ke kanan */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10 pb-6 border-b border-[#221F1C]">
+          <div>
+            <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider">Instrumen</div>
+            <div className="text-lg font-medium text-[#E8E6E1]">{trade.instrument}</div>
           </div>
-          <div className="day-meta-item font-mono text-xs uppercase text-[#6E6B65]">
-            Arah
-            <b className="block font-sans text-[#E8E6E1] text-base font-medium">{trade.direction}</b>
+          <div>
+            <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider">Arah</div>
+            <div className="text-lg font-medium text-[#E8E6E1]">{trade.direction}</div>
           </div>
-          <div className="day-meta-item font-mono text-xs uppercase text-[#6E6B65]">
-            Trigger Entry
-            <b className="block font-sans text-[#E8E6E1] text-base font-medium">{trade.trigger || "—"}</b>
+          <div>
+            <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider">Trigger Entry</div>
+            <div className="text-lg font-medium text-[#E8E6E1]">{trade.trigger || "—"}</div>
           </div>
-          <div className={`day-meta-item font-mono text-xs uppercase text-[#6E6B65] ${isLoss ? "outcome-loss" : isWin ? "outcome-win" : ""}`}>
-            Hasil
-            <b className={`block font-sans text-base font-medium ${isWin ? "text-[#C49A3C]" : isLoss ? "text-[#8B3A1F]" : "text-[#E8E6E1]"}`}>
+          <div>
+            <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider">Hasil</div>
+            <div className={`text-lg font-medium ${isWin ? "text-[#C49A3C]" : isLoss ? "text-[#8B3A1F]" : "text-[#E8E6E1]"}`}>
               {isWin ? `+${trade.r}R · Profit` : isLoss ? `−${trade.r}R · Rugi` : `${trade.r}R · Scratch`}
-            </b>
+            </div>
           </div>
         </div>
 
-        {/* ===== BACAAN PRA-PASAR ===== */}
-        <section className="mb-10 border-b border-[#221F1C] pb-8">
-          <div className="eyebrow water text-base md:text-lg">BACAAN PRA-PASAR</div>
-          <h3 className="font-['Big_Shoulders'] font-bold text-2xl md:text-3xl mb-4">Sebelum sesi dimulai</h3>
-          <div className="body-copy text-base md:text-lg max-w-3xl">
+        {/* ===== PRA-PASAR — spasi besar ===== */}
+        <section className="mb-16">
+          <div className="eyebrow water text-sm">BACAAN PRA-PASAR</div>
+          <h2 className="font-['Big_Shoulders'] font-bold text-2xl mb-6">Sebelum sesi dimulai</h2>
+          <div className="text-[#E8E6E1] text-base leading-relaxed max-w-4xl min-h-[120px]">
             {praPasar ? (
-              <div className="whitespace-pre-wrap text-[#E8E6E1]">{praPasar}</div>
+              <div className="whitespace-pre-wrap">{praPasar}</div>
             ) : (
-              <p className="text-[#6E6B65] italic">Belum ada catatan pra-pasar. Isi properti <code>Pra-pasar</code> di Notion.</p>
+              <p className="text-[#6E6B65] italic">Belum ada catatan pra-pasar.</p>
             )}
-          </div>
-          <div className="placeholder-note text-sm mt-4">
-            ✏️ Untuk mengedit, isi properti <code>Pra-pasar</code> (Rich Text) di database Notion.
           </div>
         </section>
 
-        {/* ===== EKSEKUSI ===== */}
-        <section className="mb-10 border-b border-[#221F1C] pb-8">
-          <div className="eyebrow steel text-base md:text-lg">APA YANG DILAKUKAN HARGA — EKSEKUSI</div>
-          <h3 className="font-['Big_Shoulders'] font-bold text-2xl md:text-3xl mb-4">Alasan Entry & Detail Eksekusi</h3>
-          <div className="body-copy text-base md:text-lg max-w-3xl">
+        {/* ===== EKSEKUSI — spasi besar ===== */}
+        <section className="mb-16">
+          <div className="eyebrow steel text-sm">APA YANG DILAKUKAN HARGA — EKSEKUSI</div>
+          <h2 className="font-['Big_Shoulders'] font-bold text-2xl mb-6">Alasan Entry & Detail Eksekusi</h2>
+          <div className="text-[#E8E6E1] text-base leading-relaxed max-w-4xl min-h-[120px]">
             {eksekusi ? (
-              <div className="whitespace-pre-wrap text-[#E8E6E1]">{eksekusi}</div>
+              <div className="whitespace-pre-wrap">{eksekusi}</div>
             ) : (
-              <p className="text-[#6E6B65] italic">Belum ada catatan eksekusi. Isi properti <code>Eksekusi</code> di Notion.</p>
+              <p className="text-[#6E6B65] italic">Belum ada catatan eksekusi.</p>
             )}
           </div>
-          <div className="placeholder-note text-sm mt-4">
-            ✏️ Untuk mengedit, isi properti <code>Eksekusi</code> (Rich Text) di database Notion.
-          </div>
-        </section>
-
-        {/* ===== BENAR / SALAH ===== */}
-        <section className="mb-10 border-b border-[#221F1C] pb-8">
-          <div className="eyebrow gold text-base md:text-lg">DI MANA BACAAN INI BENAR / SALAH</div>
-          <h3 className="font-['Big_Shoulders'] font-bold text-2xl md:text-3xl mb-4">Pembagian yang jujur</h3>
-          <div className="body-copy text-base md:text-lg max-w-3xl space-y-4">
-            <p><strong className="text-[#E8E6E1]">Benar:</strong> ✏️ Bagian mana dari bacaan/eksekusi yang benar.</p>
-            <p><strong className="text-[#E8E6E1]">Salah:</strong> ✏️ Bagian mana yang meleset, sejujur mungkin.</p>
-          </div>
-          <div className="pull mt-6">
-            <p className="text-lg md:text-xl">✏️ Satu kalimat kunci — pelajaran psikologis dari trade ini.</p>
-          </div>
-        </section>
-
-        {/* ===== ADAPTASI ===== */}
-        <section className="mb-10 border-b border-[#221F1C] pb-8">
-          <div className="eyebrow water text-base md:text-lg">ADAPTASI</div>
-          <h3 className="font-['Big_Shoulders'] font-bold text-2xl md:text-3xl mb-4">Apa yang berubah</h3>
-          <div className="body-copy text-base md:text-lg max-w-3xl">
-            <p>✏️ Apa yang diubah atau dilakukan berbeda karena trade ini.</p>
-          </div>
-        </section>
-
-        {/* ===== REKAMAN SESI ===== */}
-        <section className="mb-10 border-b border-[#221F1C] pb-8">
-          <div className="eyebrow steel text-base md:text-lg">REKAMAN SESI</div>
-          <h3 className="font-['Big_Shoulders'] font-bold text-2xl md:text-3xl mb-4">Rekaman layar — dari pra-pasar sampai exit</h3>
-          <div className="video-slot max-w-3xl">
-            <div className="play text-2xl">▶</div>
-          </div>
-          {trade.link && (
-            <div className="video-caption text-sm mt-2">
-              <a href={trade.link} target="_blank" rel="noopener noreferrer" className="text-[#C49A3C]">
-                📹 Buka rekaman di Notion →
-              </a>
-            </div>
-          )}
-          <details className="transcript max-w-3xl mt-4">
-            <summary className="text-sm md:text-base">Transkrip</summary>
-            <div className="transcript-body text-sm md:text-base">✏️ Transkrip video di sini.</div>
-          </details>
         </section>
 
         {/* ===== HASIL ===== */}
-        <section className="mb-10 pb-4">
-          <div className="eyebrow text-base md:text-lg">HASIL</div>
-          <h3 className="font-['Big_Shoulders'] font-bold text-2xl md:text-3xl mb-4">Grade & hasil akhir</h3>
+        <section className="pt-4 border-t border-[#221F1C]">
+          <div className="eyebrow text-sm">HASIL</div>
+          <h2 className="font-['Big_Shoulders'] font-bold text-2xl mb-6">Grade & hasil akhir</h2>
 
           <div className="stat-strip">
             <div className="stat">
-              <div className="stat-label text-sm md:text-base">Grade Setup</div>
-              <div className="stat-value text-3xl md:text-5xl gold">{trade.grade}</div>
+              <div className="stat-label text-xs uppercase tracking-wider">Grade Setup</div>
+              <div className="stat-value gold">{trade.grade}</div>
             </div>
             <div className="stat">
-              <div className="stat-label text-sm md:text-base">Hasil Akhir</div>
-              <div className={`stat-value text-3xl md:text-5xl ${isWin ? "gold" : "rust"}`}>
+              <div className="stat-label text-xs uppercase tracking-wider">Hasil Akhir</div>
+              <div className={`stat-value ${isWin ? "gold" : "rust"}`}>
                 {isWin ? "Profit" : isLoss ? "Rugi" : "Scratch"}
               </div>
             </div>
             <div className="stat">
-              <div className="stat-label text-sm md:text-base">Hasil R</div>
-              <div className={`stat-value text-3xl md:text-5xl ${isWin ? "water" : "rust"}`}>
+              <div className="stat-label text-xs uppercase tracking-wider">Hasil R</div>
+              <div className={`stat-value ${isWin ? "water" : "rust"}`}>
                 {isWin ? "+" : ""}{trade.r}R
               </div>
             </div>
             <div className="stat">
-              <div className="stat-label text-sm md:text-base">Pelanggaran Aturan</div>
-              <div className="stat-value text-3xl md:text-5xl">0</div>
+              <div className="stat-label text-xs uppercase tracking-wider">Pelanggaran</div>
+              <div className="stat-value">0</div>
             </div>
           </div>
 
-          <div className="body-copy text-base md:text-lg max-w-3xl mt-6">
-            <p>✏️ Kesimpulan jujur soal grade ini — kenapa dapat grade itu, dan apa perbaikan konkret untuk lain kali.</p>
+          <div className="text-[#A6A39C] text-base max-w-3xl mt-6 leading-relaxed">
+            <p>✏️ Kesimpulan jujur — kenapa grade ini, dan perbaikan untuk lain kali.</p>
           </div>
         </section>
       </div>
