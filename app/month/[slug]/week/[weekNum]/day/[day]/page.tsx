@@ -20,7 +20,6 @@ const monthNames: Record<string, string> = {
 };
 const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
-// Helper: cari timeframe terbawah yang bernilai "Pass"
 function getLowestPassedTimeframe(trade: any): string {
   const filters = [
     { key: 'm3Filter', label: '3M' },
@@ -65,12 +64,10 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
 
   const triggerDisplay = getLowestPassedTimeframe(trade);
 
-  // === PERBAIKAN: hanya tampilkan session + time jika berbeda ===
   let sessionDisplay = session;
   if (time && time !== session) {
     sessionDisplay = `${session} · ${time}`;
   }
-  // Jika time sama dengan session, hanya tampilkan satu
 
   return (
     <>
@@ -95,48 +92,45 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </Link>
         </div>
 
-        {/* Header */}
-        <header className="mb-10">
+        {/* Header — tanpa judul besar */}
+        <header className="mb-6">
           <div className="eyebrow water text-sm">
             {dayNames[d.getDay()].toUpperCase()} · {d.getDate()} {monthName} {year} · {sessionDisplay}
           </div>
-          <h1 className="font-['Big_Shoulders'] font-black text-[clamp(36px,5.5vw,60px)] leading-tight">
-            {trade.instrument} {trade.direction} —
-          </h1>
         </header>
 
-        {/* Meta Info */}
-        <div className="grid grid-cols-4 gap-6 mb-6 pb-6 border-b border-[#221F1C]">
+        {/* ===== META INFO — TABEL LEBIH BESAR ===== */}
+        <div className="grid grid-cols-4 gap-8 mb-8 pb-6 border-b border-[#221F1C]">
           <div>
             <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider">Instrumen</div>
-            <div className="text-lg font-medium text-[#E8E6E1]">{trade.instrument}</div>
+            <div className="text-2xl font-medium text-[#E8E6E1]">{trade.instrument}</div>
           </div>
           <div>
             <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider">Arah</div>
-            <div className="text-lg font-medium text-[#E8E6E1]">{trade.direction}</div>
+            <div className="text-2xl font-medium text-[#E8E6E1]">{trade.direction}</div>
           </div>
           <div>
             <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider">Trigger Entry</div>
-            <div className="text-lg font-medium text-[#E8E6E1]">{triggerDisplay}</div>
+            <div className="text-2xl font-medium text-[#E8E6E1]">{triggerDisplay}</div>
           </div>
           <div>
             <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider">Hasil</div>
-            <div className={`text-lg font-medium ${isWin ? "text-[#C49A3C]" : isLoss ? "text-[#8B3A1F]" : "text-[#E8E6E1]"}`}>
+            <div className={`text-2xl font-medium ${isWin ? "text-[#C49A3C]" : isLoss ? "text-[#8B3A1F]" : "text-[#E8E6E1]"}`}>
               {isWin ? `+${trade.r}R · Profit` : isLoss ? `−${trade.r}R · Rugi` : `${trade.r}R · Scratch`}
             </div>
           </div>
         </div>
 
-        {/* ===== LINK YOUTUBE (di bawah meta, sebelum Pra-pasar) ===== */}
+        {/* ===== LINK YOUTUBE ===== */}
         {youtubeLink && (
           <div className="mb-8 pb-4 border-b border-[#221F1C]">
             <a
               href={youtubeLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-[#C49A3C] hover:text-[#E8E6E1] transition-colors duration-200 font-medium"
+              className="inline-flex items-center gap-2 text-[#C49A3C] hover:text-[#E8E6E1] transition-colors duration-200 font-medium text-lg"
             >
-              <span className="text-xl">▶</span> Tonton rekaman sesi di YouTube
+              <span className="text-2xl">▶</span> Tonton rekaman sesi di YouTube
             </a>
           </div>
         )}
