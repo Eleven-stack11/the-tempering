@@ -78,15 +78,17 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
   const netR = trades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
 
-  // --- Ambil Monthly Note dari trade pertama yang memiliki isi ---
+  // ===== AMBIL MONTHLY NOTE DARI PROPERTI YANG BENAR =====
+  // Cari trade pertama yang memiliki isi properti 'Monthly Note'
   let monthlyNote = '';
   for (const t of trades) {
-    if (t.notes && t.notes.trim().length > 0) {
-      monthlyNote = t.notes;
+    if (t.monthlyNote && t.monthlyNote.trim().length > 0) {
+      monthlyNote = t.monthlyNote;
       break;
     }
   }
-  // Jika tidak ada, gunakan default
+
+  // Jika kosong, gunakan default
   const defaultDesc = "Bacaan hari Minggu, lima sesi kontak dengan pasar, dan pertanggungjawaban jujur hari Sabtu.";
   const description = monthlyNote || defaultDesc;
 
@@ -148,8 +150,7 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
       {/* Weeks List */}
       <section>
         <div className="sec-head">
-          <h2>Monthly Note</h2>
-          {/* Deskripsi dinamis dari Monthly Note */}
+          <h2>Pra-bulan</h2>
           <p>{description}</p>
         </div>
 
@@ -210,7 +211,7 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
       {/* Divider */}
       <div className="ink-divider"></div>
 
-      {/* Monthly Note (di sini juga bisa ditampilkan, tapi kita sudah pakai di atas) */}
+      {/* Catatan Bulanan — juga pakai monthlyNote */}
       <section>
         <div className="sec-head">
           <h2>Catatan Bulanan</h2>
