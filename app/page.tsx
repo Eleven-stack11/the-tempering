@@ -135,7 +135,7 @@ export default async function HomePage() {
       <footer className="site-footer">
         <div className="blade-rule static" style={{ marginBottom: 36 }}></div>
         <div className="quote">
-          "Fokus hanya dengan data.<br />membantu membuat metode terbaik."
+          "Kumpulkan data sebanyak-banyaknya.<br />Hanya itu penganganmu."
         </div>
         <div className="foot-meta">EL-DOCUMENTARY · JURNAL TRADING · DIPERBARUI SETIAP MINGGU</div>
       </footer>
