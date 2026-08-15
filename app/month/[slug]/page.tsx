@@ -22,6 +22,7 @@ const monthNames: Record<string, string> = {
 export default async function MonthPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
+  // Validasi slug
   const parts = slug.split("-");
   if (parts.length !== 2) {
     return <div className="p-8 text-[#A6A39C]">Format bulan tidak valid.</div>;
@@ -38,6 +39,7 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
   const allTrades = await fetchTrades();
 
+  // Filter trades bulan ini
   const trades = allTrades.filter((t) => {
     const d = new Date(t.date);
     return !isNaN(d.getTime()) && d.getFullYear() === yearNum && d.getMonth() === monthIndex;
@@ -45,11 +47,14 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
   if (trades.length === 0) notFound();
 
+  // Dapatkan minggu-minggu
   const weeks = getWeeksOfMonth(yearNum, monthIndex);
 
+  // Kelompokkan trade per minggu
   const tradeGroups: Record<number, any[]> = {};
   for (const t of trades) {
     const d = new Date(t.date);
+    // Cari Senin minggu ini
     const monday = new Date(d);
     while (monday.getDay() !== 1) {
       monday.setDate(monday.getDate() - 1);
@@ -63,16 +68,21 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
     }
   }
 
+  // Statistik
   const totalSessions = trades.length;
   const enteredCount = trades.filter((t) => t.status === "Entered").length;
   const missedCount = trades.filter((t) => t.status === "Missed").length;
-  const studyCount = trades.filter((t) => t.status === "Study Case").length;
   const totalConsidered = enteredCount + missedCount;
   const executionRate = totalConsidered > 0 ? Math.round((enteredCount / totalConsidered) * 100) : 0;
 
+  // ===== PELANGGARAN: cari di notes yang mengandung kata "pelanggaran" =====
+  const violations = trades.filter((t) => 
+    t.notes?.toLowerCase().includes("pelanggaran")
+  ).length;
+
   const netR = trades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
 
-  // ===== AMBIL MONTHLY NOTE =====
+  // Ambil Monthly Note dari Notion
   let monthlyNote = '';
   for (const t of trades) {
     if (t.monthlyNote && t.monthlyNote.trim().length > 0) {
@@ -86,6 +96,7 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
+      {/* Tombol kembali ke homepage */}
       <div className="mb-4">
         <Link
           href="/"
@@ -95,6 +106,7 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
         </Link>
       </div>
 
+      {/* Header */}
       <header className="mb-8">
         <div className="eyebrow steel">BULAN {String(monthIndex + 1).padStart(2, "0")} · {year}</div>
         <h1 className="font-['Big_Shoulders'] font-black text-[clamp(44px,7vw,80px)] leading-tight">
@@ -105,6 +117,7 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
         </p>
       </header>
 
+      {/* Stat Strip */}
       <section className="mb-8">
         <div className="stat-strip">
           <div className="stat">
@@ -121,8 +134,8 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
             </div>
           </div>
           <div className="stat">
-            <div className="stat-label">Study Case</div>
-            <div className="stat-value text-[#C49A3C]">{studyCount}</div>
+            <div className="stat-label">Pelanggaran</div>
+            <div className="stat-value rust">{violations}</div>
           </div>
           <div className="stat">
             <div className="stat-label">Net R</div>
@@ -133,11 +146,13 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
         </div>
       </section>
 
+      {/* Blade Rule */}
       <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
 
+      {/* Weeks List */}
       <section>
         <div className="sec-head">
-          <h2>Monthly note</h2>
+          <h2>Minggu-Minggu</h2>
           <p>{description}</p>
         </div>
 
@@ -152,6 +167,7 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
             const endDay = week.end.getDate();
             const monthLabel = monthName.slice(0, 3).toUpperCase();
             const dateRange = `${startDay}–${endDay} ${monthName} ${year}`;
+
             const hasTrade = weekTrades.length > 0;
             const linkHref = hasTrade ? `/month/${slug}/week/${week.weekNumber}` : "#";
             const localWeekNumber = idx + 1;
@@ -194,8 +210,10 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
         </div>
       </section>
 
+      {/* Divider */}
       <div className="ink-divider"></div>
 
+      {/* Monthly Note */}
       <section>
         <div className="sec-head">
           <h2>Catatan Bulanan</h2>
