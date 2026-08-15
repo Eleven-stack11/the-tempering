@@ -213,9 +213,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
                   <p className="text-[#6E6B65] italic">Belum ada catatan psikologi.</p>
                 )}
               </div>
-              <div className="placeholder-note">
-                ✏️ Untuk mengedit, isi properti <code>Psikologi</code> (Rich Text) di database Notion.
-              </div>
             </div>
 
             {/* --- PELAJARAN CHART --- */}
@@ -232,10 +229,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
                   </p>
                 )}
               </div>
-              <div className="placeholder-note">
-                ✏️ Untuk mengedit, isi properti <code>Pelajaran Chart</code> (Rich Text) di database Notion.
-              </div>
-            </div>
 
             {/* --- HASIL (tetap hardcode, tidak dari Notion) --- */}
             <div className="journal-section">
