@@ -90,7 +90,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
             MINGGU {localWeekNumber} · {monthLabel} {first.getDate()} – {monthLabel} {last.getDate()}
           </div>
           <h1 className="font-['Big_Shoulders'] font-black text-[clamp(40px,6.5vw,72px)] leading-tight">
-            Bacaan Hari Minggu
+            Pra-minggu
           </h1>
           <p className="text-lg md:text-xl text-[#A6A39C]">
             {weekTrades.length} trade tercatat minggu ini. Net R {netR >= 0 ? "+" : ""}{netR.toFixed(1)}R
