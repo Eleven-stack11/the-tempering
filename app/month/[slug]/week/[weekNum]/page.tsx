@@ -30,18 +30,13 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
   const allTrades = await fetchTrades();
 
-  // Dapatkan semua minggu dalam bulan ini
   const weeks = getWeeksOfMonth(yearNum, monthIndex);
-
-  // Cari minggu yang sesuai dengan weekNumber
   const targetWeek = weeks.find((w) => w.weekNumber === weekNumber);
   if (!targetWeek) notFound();
 
-  // Cari urutan minggu lokal (1,2,3,4)
   const localWeekIndex = weeks.findIndex((w) => w.weekNumber === weekNumber);
   const localWeekNumber = localWeekIndex !== -1 ? localWeekIndex + 1 : weekNumber;
 
-  // Filter trades yang jatuh di antara start dan end minggu tersebut
   const weekTrades = allTrades.filter((t) => {
     const d = new Date(t.date);
     return d >= targetWeek.start && d <= targetWeek.end;
@@ -49,12 +44,10 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
   if (weekTrades.length === 0) notFound();
 
-  // Ambil data dari trade pertama (asumsi satu minggu punya isi yang sama)
   const weeklyThesis = weekTrades[0]?.weeklyThesis || '';
   const psychology = weekTrades[0]?.psychology || '';
   const chartLesson = weekTrades[0]?.chartLesson || '';
 
-  // Group by day
   const dayMap: Record<string, any[]> = {};
   for (const t of weekTrades) {
     const key = new Date(t.date).toISOString().split("T")[0];
@@ -70,7 +63,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
   return (
     <>
-      {/* Tombol kembali ke homepage */}
+      {/* Tombol Beranda (kanan atas) */}
       <div className="flex justify-end items-center py-3 px-4 border-b border-[#221F1C] mb-4">
         <Link
           href="/"
@@ -91,153 +84,200 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           </Link>
         </div>
 
-        <header className="hero" style={{ padding: "64px 0 40px" }}>
-          <div className="wrap" style={{ padding: 0 }}>
-            <div className="eyebrow water">
-              MINGGU {localWeekNumber} · {monthLabel} {first.getDate()} – {monthLabel} {last.getDate()}
-            </div>
-            <h1 style={{ fontSize: "clamp(40px, 6.5vw, 72px)" }}>Trade log</h1>
-            <p className="lede">{weekTrades.length} trade tercatat minggu ini. Net R {netR >= 0 ? "+" : ""}{netR.toFixed(1)}R</p>
+        {/* Header */}
+        <header className="mb-8">
+          <div className="eyebrow water text-base md:text-lg">
+            MINGGU {localWeekNumber} · {monthLabel} {first.getDate()} – {monthLabel} {last.getDate()}
           </div>
+          <h1 className="font-['Big_Shoulders'] font-black text-[clamp(40px,6.5vw,72px)] leading-tight">
+            Bacaan Hari Minggu
+          </h1>
+          <p className="text-lg md:text-xl text-[#A6A39C]">
+            {weekTrades.length} trade tercatat minggu ini. Net R {netR >= 0 ? "+" : ""}{netR.toFixed(1)}R
+          </p>
         </header>
 
-        <section>
-          <div className="wrap" style={{ padding: 0 }}>
-            <div className="journal-section" style={{ paddingTop: 0, borderBottom: "1px solid var(--border-soft)" }}>
-              <div className="eyebrow water">TESIS PRA-PASAR</div>
-              <div className="body-copy">
-                {weeklyThesis ? (
-                  <div className="whitespace-pre-wrap text-[#E8E6E1]">{weeklyThesis}</div>
-                ) : (
-                  <p className="text-[#6E6B65] italic">Belum ada tesis untuk minggu ini. Tambahkan properti <code>Weekly Thesis</code> di Notion.</p>
-                )}
-              </div>
-              <div className="placeholder-note">
-                ✏️ Untuk mengedit, isi properti <code>Weekly Thesis</code> (Rich Text) di database Notion.
-              </div>
-            </div>
+        {/* Tesis Pra-Pasar */}
+        <section className="mb-8 border-b border-[#221F1C] pb-8">
+          <div className="eyebrow water text-base md:text-lg">TESIS PRA-PASAR</div>
+          <div className="body-copy text-base md:text-lg">
+            {weeklyThesis ? (
+              <div className="whitespace-pre-wrap text-[#E8E6E1]">{weeklyThesis}</div>
+            ) : (
+              <p className="text-[#6E6B65] italic">Belum ada tesis untuk minggu ini. Tambahkan properti <code>Weekly Thesis</code> di Notion.</p>
+            )}
+          </div>
+          <div className="placeholder-note text-sm mt-4">
+            ✏️ Untuk mengedit, isi properti <code>Weekly Thesis</code> (Rich Text) di database Notion.
           </div>
         </section>
 
-        <div className="blade-rule on-scroll" style={{ maxWidth: "100%", margin: "20px 0" }}></div>
+        <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
 
-        <section>
-          <div className="wrap" style={{ padding: 0 }}>
-            <div className="sec-head">
-              <h2>Minggu Ini</h2>
+        {/* Minggu Ini */}
+        <section className="mb-8">
+          <div className="sec-head">
+            <h2 className="text-3xl md:text-4xl">Minggu Ini</h2>
+            <p className="text-base md:text-lg text-[#A6A39C]">
+              Lima sesi kontak dengan rencana di atas. Hari yang terkunci adalah hari yang tidak dicatat — itu juga adalah data.
+            </p>
+          </div>
 
-            <div className="rail">
-              {dayKeys.map((dayKey) => {
-                const d = new Date(dayKey);
-                const dayName = dayNames[d.getDay()];
-                const dayTrades = dayMap[dayKey];
-                const dayR = dayTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
-                const grade = dayTrades[0]?.grade || "B";
-                const daySlug = dayKey;
+          <div className="rail text-base md:text-lg">
+            {dayKeys.map((dayKey) => {
+              const d = new Date(dayKey);
+              const dayName = dayNames[d.getDay()];
+              const dayTrades = dayMap[dayKey];
+              const dayR = dayTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
+              const grade = dayTrades[0]?.grade || "B";
+              const daySlug = dayKey;
 
-                return (
-                  <Link key={dayKey} href={`/month/${slug}/week/${weekNum}/day/${daySlug}`} className="rail-row linked">
-                    <div className="rail-day">
-                      {dayName}<b>{d.getDate()}</b>
-                    </div>
-                    <div className="rail-body">
-                      <h4>{dayTrades.length} trade — {dayTrades.map(t => t.title).join(", ")}</h4>
-                      <p>{dayTrades.map(t => `${t.instrument} ${t.direction}`).join(" · ")}</p>
-                    </div>
-                    <div className={`seal ${dayR >= 0 ? "win" : "loss"}`}>
-                      <span>{grade}</span>
-                    </div>
-                    <div className={`rail-tag ${dayR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>
-                      {dayR >= 0 ? "+" : ""}{dayR.toFixed(1)}R
-                    </div>
-                  </Link>
-                );
-              })}
-
-              {/* Tampilkan hari Senin–Jumat yang tidak ada trade */}
-              {[0, 1, 2, 3, 4].map((i) => {
-                const d = new Date(targetWeek.start);
-                d.setDate(d.getDate() + i);
-                if (d > targetWeek.end) return null;
-                const dayKey = d.toISOString().split("T")[0];
-                if (dayMap[dayKey]) return null;
-                const dayName = dayNames[d.getDay()];
-                return (
-                  <div key={i} className="rail-row locked">
-                    <div className="rail-day">
-                      {dayName}<b>{d.getDate()}</b>
-                    </div>
-                    <div className="rail-body"><h4>Tidak ada sesi tercatat</h4></div>
-                    <div className="rail-tag"></div>
-                    <div className="rail-tag"></div>
+              return (
+                <Link
+                  key={dayKey}
+                  href={`/month/${slug}/week/${weekNum}/day/${daySlug}`}
+                  className="rail-row linked py-4 md:py-5 px-4 md:px-6"
+                >
+                  <div className="rail-day text-base md:text-lg">
+                    {dayName}
+                    <b className="text-2xl md:text-3xl">{d.getDate()}</b>
                   </div>
-                );
-              })}
+                  <div className="rail-body">
+                    <h4 className="text-lg md:text-xl font-medium">
+                      {dayTrades.length} trade — {dayTrades.map(t => t.title).join(", ")}
+                    </h4>
+                    <p className="text-base md:text-lg text-[#A6A39C]">
+                      {dayTrades.map(t => `${t.instrument} ${t.direction}`).join(" · ")}
+                    </p>
+                  </div>
+                  <div className={`seal ${dayR >= 0 ? "win" : "loss"} w-10 h-10 md:w-12 md:h-12 text-base md:text-lg`}>
+                    <span>{grade}</span>
+                  </div>
+                  <div className={`rail-tag text-base md:text-2xl font-bold tracking-wider ${dayR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>
+                    {dayR >= 0 ? "+" : ""}{dayR.toFixed(1)}R
+                  </div>
+                </Link>
+              );
+            })}
 
-              <div className="rail-row review">
-                <div className="rail-day" style={{ color: "var(--gold)" }}>SAB</div>
-                <div className="rail-body">
-                  <h4 style={{ color: "var(--gold)" }}>Review Mingguan</h4>
-                  <p>Rincian lengkap di bawah — tidak ada halaman terpisah, semuanya ada di halaman ini</p>
+            {/* Hari kosong */}
+            {[0, 1, 2, 3, 4].map((i) => {
+              const d = new Date(targetWeek.start);
+              d.setDate(d.getDate() + i);
+              if (d > targetWeek.end) return null;
+              const dayKey = d.toISOString().split("T")[0];
+              if (dayMap[dayKey]) return null;
+              const dayName = dayNames[d.getDay()];
+              return (
+                <div key={i} className="rail-row locked py-4 md:py-5 px-4 md:px-6">
+                  <div className="rail-day text-base md:text-lg">
+                    {dayName}
+                    <b className="text-2xl md:text-3xl">{d.getDate()}</b>
+                  </div>
+                  <div className="rail-body">
+                    <h4 className="text-lg md:text-xl font-medium">Tidak ada sesi tercatat</h4>
+                  </div>
+                  <div className="rail-tag"></div>
+                  <div className="rail-tag"></div>
                 </div>
-                <div className="rail-tag"></div>
-                <div className="rail-tag"></div>
+              );
+            })}
+
+            {/* Review Sabtu */}
+            <div className="rail-row review py-4 md:py-5 px-4 md:px-6">
+              <div className="rail-day text-base md:text-lg" style={{ color: "var(--gold)" }}>
+                SAB
               </div>
+              <div className="rail-body">
+                <h4 className="text-lg md:text-xl font-medium" style={{ color: "var(--gold)" }}>
+                  Review Mingguan
+                </h4>
+                <p className="text-base md:text-lg text-[#A6A39C]">
+                  Rincian lengkap di bawah — tidak ada halaman terpisah, semuanya ada di halaman ini
+                </p>
+              </div>
+              <div className="rail-tag"></div>
+              <div className="rail-tag"></div>
             </div>
           </div>
         </section>
 
         <div className="ink-divider"></div>
 
+        {/* Review Mingguan Detail */}
         <section>
-          <div className="wrap" style={{ padding: 0 }}>
-            <div className="sec-head">
-              <h2>Sabtu — Review</h2>
+          <div className="sec-head">
+            <h2 className="text-3xl md:text-4xl">Sabtu — Rincian Lengkap</h2>
+            <p className="text-base md:text-lg text-[#A6A39C]">
+              Tesis hari Minggu dibandingkan dengan apa yang benar-benar terjadi. Tidak ada revisi rencana setelah kejadian.
+            </p>
+          </div>
 
-            {/* --- TESIS VS REALITA --- dihapus sesuai permintaan, tidak ditampilkan --- */}
-
-            {/* --- PSIKOLOGI --- */}
-            <div className="journal-section">
-              <div className="eyebrow">PSIKOLOGI</div>
-              <div className="pull">
-                {psychology ? (
-                  <p>{psychology}</p>
-                ) : (
-                  <p className="text-[#6E6B65] italic">✏️ Isi properti <code>Psikologi</code> di Notion untuk refleksi minggu ini.</p>
-                )}
-              </div>
-              <div className="body-copy">
-                {psychology ? (
-                  <div className="whitespace-pre-wrap text-[#E8E6E1]">{psychology}</div>
-                ) : (
-                  <p className="text-[#6E6B65] italic">Belum ada catatan psikologi.</p>
-                )}
-              </div>
+          {/* Psikologi */}
+          <div className="journal-section">
+            <div className="eyebrow text-base md:text-lg">PSIKOLOGI</div>
+            <div className="pull">
+              {psychology ? (
+                <p className="text-lg md:text-xl">{psychology}</p>
+              ) : (
+                <p className="text-[#6E6B65] italic text-base md:text-lg">
+                  ✏️ Isi properti <code>Psikologi</code> di Notion untuk refleksi minggu ini.
+                </p>
+              )}
             </div>
+            <div className="body-copy text-base md:text-lg">
+              {psychology ? (
+                <div className="whitespace-pre-wrap text-[#E8E6E1]">{psychology}</div>
+              ) : (
+                <p className="text-[#6E6B65] italic">Belum ada catatan psikologi.</p>
+              )}
+            </div>
+            <div className="placeholder-note text-sm mt-4">
+              ✏️ Untuk mengedit, isi properti <code>Psikologi</code> (Rich Text) di database Notion.
+            </div>
+          </div>
 
-            {/* --- PELAJARAN CHART --- */}
-            <div className="journal-section">
-              <div className="eyebrow steel">PELAJARAN CHART</div>
-              <div className="body-copy">
-                {chartLesson ? (
-                  <div className="whitespace-pre-wrap text-[#E8E6E1]">
-                    <p><strong>✏️ Satu pelajaran utama:</strong> {chartLesson}</p>
-                  </div>
-                ) : (
-                  <p className="text-[#6E6B65] italic">
-                    <strong>✏️ Satu pelajaran utama, jangan lebih dari itu.</strong> Isi properti <code>Pelajaran Chart</code> di Notion.
-                  </p>
-                )}
+          {/* Pelajaran Chart */}
+          <div className="journal-section">
+            <div className="eyebrow steel text-base md:text-lg">PELAJARAN CHART</div>
+            <div className="body-copy text-base md:text-lg">
+              {chartLesson ? (
+                <div className="whitespace-pre-wrap text-[#E8E6E1]">
+                  <p className="text-lg md:text-xl font-medium">✏️ Satu pelajaran utama:</p>
+                  <p>{chartLesson}</p>
+                </div>
+              ) : (
+                <p className="text-[#6E6B65] italic">
+                  <strong>✏️ Satu pelajaran utama, jangan lebih dari itu.</strong> Isi properti <code>Pelajaran Chart</code> di Notion.
+                </p>
+              )}
+            </div>
+            <div className="placeholder-note text-sm mt-4">
+              ✏️ Untuk mengedit, isi properti <code>Pelajaran Chart</code> (Rich Text) di database Notion.
+            </div>
+          </div>
+
+          {/* Hasil */}
+          <div className="journal-section">
+            <div className="eyebrow text-base md:text-lg">HASIL</div>
+            <div className="stat-strip">
+              <div className="stat">
+                <div className="stat-label text-sm md:text-base">Trade Diambil</div>
+                <div className="stat-value text-3xl md:text-5xl">{weekTrades.length}</div>
               </div>
-
-            {/* --- HASIL (tetap hardcode, tidak dari Notion) --- */}
-            <div className="journal-section">
-              <div className="eyebrow">HASIL</div>
-              <div className="stat-strip" style={{ marginTop: 8 }}>
-                <div className="stat"><div className="stat-label">Trade Diambil</div><div className="stat-value">{weekTrades.length}</div></div>
-                <div className="stat"><div className="stat-label">Grade</div><div className="stat-value gold">{weekTrades[0]?.grade || "B"}</div></div>
-                <div className="stat"><div className="stat-label">Net R</div><div className={`stat-value ${netR >= 0 ? "water" : "rust"}`}>{netR >= 0 ? "+" : ""}{netR.toFixed(1)}R</div></div>
-                <div className="stat"><div className="stat-label">Pelanggaran Aturan</div><div className="stat-value">0</div></div>
+              <div className="stat">
+                <div className="stat-label text-sm md:text-base">Grade</div>
+                <div className="stat-value gold text-3xl md:text-5xl">{weekTrades[0]?.grade || "B"}</div>
+              </div>
+              <div className="stat">
+                <div className="stat-label text-sm md:text-base">Net R</div>
+                <div className={`stat-value text-3xl md:text-5xl ${netR >= 0 ? "water" : "rust"}`}>
+                  {netR >= 0 ? "+" : ""}{netR.toFixed(1)}R
+                </div>
+              </div>
+              <div className="stat">
+                <div className="stat-label text-sm md:text-base">Pelanggaran Aturan</div>
+                <div className="stat-value text-3xl md:text-5xl">0</div>
               </div>
             </div>
           </div>
