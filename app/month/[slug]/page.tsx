@@ -19,14 +19,6 @@ const monthNames: Record<string, string> = {
   december: "Desember",
 };
 
-// ---------- CATATAN BULANAN (EDIT DI SINI) ----------
-const MONTHLY_NOTES: Record<string, string> = {
-  june: "⚠️ Perhatian: Liburan musim panas di Eropa/US — volume rendah, pergerakan liar. Kurangi size.",
-  july: "🔥 Bulan dengan pelanggaran limit sesi. Harus lebih disiplin.",
-  august: "🌊 Bulan range. Fokus pada konfirmasi BMS sebelum entry.",
-};
-// ----------------------------------------------------
-
 export default async function MonthPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
@@ -78,7 +70,6 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
   // Statistik
   const totalSessions = trades.length;
-  // Hitung trade entered vs missed
   const enteredCount = trades.filter((t) => t.status === "Entered").length;
   const missedCount = trades.filter((t) => t.status === "Missed").length;
   const studyCount = trades.filter((t) => t.status === "Study Case").length;
@@ -87,7 +78,17 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
   const netR = trades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
 
-  const monthlyNote = MONTHLY_NOTES[monthKey] || "✏️ Tulis catatan bulanan di sini.";
+  // --- Ambil Monthly Note dari trade pertama yang memiliki isi ---
+  let monthlyNote = '';
+  for (const t of trades) {
+    if (t.notes && t.notes.trim().length > 0) {
+      monthlyNote = t.notes;
+      break;
+    }
+  }
+  // Jika tidak ada, gunakan default
+  const defaultDesc = "Bacaan hari Minggu, lima sesi kontak dengan pasar, dan pertanggungjawaban jujur hari Sabtu.";
+  const description = monthlyNote || defaultDesc;
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -147,8 +148,9 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
       {/* Weeks List */}
       <section>
         <div className="sec-head">
-          <h2>Pra-bulan</h2>
-          <p>Bacaan hari Minggu, lima sesi kontak dengan pasar, dan pertanggungjawaban jujur hari Sabtu.</p>
+          <h2>Monthly Note</h2>
+          {/* Deskripsi dinamis dari Monthly Note */}
+          <p>{description}</p>
         </div>
 
         <div className="rail">
@@ -208,15 +210,15 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
       {/* Divider */}
       <div className="ink-divider"></div>
 
-      {/* Monthly Note */}
+      {/* Monthly Note (di sini juga bisa ditampilkan, tapi kita sudah pakai di atas) */}
       <section>
         <div className="sec-head">
           <h2>Catatan Bulanan</h2>
         </div>
         <div className="max-w-2xl text-[#A6A39C] text-base leading-relaxed mb-12">
-          <p>{monthlyNote}</p>
+          <p>{monthlyNote || "✏️ Tidak ada catatan bulanan. Isi properti `Monthly Note` di Notion."}</p>
           <div className="placeholder-note mt-3">
-            ✏️ Untuk mengubah catatan, edit variabel <code>MONTHLY_NOTES</code> di file ini.
+            ✏️ Untuk mengubah catatan, isi properti <code>Monthly Note</code> (Rich Text) di database Notion.
           </div>
         </div>
       </section>
