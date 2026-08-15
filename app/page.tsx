@@ -135,7 +135,7 @@ export default async function HomePage() {
       <footer className="site-footer">
         <div className="blade-rule static" style={{ marginBottom: 36 }}></div>
         <div className="quote">
-          "Kumpulkan data sebanyak-banyaknya.<br />Hanya itu penganganmu."
+          "Shokunin 職人.<br />semangat hidup untuk terus mengejar kesempurnaan."
         </div>
         <div className="foot-meta">EL-DOCUMENTARY · JURNAL TRADING · DIPERBARUI SETIAP MINGGU</div>
       </footer>
