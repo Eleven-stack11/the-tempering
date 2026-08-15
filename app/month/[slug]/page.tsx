@@ -194,8 +194,11 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
                 </div>
                 {hasTrade ? (
                   <>
-                    <div className="rail-tag text-sm md:text-base">{weekTrades.length} TRADE</div>
-                    <div className={`rail-tag text-sm md:text-base ${weekR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>
+                    {/* === PERBESAR FONT DI SINI === */}
+                    <div className="rail-tag text-base md:text-xl font-bold tracking-wider">
+                      {weekTrades.length} TRADE
+                    </div>
+                    <div className={`rail-tag text-base md:text-xl font-bold tracking-wider ${weekR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>
                       {weekR >= 0 ? "+" : ""}
                       {weekR.toFixed(1)}R
                     </div>
