@@ -75,7 +75,7 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
   const totalConsidered = enteredCount + missedCount;
   const executionRate = totalConsidered > 0 ? Math.round((enteredCount / totalConsidered) * 100) : 0;
 
-  // ===== PELANGGARAN: cari di notes yang mengandung kata "pelanggaran" =====
+  // Pelanggaran: cek di notes
   const violations = trades.filter((t) => 
     t.notes?.toLowerCase().includes("pelanggaran")
   ).length;
@@ -96,7 +96,17 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      {/* Tombol kembali ke homepage */}
+      {/* ===== TOMBOL BERANDA (KANAN ATAS) ===== */}
+      <div className="flex justify-end items-center mb-4">
+        <Link
+          href="/"
+          className="font-mono text-xs uppercase tracking-widest text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 flex items-center gap-1.5"
+        >
+          <span>←</span> Beranda
+        </Link>
+      </div>
+
+      {/* Tombol kembali ke 2026 (kiri, di bawah) */}
       <div className="mb-4">
         <Link
           href="/"
