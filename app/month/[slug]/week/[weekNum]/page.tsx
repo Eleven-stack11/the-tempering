@@ -84,9 +84,9 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           </Link>
         </div>
 
-        {/* ===== HEADER UTAMA (tanpa "Bacaan Hari Minggu") ===== */}
+        {/* ===== HEADER UTAMA — ukuran turun 2 level ===== */}
         <header className="mb-10 mt-4">
-          <div className="font-['Big_Shoulders'] font-black text-[clamp(40px,6.5vw,72px)] leading-tight">
+          <div className="font-['Big_Shoulders'] font-black text-[clamp(28px,4.5vw,52px)] leading-tight">
             MINGGU {localWeekNumber} · {monthLabel} {first.getDate()} – {monthLabel} {last.getDate()}
           </div>
           <p className="text-lg md:text-xl text-[#A6A39C] mt-2">
