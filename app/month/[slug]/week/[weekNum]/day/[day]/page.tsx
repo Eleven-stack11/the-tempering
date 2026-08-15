@@ -147,9 +147,9 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </div>
         </div>
 
-        {/* ===== EMBED YOUTUBE — CENTER, TIDAK MELEBAR ===== */}
+        {/* ===== EMBED YOUTUBE — UKURAN KECIL, CENTER ===== */}
         {youtubeId && (
-          <div className="mx-auto max-w-xl mb-10 pb-4 border-b border-[#221F1C]">
+          <div className="mx-auto w-72 mb-10 pb-4 border-b border-[#221F1C]">
             <div className="aspect-video w-full">
               <iframe
                 src={`https://www.youtube.com/embed/${youtubeId}`}
