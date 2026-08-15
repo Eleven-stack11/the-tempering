@@ -60,9 +60,13 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
   const praPasar = trade.praPasar || '';
   const eksekusi = trade.eksekusi || '';
   const session = trade.session || 'LONDON';
+  const time = trade.time || '';
+  const youtubeLink = trade.link || '';
 
-  // Trigger = timeframe terbawah yang "Pass"
   const triggerDisplay = getLowestPassedTimeframe(trade);
+
+  // Gabungkan session + time jika ada
+  const sessionDisplay = time ? `${session} · ${time}` : session;
 
   return (
     <>
@@ -90,15 +94,15 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
         {/* Header */}
         <header className="mb-10">
           <div className="eyebrow water text-sm">
-            {dayNames[d.getDay()].toUpperCase()} · {d.getDate()} {monthName} {year} · {session}
+            {dayNames[d.getDay()].toUpperCase()} · {d.getDate()} {monthName} {year} · {sessionDisplay}
           </div>
           <h1 className="font-['Big_Shoulders'] font-black text-[clamp(36px,5.5vw,60px)] leading-tight">
             {trade.instrument} {trade.direction} —
           </h1>
         </header>
 
-        {/* Meta Info — SATU BARIS dengan grid */}
-        <div className="grid grid-cols-4 gap-6 mb-10 pb-6 border-b border-[#221F1C]">
+        {/* Meta Info */}
+        <div className="grid grid-cols-4 gap-6 mb-6 pb-6 border-b border-[#221F1C]">
           <div>
             <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider">Instrumen</div>
             <div className="text-lg font-medium text-[#E8E6E1]">{trade.instrument}</div>
@@ -118,6 +122,20 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
             </div>
           </div>
         </div>
+
+        {/* ===== LINK YOUTUBE (jika ada) ===== */}
+        {youtubeLink && (
+          <div className="mb-8 pb-4 border-b border-[#221F1C]">
+            <a
+              href={youtubeLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-[#C49A3C] hover:text-[#E8E6E1] transition-colors duration-200 font-medium"
+            >
+              <span className="text-xl">▶</span> Tonton rekaman sesi di YouTube
+            </a>
+          </div>
+        )}
 
         {/* ===== PRA-PASAR ===== */}
         <section className="mb-16">
