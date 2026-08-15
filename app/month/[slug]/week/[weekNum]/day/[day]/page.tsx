@@ -147,10 +147,10 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </div>
         </div>
 
-        {/* ===== EMBED YOUTUBE — UKURAN KECIL, CENTER ===== */}
+        {/* ===== EMBED YOUTUBE — UKURAN KECIL, TIDAK MELEBAR ===== */}
         {youtubeId && (
-          <div className="mx-auto w-72 mb-10 pb-4 border-b border-[#221F1C]">
-            <div className="aspect-video w-full">
+          <div className="mx-auto max-w-xs mb-10 pb-4 border-b border-[#221F1C]">
+            <div className="aspect-video">
               <iframe
                 src={`https://www.youtube.com/embed/${youtubeId}`}
                 title="Rekaman sesi trading"
