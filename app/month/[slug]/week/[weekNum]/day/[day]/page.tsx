@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { fetchTrades } from "@/lib/notion";
+import { fetchTrades, getWeeksOfMonth } from "@/lib/notion";
 
 export const revalidate = 60;
 
@@ -20,6 +20,7 @@ const monthNames: Record<string, string> = {
 };
 const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
+// Helper: ekstrak ID YouTube
 function getYoutubeId(url: string): string | null {
   if (!url) return null;
   const patterns = [
@@ -35,6 +36,7 @@ function getYoutubeId(url: string): string | null {
   return null;
 }
 
+// Helper: timeframe terbawah
 function getLowestPassedTimeframe(trade: any): string {
   const filters = [
     { key: 'm3Filter', label: '3M' },
@@ -55,13 +57,14 @@ function getLowestPassedTimeframe(trade: any): string {
 export default async function DayPage({ params }: { params: Promise<{ slug: string; weekNum: string; day: string }> }) {
   const { slug, weekNum, day } = await params;
   const [year, month] = slug.split("-");
+  const yearNum = parseInt(year);
   const monthIndex = parseInt(month) - 1;
   const monthName = monthNames[Object.keys(monthNames)[monthIndex]];
 
   const allTrades = await fetchTrades();
   const trades = allTrades.filter(t => {
     const d = new Date(t.date);
-    return d.getFullYear() === parseInt(year) && d.getMonth() === monthIndex && d.toISOString().split("T")[0] === day;
+    return d.getFullYear() === yearNum && d.getMonth() === monthIndex && d.toISOString().split("T")[0] === day;
   });
 
   if (trades.length === 0) notFound();
@@ -80,6 +83,11 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
   const triggerDisplay = getLowestPassedTimeframe(trade);
   const youtubeId = getYoutubeId(youtubeLink);
 
+  // ===== CARI NOMOR MINGGU LOKAL =====
+  const weeks = getWeeksOfMonth(yearNum, monthIndex);
+  const localWeekIndex = weeks.findIndex((w) => w.weekNumber === parseInt(weekNum));
+  const localWeekNumber = localWeekIndex !== -1 ? localWeekIndex + 1 : parseInt(weekNum);
+
   let sessionDisplay = session;
   if (time && time !== session) {
     sessionDisplay = `${session} · ${time}`;
@@ -87,6 +95,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
 
   return (
     <>
+      {/* Beranda */}
       <div className="flex justify-end items-center py-3 px-6 border-b border-[#221F1C]">
         <Link
           href="/"
@@ -97,15 +106,17 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
       </div>
 
       <div className="p-6 max-w-6xl mx-auto">
+        {/* Kembali ke minggu — pakai localWeekNumber */}
         <div className="mb-6">
           <Link
             href={`/month/${slug}/week/${weekNum}`}
             className="inline-flex items-center gap-1 text-sm font-mono text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 uppercase tracking-wider"
           >
-            <span>←</span> Kembali ke Minggu {weekNum}
+            <span>←</span> Kembali ke Minggu {localWeekNumber}
           </Link>
         </div>
 
+        {/* HEADER */}
         <header className="mb-6">
           <div className="eyebrow water text-sm tracking-[0.2em]">
             {dayNames[d.getDay()].toUpperCase()} · {d.getDate()} {monthName} {year} · {sessionDisplay}
@@ -142,9 +153,9 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </div>
         </div>
 
-        {/* ===== EMBED YOUTUBE — JARAK KE BAWAH DIPERBESAR ===== */}
+        {/* ===== EMBED YOUTUBE ===== */}
         {youtubeId && (
-          <div className="mx-auto max-w-xs mb-20">   {/* ← jarak lebih besar */}
+          <div className="mx-auto max-w-xs mb-20">
             <div className="aspect-video">
               <iframe
                 src={`https://www.youtube.com/embed/${youtubeId}`}
