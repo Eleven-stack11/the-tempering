@@ -22,7 +22,6 @@ const monthNames: Record<string, string> = {
 export default async function MonthPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  // Validasi slug
   const parts = slug.split("-");
   if (parts.length !== 2) {
     return <div className="p-8 text-[#A6A39C]">Format bulan tidak valid.</div>;
@@ -39,7 +38,6 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
   const allTrades = await fetchTrades();
 
-  // Filter trades bulan ini
   const trades = allTrades.filter((t) => {
     const d = new Date(t.date);
     return !isNaN(d.getTime()) && d.getFullYear() === yearNum && d.getMonth() === monthIndex;
@@ -47,14 +45,11 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
   if (trades.length === 0) notFound();
 
-  // Dapatkan minggu-minggu
   const weeks = getWeeksOfMonth(yearNum, monthIndex);
 
-  // Kelompokkan trade per minggu
   const tradeGroups: Record<number, any[]> = {};
   for (const t of trades) {
     const d = new Date(t.date);
-    // Cari Senin minggu ini
     const monday = new Date(d);
     while (monday.getDay() !== 1) {
       monday.setDate(monday.getDate() - 1);
@@ -68,21 +63,18 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
     }
   }
 
-  // Statistik
   const totalSessions = trades.length;
   const enteredCount = trades.filter((t) => t.status === "Entered").length;
   const missedCount = trades.filter((t) => t.status === "Missed").length;
   const totalConsidered = enteredCount + missedCount;
   const executionRate = totalConsidered > 0 ? Math.round((enteredCount / totalConsidered) * 100) : 0;
 
-  // Pelanggaran: cek di notes
   const violations = trades.filter((t) => 
     t.notes?.toLowerCase().includes("pelanggaran")
   ).length;
 
   const netR = trades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
 
-  // Ambil Monthly Note dari Notion
   let monthlyNote = '';
   for (const t of trades) {
     if (t.monthlyNote && t.monthlyNote.trim().length > 0) {
@@ -96,7 +88,7 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      {/* ===== TOMBOL BERANDA (KANAN ATAS) ===== */}
+      {/* Tombol Beranda (kanan atas) */}
       <div className="flex justify-end items-center mb-4">
         <Link
           href="/"
@@ -106,7 +98,7 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
         </Link>
       </div>
 
-      {/* Tombol kembali ke 2026 (kiri, di bawah) */}
+      {/* Tombol kembali ke 2026 */}
       <div className="mb-4">
         <Link
           href="/"
@@ -159,14 +151,14 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
       {/* Blade Rule */}
       <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
 
-      {/* Weeks List */}
+      {/* ===== MINGGU-MINGGU (FONT LEBIH BESAR) ===== */}
       <section>
         <div className="sec-head">
-          <h2>Minggu-Minggu</h2>
-          <p>{description}</p>
+          <h2 className="text-3xl md:text-4xl">Minggu-Minggu</h2>
+          <p className="text-base md:text-lg text-[#A6A39C]">{description}</p>
         </div>
 
-        <div className="rail">
+        <div className="rail text-base md:text-lg">
           {weeks.map((week, idx) => {
             const weekTrades = tradeGroups[week.weekNumber] || [];
             const weekR = weekTrades.reduce(
@@ -186,24 +178,24 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
               <Link
                 key={week.weekNumber}
                 href={linkHref}
-                className={`rail-row ${hasTrade ? "linked" : "locked"}`}
+                className={`rail-row ${hasTrade ? "linked" : "locked"} py-4 md:py-5 px-4 md:px-6`}
               >
-                <div className="rail-day">
+                <div className="rail-day text-base md:text-lg">
                   {monthLabel}
-                  <b>
+                  <b className="text-2xl md:text-3xl">
                     {startDay}–{endDay}
                   </b>
                 </div>
                 <div className="rail-body">
-                  <h4>Minggu {localWeekNumber}</h4>
-                  <p>
+                  <h4 className="text-lg md:text-xl font-medium">Minggu {localWeekNumber}</h4>
+                  <p className="text-base md:text-lg text-[#A6A39C]">
                     {dateRange} · {weekTrades.length} trade
                   </p>
                 </div>
                 {hasTrade ? (
                   <>
-                    <div className="rail-tag">{weekTrades.length} TRADE</div>
-                    <div className={`rail-tag ${weekR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>
+                    <div className="rail-tag text-sm md:text-base">{weekTrades.length} TRADE</div>
+                    <div className={`rail-tag text-sm md:text-base ${weekR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>
                       {weekR >= 0 ? "+" : ""}
                       {weekR.toFixed(1)}R
                     </div>
@@ -226,11 +218,11 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
       {/* Monthly Note */}
       <section>
         <div className="sec-head">
-          <h2>Catatan Bulanan</h2>
+          <h2 className="text-3xl md:text-4xl">Catatan Bulanan</h2>
         </div>
-        <div className="max-w-2xl text-[#A6A39C] text-base leading-relaxed mb-12">
+        <div className="max-w-2xl text-[#A6A39C] text-base md:text-lg leading-relaxed mb-12">
           <p>{monthlyNote || "✏️ Tidak ada catatan bulanan. Isi properti `Monthly Note` di Notion."}</p>
-          <div className="placeholder-note mt-3">
+          <div className="placeholder-note mt-3 text-sm">
             ✏️ Untuk mengubah catatan, isi properti <code>Monthly Note</code> (Rich Text) di database Notion.
           </div>
         </div>
