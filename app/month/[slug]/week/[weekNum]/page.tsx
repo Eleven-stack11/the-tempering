@@ -57,14 +57,16 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const dayKeys = Object.keys(dayMap).sort();
 
   const netR = weekTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
-  const first = new Date(weekTrades[0].date);
-  const last = new Date(weekTrades[weekTrades.length - 1].date);
+
+  // Gunakan targetWeek.start dan targetWeek.end untuk rentang tanggal yang benar
+  const startDate = targetWeek.start;
+  const endDate = targetWeek.end;
   const monthLabel = monthName.slice(0, 3).toUpperCase();
 
   return (
     <>
       {/* ===== NAVIGASI ATAS: Kembali ke Bulan & Beranda SEJAJAR ===== */}
-      <div className="flex items-center justify-between py-3 px-4 border-b border-[#221F1C] mb-4">
+      <div className="flex items-center justify-between py-3 px-4 border-b border-[#221F1C] mb-8">
         <Link
           href={`/month/${slug}`}
           className="text-sm font-mono text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 uppercase tracking-wider flex items-center gap-1"
@@ -80,17 +82,17 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
       </div>
 
       <div className="p-6 max-w-6xl mx-auto">
-        {/* Header */}
-        <header className="mb-10 mt-4">
+        {/* ===== HEADER UTAMA — rentang tanggal diperbaiki ===== */}
+        <header className="mb-10 mt-2">
           <div className="font-['Big_Shoulders'] font-black text-[clamp(28px,4.5vw,52px)] leading-tight">
-            MINGGU {localWeekNumber} · {monthLabel} {first.getDate()} – {monthLabel} {last.getDate()}
+            MINGGU {localWeekNumber} · {monthLabel} {startDate.getDate()} – {monthLabel} {endDate.getDate()}
           </div>
           <p className="text-lg md:text-xl text-[#A6A39C] mt-2">
             {weekTrades.length} trade tercatat minggu ini. Net R {netR >= 0 ? "+" : ""}{netR.toFixed(1)}R
           </p>
         </header>
 
-        {/* TESIS PRA-PASAR */}
+        {/* ===== TESIS PRA-PASAR ===== */}
         <section className="mb-10 border-b border-[#221F1C] pb-8">
           <div className="eyebrow water text-base md:text-lg">TESIS PRA-PASAR</div>
           <div className="body-copy text-base md:text-lg mt-2">
@@ -104,7 +106,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
         <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
 
-        {/* MINGGU INI */}
+        {/* ===== MINGGU INI ===== */}
         <section className="mb-10">
           <div className="sec-head">
             <h2 className="text-3xl md:text-4xl">Minggu Ini</h2>
@@ -194,7 +196,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
         <div className="ink-divider"></div>
 
-        {/* REVIEW MINGGUAN */}
+        {/* ===== REVIEW MINGGUAN ===== */}
         <section>
           <div className="sec-head">
             <h2 className="text-3xl md:text-4xl">Sabtu — Rincian Lengkap</h2>
