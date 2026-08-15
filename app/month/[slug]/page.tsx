@@ -150,7 +150,7 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
       {/* Weeks List */}
       <section>
         <div className="sec-head">
-          <h2>Pra-bulan</h2>
+          <h2>Monthly note</h2>
           <p>{description}</p>
         </div>
 
