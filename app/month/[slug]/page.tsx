@@ -151,7 +151,7 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
       {/* Blade Rule */}
       <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
 
-      {/* ===== MINGGU-MINGGU (FONT LEBIH BESAR) ===== */}
+      {/* ===== MINGGU-MINGGU ===== */}
       <section>
         <div className="sec-head">
           <h2 className="text-3xl md:text-4xl">Minggu-Minggu</h2>
@@ -194,11 +194,11 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
                 </div>
                 {hasTrade ? (
                   <>
-                    {/* === PERBESAR FONT DI SINI === */}
-                    <div className="rail-tag text-base md:text-xl font-bold tracking-wider">
+                    {/* ===== TRADE & R DI KANAN ===== */}
+                    <div className="rail-tag text-base md:text-2xl font-bold tracking-wider">
                       {weekTrades.length} TRADE
                     </div>
-                    <div className={`rail-tag text-base md:text-xl font-bold tracking-wider ${weekR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>
+                    <div className={`rail-tag text-base md:text-2xl font-bold tracking-wider ${weekR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>
                       {weekR >= 0 ? "+" : ""}
                       {weekR.toFixed(1)}R
                     </div>
