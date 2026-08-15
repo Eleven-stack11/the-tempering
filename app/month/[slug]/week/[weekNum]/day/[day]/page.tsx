@@ -20,7 +20,7 @@ const monthNames: Record<string, string> = {
 };
 const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
-// Helper: ekstrak ID YouTube dari berbagai format URL
+// Helper: ekstrak ID YouTube
 function getYoutubeId(url: string): string | null {
   if (!url) return null;
   const patterns = [
@@ -36,7 +36,7 @@ function getYoutubeId(url: string): string | null {
   return null;
 }
 
-// Helper: cari timeframe terbawah yang bernilai "Pass"
+// Helper: timeframe terbawah
 function getLowestPassedTimeframe(trade: any): string {
   const filters = [
     { key: 'm3Filter', label: '3M' },
@@ -110,14 +110,14 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </Link>
         </div>
 
-        {/* ===== HEADER ===== */}
+        {/* HEADER */}
         <header className="mb-6">
           <div className="eyebrow water text-sm tracking-[0.2em]">
             {dayNames[d.getDay()].toUpperCase()} · {d.getDate()} {monthName} {year} · {sessionDisplay}
           </div>
         </header>
 
-        {/* ===== DATA TABLE — HIGHLIGHT UTAMA ===== */}
+        {/* DATA TABLE */}
         <div className="grid grid-cols-4 gap-6 mb-12 mt-16 p-8 md:p-10 bg-[#1A1918] border border-[#2C2A27]">
           <div className="text-center">
             <div className="font-mono text-sm uppercase text-[#6E6B65] tracking-wider mb-3">Instrumen</div>
@@ -147,19 +147,17 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </div>
         </div>
 
-        {/* ===== EMBED YOUTUBE ===== */}
+        {/* ===== EMBED YOUTUBE — CENTER & LEBIH TINGGI ===== */}
         {youtubeId && (
-          <div className="mb-10 pb-4 border-b border-[#221F1C]">
-            <div className="aspect-video w-full max-w-3xl">
-              <iframe
-                src={`https://www.youtube.com/embed/${youtubeId}`}
-                title="Rekaman sesi trading"
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-            </div>
-            <div className="text-sm text-[#A6A39C] mt-2">
+          <div className="mx-auto max-w-2xl aspect-[4/3] mb-10 pb-4 border-b border-[#221F1C]">
+            <iframe
+              src={`https://www.youtube.com/embed/${youtubeId}`}
+              title="Rekaman sesi trading"
+              className="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+            <div className="text-sm text-[#A6A39C] mt-2 text-center">
               📹 Rekaman sesi — klik play untuk menonton
             </div>
           </div>
