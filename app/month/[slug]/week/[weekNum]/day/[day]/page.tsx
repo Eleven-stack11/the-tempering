@@ -101,7 +101,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
         </header>
 
         {/* ===== DATA TABLE — HIGHLIGHT UTAMA (SUPER BESAR) ===== */}
-        <div className="grid grid-cols-4 gap-6 mb-10 mt-16 p-8 md:p-10 bg-[#1A1918] border border-[#2C2A27]">
+        <div className="grid grid-cols-4 gap-6 mb-12 mt-16 p-8 md:p-10 bg-[#1A1918] border border-[#2C2A27]">
           <div className="text-center">
             <div className="font-mono text-sm uppercase text-[#6E6B65] tracking-wider mb-3">
               Instrumen
@@ -178,35 +178,35 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </div>
         </section>
 
-        {/* ===== HASIL (BAGIAN BAWAH — DIPERKECIL) ===== */}
+        {/* ===== HASIL (BAGIAN BAWAH — TETAP BESAR) ===== */}
         <section className="pt-4 border-t border-[#221F1C]">
           <div className="eyebrow text-sm">HASIL</div>
-          <h2 className="font-['Big_Shoulders'] font-bold text-xl mb-4 text-[#A6A39C]">Grade & hasil akhir</h2>
+          <h2 className="font-['Big_Shoulders'] font-bold text-2xl mb-6">Grade & hasil akhir</h2>
 
-          <div className="grid grid-cols-4 gap-1 bg-[#221F1C] border border-[#221F1C] max-w-3xl">
-            <div className="bg-[#1A1918] p-4 text-center">
-              <div className="font-mono text-[10px] uppercase text-[#6E6B65] tracking-wider">Grade Setup</div>
-              <div className="text-2xl font-bold text-[#C49A3C]">{trade.grade}</div>
+          <div className="stat-strip">
+            <div className="stat">
+              <div className="stat-label text-xs uppercase tracking-wider">Grade Setup</div>
+              <div className="stat-value text-3xl md:text-5xl gold">{trade.grade}</div>
             </div>
-            <div className="bg-[#1A1918] p-4 text-center">
-              <div className="font-mono text-[10px] uppercase text-[#6E6B65] tracking-wider">Hasil Akhir</div>
-              <div className={`text-2xl font-bold ${isWin ? "text-[#C49A3C]" : "text-[#8B3A1F]"}`}>
+            <div className="stat">
+              <div className="stat-label text-xs uppercase tracking-wider">Hasil Akhir</div>
+              <div className={`stat-value text-3xl md:text-5xl ${isWin ? "gold" : "rust"}`}>
                 {isWin ? "Profit" : isLoss ? "Rugi" : "Scratch"}
               </div>
             </div>
-            <div className="bg-[#1A1918] p-4 text-center">
-              <div className="font-mono text-[10px] uppercase text-[#6E6B65] tracking-wider">Hasil R</div>
-              <div className={`text-2xl font-bold ${isWin ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>
+            <div className="stat">
+              <div className="stat-label text-xs uppercase tracking-wider">Hasil R</div>
+              <div className={`stat-value text-3xl md:text-5xl ${isWin ? "water" : "rust"}`}>
                 {isWin ? "+" : ""}{trade.r}R
               </div>
             </div>
-            <div className="bg-[#1A1918] p-4 text-center">
-              <div className="font-mono text-[10px] uppercase text-[#6E6B65] tracking-wider">Pelanggaran</div>
-              <div className="text-2xl font-bold text-[#E8E6E1]">0</div>
+            <div className="stat">
+              <div className="stat-label text-xs uppercase tracking-wider">Pelanggaran</div>
+              <div className="stat-value text-3xl md:text-5xl">0</div>
             </div>
           </div>
 
-          <div className="text-[#A6A39C] text-sm max-w-3xl mt-4 leading-relaxed">
+          <div className="text-[#A6A39C] text-base max-w-3xl mt-6 leading-relaxed">
             <p>✏️ Kesimpulan jujur — kenapa grade ini, dan perbaikan untuk lain kali.</p>
           </div>
         </section>
