@@ -65,8 +65,12 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
 
   const triggerDisplay = getLowestPassedTimeframe(trade);
 
-  // Gabungkan session + time jika ada
-  const sessionDisplay = time ? `${session} · ${time}` : session;
+  // === PERBAIKAN: hanya tampilkan session + time jika berbeda ===
+  let sessionDisplay = session;
+  if (time && time !== session) {
+    sessionDisplay = `${session} · ${time}`;
+  }
+  // Jika time sama dengan session, hanya tampilkan satu
 
   return (
     <>
@@ -123,7 +127,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </div>
         </div>
 
-        {/* ===== LINK YOUTUBE (jika ada) ===== */}
+        {/* ===== LINK YOUTUBE (di bawah meta, sebelum Pra-pasar) ===== */}
         {youtubeLink && (
           <div className="mb-8 pb-4 border-b border-[#221F1C]">
             <a
