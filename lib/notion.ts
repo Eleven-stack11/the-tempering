@@ -68,7 +68,7 @@ export async function fetchTrades(): Promise<any[]> {
       const date = page.properties.Date?.date?.start || '';
       const position = page.properties.Position?.select?.name || 'Long';
 
-      // === PROPERTI BARU ===
+      // === PROPERTI ===
       const praPasar = getRichText(page, 'Pra-pasar');
       const eksekusi = getRichText(page, 'Eksekusi');
       const monthlyNote = getRichText(page, 'Monthly Note');
@@ -76,7 +76,12 @@ export async function fetchTrades(): Promise<any[]> {
       const psychology = getRichText(page, 'Psikologi');
       const chartLesson = getRichText(page, 'Pelajaran Chart');
 
-      // RR
+      // === TIME / SESSION ===
+      const session = page.properties.Session?.select?.name || 
+                      page.properties.Time?.select?.name || 
+                      'LONDON';
+
+      // === RR ===
       let rrRaw = null;
       const rrProp = page.properties.RR;
       if (rrProp) {
@@ -92,6 +97,7 @@ export async function fetchTrades(): Promise<any[]> {
       const youtube = page.properties.YouTube?.url || '';
       const status = page.properties.Status?.select?.name || 'Entered';
 
+      // === FILTERS (untuk menentukan timeframe terbawah) ===
       const dailyFilter = page.properties['Daily filter']?.select?.name || '';
       const h4Filter = page.properties['4H filter']?.select?.name || '';
       const h1Filter = page.properties['1H close filter']?.select?.name || '';
@@ -99,6 +105,7 @@ export async function fetchTrades(): Promise<any[]> {
       const m5Filter = page.properties['5M filter']?.select?.name || '';
       const m3Filter = page.properties['3M filter']?.select?.name || '';
 
+      // === BUILD TRIGGER (untuk keperluan lain, tetap disimpan) ===
       const triggerParts = [];
       if (dailyFilter) triggerParts.push(`Daily:${dailyFilter}`);
       if (h4Filter) triggerParts.push(`4H:${h4Filter}`);
@@ -121,22 +128,30 @@ export async function fetchTrades(): Promise<any[]> {
       return {
         id: page.id,
         date,
-        title: `${position} ${page.properties.Instrument?.select?.name || 'NQ'}`, // judul sederhana
+        title: `${position} ${page.properties.Instrument?.select?.name || 'NQ'}`,
         instrument: page.properties.Instrument?.select?.name || 'NQ',
         direction: position === 'Short' ? 'Short' : 'Long',
-        trigger,
+        trigger, // tetap ada untuk keperluan lain
         result: rrData.result,
         grade,
         r: rrData.value,
         notes: praPasar || eksekusi || '',
-        praPasar: praPasar,
-        eksekusi: eksekusi,
-        monthlyNote: monthlyNote,
+        praPasar,
+        eksekusi,
+        monthlyNote,
+        session, // <-- SESSION / TIME
         link: youtube || '',
         status,
         weeklyThesis,
         psychology,
         chartLesson,
+        // --- filter values untuk menentukan timeframe terbawah ---
+        dailyFilter,
+        h4Filter,
+        h1Filter,
+        m15Filter,
+        m5Filter,
+        m3Filter,
         createdAt: page.created_time,
       };
     });
