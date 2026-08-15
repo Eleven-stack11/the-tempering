@@ -76,10 +76,12 @@ export async function fetchTrades(): Promise<any[]> {
       const psychology = getRichText(page, 'Psikologi');
       const chartLesson = getRichText(page, 'Pelajaran Chart');
 
-      // === TIME / SESSION ===
-      const session = page.properties.Session?.select?.name || 
-                      page.properties.Time?.select?.name || 
-                      'LONDON';
+      // === SESSION & TIME ===
+      const session = page.properties.Session?.select?.name || page.properties.Time?.select?.name || 'LONDON';
+      const time = page.properties.Time?.select?.name || page.properties.Session?.select?.name || '';
+
+      // === LINK YOUTUBE ===
+      const youtubeLink = page.properties.YouTube?.url || '';
 
       // === RR ===
       let rrRaw = null;
@@ -94,10 +96,9 @@ export async function fetchTrades(): Promise<any[]> {
 
       const halfRisk = page.properties['Half risk (if not...)']?.checkbox || false;
       const setupGrade = page.properties['Setup Grade']?.select?.name || 'B';
-      const youtube = page.properties.YouTube?.url || '';
       const status = page.properties.Status?.select?.name || 'Entered';
 
-      // === FILTERS (untuk menentukan timeframe terbawah) ===
+      // === FILTERS ===
       const dailyFilter = page.properties['Daily filter']?.select?.name || '';
       const h4Filter = page.properties['4H filter']?.select?.name || '';
       const h1Filter = page.properties['1H close filter']?.select?.name || '';
@@ -105,7 +106,6 @@ export async function fetchTrades(): Promise<any[]> {
       const m5Filter = page.properties['5M filter']?.select?.name || '';
       const m3Filter = page.properties['3M filter']?.select?.name || '';
 
-      // === BUILD TRIGGER (untuk keperluan lain, tetap disimpan) ===
       const triggerParts = [];
       if (dailyFilter) triggerParts.push(`Daily:${dailyFilter}`);
       if (h4Filter) triggerParts.push(`4H:${h4Filter}`);
@@ -131,7 +131,7 @@ export async function fetchTrades(): Promise<any[]> {
         title: `${position} ${page.properties.Instrument?.select?.name || 'NQ'}`,
         instrument: page.properties.Instrument?.select?.name || 'NQ',
         direction: position === 'Short' ? 'Short' : 'Long',
-        trigger, // tetap ada untuk keperluan lain
+        trigger,
         result: rrData.result,
         grade,
         r: rrData.value,
@@ -139,13 +139,13 @@ export async function fetchTrades(): Promise<any[]> {
         praPasar,
         eksekusi,
         monthlyNote,
-        session, // <-- SESSION / TIME
-        link: youtube || '',
+        session,
+        time, // <-- TIME
+        link: youtubeLink, // <-- LINK YOUTUBE
         status,
         weeklyThesis,
         psychology,
         chartLesson,
-        // --- filter values untuk menentukan timeframe terbawah ---
         dailyFilter,
         h4Filter,
         h1Filter,
