@@ -64,18 +64,14 @@ export async function fetchTrades(): Promise<any[]> {
 
     const data = await res.json();
 
-    if (data.results && data.results.length > 0) {
-      const first = data.results[0];
-      console.log("🔍 Properti tersedia:", Object.keys(first.properties).join(', '));
-    }
-
     return data.results.map((page: any) => {
       const date = page.properties.Date?.date?.start || '';
-      const details = getRichText(page, 'Details');
-      const monthlyNote = getRichText(page, 'Monthly Note');
       const position = page.properties.Position?.select?.name || 'Long';
 
-      // === PROPERI BARU ===
+      // === PROPERTI BARU ===
+      const praPasar = getRichText(page, 'Pra-pasar');
+      const eksekusi = getRichText(page, 'Eksekusi');
+      const monthlyNote = getRichText(page, 'Monthly Note');
       const weeklyThesis = getRichText(page, 'Weekly Thesis');
       const psychology = getRichText(page, 'Psikologi');
       const chartLesson = getRichText(page, 'Pelajaran Chart');
@@ -125,15 +121,17 @@ export async function fetchTrades(): Promise<any[]> {
       return {
         id: page.id,
         date,
-        title: details.slice(0, 60) || 'Untitled',
-        instrument: 'NQ',
+        title: `${position} ${page.properties.Instrument?.select?.name || 'NQ'}`, // judul sederhana
+        instrument: page.properties.Instrument?.select?.name || 'NQ',
         direction: position === 'Short' ? 'Short' : 'Long',
         trigger,
         result: rrData.result,
         grade,
         r: rrData.value,
-        notes: details || monthlyNote || '',
-        monthlyNote: monthlyNote, // <-- INI PENTING
+        notes: praPasar || eksekusi || '',
+        praPasar: praPasar,
+        eksekusi: eksekusi,
+        monthlyNote: monthlyNote,
         link: youtube || '',
         status,
         weeklyThesis,
