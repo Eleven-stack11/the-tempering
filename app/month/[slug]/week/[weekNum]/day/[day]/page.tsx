@@ -147,16 +147,18 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </div>
         </div>
 
-        {/* ===== EMBED YOUTUBE — CENTER & LEBIH TINGGI ===== */}
+        {/* ===== EMBED YOUTUBE — CENTER, TIDAK MELEBAR ===== */}
         {youtubeId && (
-          <div className="mx-auto max-w-2xl aspect-[4/3] mb-10 pb-4 border-b border-[#221F1C]">
-            <iframe
-              src={`https://www.youtube.com/embed/${youtubeId}`}
-              title="Rekaman sesi trading"
-              className="w-full h-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
+          <div className="mx-auto max-w-xl mb-10 pb-4 border-b border-[#221F1C]">
+            <div className="aspect-video w-full">
+              <iframe
+                src={`https://www.youtube.com/embed/${youtubeId}`}
+                title="Rekaman sesi trading"
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
             <div className="text-sm text-[#A6A39C] mt-2 text-center">
               📹 Rekaman sesi — klik play untuk menonton
             </div>
