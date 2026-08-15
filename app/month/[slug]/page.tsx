@@ -54,7 +54,6 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
   const tradeGroups: Record<number, any[]> = {};
   for (const t of trades) {
     const d = new Date(t.date);
-    // Cari Senin minggu ini
     const monday = new Date(d);
     while (monday.getDay() !== 1) {
       monday.setDate(monday.getDate() - 1);
@@ -79,7 +78,6 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
   const netR = trades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
 
   // ===== AMBIL MONTHLY NOTE DARI PROPERTI YANG BENAR =====
-  // Cari trade pertama yang memiliki isi properti 'Monthly Note'
   let monthlyNote = '';
   for (const t of trades) {
     if (t.monthlyNote && t.monthlyNote.trim().length > 0) {
@@ -88,13 +86,11 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
     }
   }
 
-  // Jika kosong, gunakan default
   const defaultDesc = "Bacaan hari Minggu, lima sesi kontak dengan pasar, dan pertanggungjawaban jujur hari Sabtu.";
   const description = monthlyNote || defaultDesc;
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      {/* Tombol kembali ke homepage */}
       <div className="mb-4">
         <Link
           href="/"
@@ -104,7 +100,6 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
         </Link>
       </div>
 
-      {/* Header */}
       <header className="mb-8">
         <div className="eyebrow steel">BULAN {String(monthIndex + 1).padStart(2, "0")} · {year}</div>
         <h1 className="font-['Big_Shoulders'] font-black text-[clamp(44px,7vw,80px)] leading-tight">
@@ -115,7 +110,6 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
         </p>
       </header>
 
-      {/* Stat Strip */}
       <section className="mb-8">
         <div className="stat-strip">
           <div className="stat">
@@ -144,13 +138,11 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
         </div>
       </section>
 
-      {/* Blade Rule */}
       <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
 
-      {/* Weeks List */}
       <section>
         <div className="sec-head">
-          <h2>Monthly note</h2>
+          <h2>Minggu-Minggu</h2>
           <p>{description}</p>
         </div>
 
@@ -165,7 +157,6 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
             const endDay = week.end.getDate();
             const monthLabel = monthName.slice(0, 3).toUpperCase();
             const dateRange = `${startDay}–${endDay} ${monthName} ${year}`;
-
             const hasTrade = weekTrades.length > 0;
             const linkHref = hasTrade ? `/month/${slug}/week/${week.weekNumber}` : "#";
             const localWeekNumber = idx + 1;
@@ -208,10 +199,8 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
         </div>
       </section>
 
-      {/* Divider */}
       <div className="ink-divider"></div>
 
-      {/* Catatan Bulanan — juga pakai monthlyNote */}
       <section>
         <div className="sec-head">
           <h2>Catatan Bulanan</h2>
