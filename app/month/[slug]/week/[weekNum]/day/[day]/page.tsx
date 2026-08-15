@@ -20,6 +20,22 @@ const monthNames: Record<string, string> = {
 };
 const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
+// Helper: ekstrak ID YouTube dari berbagai format URL
+function getYoutubeId(url: string): string | null {
+  if (!url) return null;
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=)([\w-]+)/,
+    /(?:youtu\.be\/)([\w-]+)/,
+    /(?:youtube\.com\/embed\/)([\w-]+)/,
+    /(?:youtube\.com\/v\/)([\w-]+)/,
+  ];
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match) return match[1];
+  }
+  return null;
+}
+
 // Helper: cari timeframe terbawah yang bernilai "Pass"
 function getLowestPassedTimeframe(trade: any): string {
   const filters = [
@@ -64,6 +80,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
   const youtubeLink = trade.link || '';
 
   const triggerDisplay = getLowestPassedTimeframe(trade);
+  const youtubeId = getYoutubeId(youtubeLink);
 
   let sessionDisplay = session;
   if (time && time !== session) {
@@ -100,36 +117,28 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </div>
         </header>
 
-        {/* ===== DATA TABLE — HIGHLIGHT UTAMA (SUPER BESAR) ===== */}
+        {/* ===== DATA TABLE — HIGHLIGHT UTAMA ===== */}
         <div className="grid grid-cols-4 gap-6 mb-12 mt-16 p-8 md:p-10 bg-[#1A1918] border border-[#2C2A27]">
           <div className="text-center">
-            <div className="font-mono text-sm uppercase text-[#6E6B65] tracking-wider mb-3">
-              Instrumen
-            </div>
+            <div className="font-mono text-sm uppercase text-[#6E6B65] tracking-wider mb-3">Instrumen</div>
             <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#E8E6E1] tracking-wide">
               {trade.instrument}
             </div>
           </div>
           <div className="text-center">
-            <div className="font-mono text-sm uppercase text-[#6E6B65] tracking-wider mb-3">
-              Arah
-            </div>
+            <div className="font-mono text-sm uppercase text-[#6E6B65] tracking-wider mb-3">Arah</div>
             <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#E8E6E1] tracking-wide">
               {trade.direction}
             </div>
           </div>
           <div className="text-center">
-            <div className="font-mono text-sm uppercase text-[#6E6B65] tracking-wider mb-3">
-              Trigger Entry
-            </div>
+            <div className="font-mono text-sm uppercase text-[#6E6B65] tracking-wider mb-3">Trigger Entry</div>
             <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#E8E6E1] tracking-wide">
               {triggerDisplay}
             </div>
           </div>
           <div className="text-center">
-            <div className="font-mono text-sm uppercase text-[#6E6B65] tracking-wider mb-3">
-              Hasil
-            </div>
+            <div className="font-mono text-sm uppercase text-[#6E6B65] tracking-wider mb-3">Hasil</div>
             <div className={`text-4xl md:text-5xl lg:text-6xl font-bold tracking-wide ${
               isWin ? "text-[#C49A3C]" : isLoss ? "text-[#8B3A1F]" : "text-[#E8E6E1]"
             }`}>
@@ -138,17 +147,21 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </div>
         </div>
 
-        {/* ===== LINK YOUTUBE ===== */}
-        {youtubeLink && (
-          <div className="mb-8 pb-4 border-b border-[#221F1C]">
-            <a
-              href={youtubeLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-[#C49A3C] hover:text-[#E8E6E1] transition-colors duration-200 font-medium"
-            >
-              <span className="text-xl">▶</span> Tonton rekaman sesi di YouTube
-            </a>
+        {/* ===== EMBED YOUTUBE ===== */}
+        {youtubeId && (
+          <div className="mb-10 pb-4 border-b border-[#221F1C]">
+            <div className="aspect-video w-full max-w-3xl">
+              <iframe
+                src={`https://www.youtube.com/embed/${youtubeId}`}
+                title="Rekaman sesi trading"
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+            <div className="text-sm text-[#A6A39C] mt-2">
+              📹 Rekaman sesi — klik play untuk menonton
+            </div>
           </div>
         )}
 
@@ -178,7 +191,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </div>
         </section>
 
-        {/* ===== HASIL (BAGIAN BAWAH — TETAP BESAR) ===== */}
+        {/* ===== HASIL (BAGIAN BAWAH) ===== */}
         <section className="pt-4 border-t border-[#221F1C]">
           <div className="eyebrow text-sm">HASIL</div>
           <h2 className="font-['Big_Shoulders'] font-bold text-2xl mb-6">Grade & hasil akhir</h2>
