@@ -20,7 +20,6 @@ const monthNames: Record<string, string> = {
 };
 const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
-// Helper: ekstrak ID YouTube
 function getYoutubeId(url: string): string | null {
   if (!url) return null;
   const patterns = [
@@ -36,7 +35,6 @@ function getYoutubeId(url: string): string | null {
   return null;
 }
 
-// Helper: timeframe terbawah
 function getLowestPassedTimeframe(trade: any): string {
   const filters = [
     { key: 'm3Filter', label: '3M' },
@@ -83,7 +81,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
   const triggerDisplay = getLowestPassedTimeframe(trade);
   const youtubeId = getYoutubeId(youtubeLink);
 
-  // ===== CARI NOMOR MINGGU LOKAL =====
+  // Cari nomor minggu lokal
   const weeks = getWeeksOfMonth(yearNum, monthIndex);
   const localWeekIndex = weeks.findIndex((w) => w.weekNumber === parseInt(weekNum));
   const localWeekNumber = localWeekIndex !== -1 ? localWeekIndex + 1 : parseInt(weekNum);
@@ -95,8 +93,17 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
 
   return (
     <>
-      {/* Beranda */}
-      <div className="flex justify-end items-center py-3 px-6 border-b border-[#221F1C]">
+      {/* ===== NAVIGASI ATAS: Beranda & Kembali SEJAJAR ===== */}
+      <div className="flex items-center justify-between py-3 px-6 border-b border-[#221F1C]">
+        {/* Kembali ke Minggu */}
+        <Link
+          href={`/month/${slug}/week/${weekNum}`}
+          className="text-sm font-mono text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 uppercase tracking-wider flex items-center gap-1"
+        >
+          <span>←</span> Kembali ke Minggu {localWeekNumber}
+        </Link>
+
+        {/* Beranda */}
         <Link
           href="/"
           className="font-mono text-xs uppercase tracking-widest text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 flex items-center gap-1.5"
@@ -106,25 +113,15 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
       </div>
 
       <div className="p-6 max-w-6xl mx-auto">
-        {/* Kembali ke minggu — pakai localWeekNumber */}
-        <div className="mb-6">
-          <Link
-            href={`/month/${slug}/week/${weekNum}`}
-            className="inline-flex items-center gap-1 text-sm font-mono text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 uppercase tracking-wider"
-          >
-            <span>←</span> Kembali ke Minggu {localWeekNumber}
-          </Link>
-        </div>
-
         {/* HEADER */}
-        <header className="mb-6">
+        <header className="mb-10 mt-6">
           <div className="eyebrow water text-sm tracking-[0.2em]">
             {dayNames[d.getDay()].toUpperCase()} · {d.getDate()} {monthName} {year} · {sessionDisplay}
           </div>
         </header>
 
         {/* DATA TABLE */}
-        <div className="grid grid-cols-4 gap-6 mb-12 mt-16 p-8 md:p-10 bg-[#1A1918] border border-[#2C2A27]">
+        <div className="grid grid-cols-4 gap-6 mb-16 mt-10 p-8 md:p-10 bg-[#1A1918] border border-[#2C2A27]">
           <div className="text-center">
             <div className="font-mono text-sm uppercase text-[#6E6B65] tracking-wider mb-3">Instrumen</div>
             <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#E8E6E1] tracking-wide">
@@ -153,7 +150,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </div>
         </div>
 
-        {/* ===== EMBED YOUTUBE ===== */}
+        {/* ===== YOUTUBE ===== */}
         {youtubeId && (
           <div className="mx-auto max-w-xs mb-20">
             <div className="aspect-video">
@@ -172,7 +169,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
         )}
 
         {/* ===== PRA-PASAR ===== */}
-        <section className="mb-16">
+        <section className="mb-20">
           <div className="eyebrow water text-sm">BACAAN PRA-PASAR</div>
           <h2 className="font-['Big_Shoulders'] font-bold text-2xl mb-6">Sebelum sesi dimulai</h2>
           <div className="text-[#E8E6E1] text-base leading-relaxed max-w-4xl min-h-[100px]">
@@ -185,7 +182,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
         </section>
 
         {/* ===== EKSEKUSI ===== */}
-        <section className="mb-16">
+        <section className="mb-20">
           <div className="eyebrow steel text-sm">APA YANG DILAKUKAN HARGA — EKSEKUSI</div>
           <h2 className="font-['Big_Shoulders'] font-bold text-2xl mb-6">Alasan Entry & Detail Eksekusi</h2>
           <div className="text-[#E8E6E1] text-base leading-relaxed max-w-4xl min-h-[100px]">
