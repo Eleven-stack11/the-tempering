@@ -20,6 +20,7 @@ const monthNames: Record<string, string> = {
 };
 const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
+// Helper: cari timeframe terbawah yang bernilai "Pass"
 function getLowestPassedTimeframe(trade: any): string {
   const filters = [
     { key: 'm3Filter', label: '3M' },
@@ -64,6 +65,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
 
   const triggerDisplay = getLowestPassedTimeframe(trade);
 
+  // Session display
   let sessionDisplay = session;
   if (time && time !== session) {
     sessionDisplay = `${session} · ${time}`;
@@ -92,31 +94,42 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </Link>
         </div>
 
-        {/* Header — tanpa judul besar */}
-        <header className="mb-6">
-          <div className="eyebrow water text-sm">
+        {/* ===== HEADER ===== */}
+        <header className="mb-10">
+          <div className="eyebrow water text-sm tracking-[0.2em]">
             {dayNames[d.getDay()].toUpperCase()} · {d.getDate()} {monthName} {year} · {sessionDisplay}
           </div>
         </header>
 
-        {/* ===== META INFO — TABEL LEBIH BESAR ===== */}
-        <div className="grid grid-cols-4 gap-8 mb-8 pb-6 border-b border-[#221F1C]">
-          <div>
-            <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider">Instrumen</div>
-            <div className="text-2xl font-medium text-[#E8E6E1]">{trade.instrument}</div>
+        {/* ===== DATA TABLE — HIGHLIGHT UTAMA ===== */}
+        <div className="grid grid-cols-4 gap-6 mb-10 mt-8 p-8 bg-[#1A1918] border border-[#2C2A27] rounded-none">
+          <div className="text-center">
+            <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider mb-2">Instrumen</div>
+            <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#E8E6E1] tracking-wide">
+              {trade.instrument}
+            </div>
           </div>
-          <div>
-            <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider">Arah</div>
-            <div className="text-2xl font-medium text-[#E8E6E1]">{trade.direction}</div>
+          <div className="text-center">
+            <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider mb-2">Arah</div>
+            <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#E8E6E1] tracking-wide">
+              {trade.direction}
+            </div>
           </div>
-          <div>
-            <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider">Trigger Entry</div>
-            <div className="text-2xl font-medium text-[#E8E6E1]">{triggerDisplay}</div>
+          <div className="text-center">
+            <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider mb-2">Trigger Entry</div>
+            <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#E8E6E1] tracking-wide">
+              {triggerDisplay}
+            </div>
           </div>
-          <div>
-            <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider">Hasil</div>
-            <div className={`text-2xl font-medium ${isWin ? "text-[#C49A3C]" : isLoss ? "text-[#8B3A1F]" : "text-[#E8E6E1]"}`}>
-              {isWin ? `+${trade.r}R · Profit` : isLoss ? `−${trade.r}R · Rugi` : `${trade.r}R · Scratch`}
+          <div className="text-center">
+            <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider mb-2">Hasil</div>
+            <div className={`text-3xl md:text-4xl lg:text-5xl font-bold tracking-wide ${
+              isWin ? "text-[#C49A3C]" : isLoss ? "text-[#8B3A1F]" : "text-[#E8E6E1]"
+            }`}>
+              {isWin ? `+${trade.r}R` : isLoss ? `−${trade.r}R` : `${trade.r}R`}
+              <span className="text-base md:text-lg font-normal text-[#A6A39C] block mt-1">
+                {isWin ? "Profit" : isLoss ? "Rugi" : "Scratch"}
+              </span>
             </div>
           </div>
         </div>
@@ -128,9 +141,9 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
               href={youtubeLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-[#C49A3C] hover:text-[#E8E6E1] transition-colors duration-200 font-medium text-lg"
+              className="inline-flex items-center gap-2 text-[#C49A3C] hover:text-[#E8E6E1] transition-colors duration-200 font-medium"
             >
-              <span className="text-2xl">▶</span> Tonton rekaman sesi di YouTube
+              <span className="text-xl">▶</span> Tonton rekaman sesi di YouTube
             </a>
           </div>
         )}
@@ -139,7 +152,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
         <section className="mb-16">
           <div className="eyebrow water text-sm">BACAAN PRA-PASAR</div>
           <h2 className="font-['Big_Shoulders'] font-bold text-2xl mb-6">Sebelum sesi dimulai</h2>
-          <div className="text-[#E8E6E1] text-base leading-relaxed max-w-4xl min-h-[120px]">
+          <div className="text-[#E8E6E1] text-base leading-relaxed max-w-4xl min-h-[100px]">
             {praPasar ? (
               <div className="whitespace-pre-wrap">{praPasar}</div>
             ) : (
@@ -152,7 +165,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
         <section className="mb-16">
           <div className="eyebrow steel text-sm">APA YANG DILAKUKAN HARGA — EKSEKUSI</div>
           <h2 className="font-['Big_Shoulders'] font-bold text-2xl mb-6">Alasan Entry & Detail Eksekusi</h2>
-          <div className="text-[#E8E6E1] text-base leading-relaxed max-w-4xl min-h-[120px]">
+          <div className="text-[#E8E6E1] text-base leading-relaxed max-w-4xl min-h-[100px]">
             {eksekusi ? (
               <div className="whitespace-pre-wrap">{eksekusi}</div>
             ) : (
