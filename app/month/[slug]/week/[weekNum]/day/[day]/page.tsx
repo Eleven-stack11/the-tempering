@@ -20,6 +20,24 @@ const monthNames: Record<string, string> = {
 };
 const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
+// Helper: cari timeframe terbawah yang bernilai "Pass"
+function getLowestPassedTimeframe(trade: any): string {
+  const filters = [
+    { key: 'm3Filter', label: '3M' },
+    { key: 'm5Filter', label: '5M' },
+    { key: 'm15Filter', label: '15M' },
+    { key: 'h1Filter', label: '1H' },
+    { key: 'h4Filter', label: '4H' },
+    { key: 'dailyFilter', label: 'Daily' },
+  ];
+  for (const f of filters) {
+    if (trade[f.key] === 'Pass') {
+      return f.label;
+    }
+  }
+  return '—';
+}
+
 export default async function DayPage({ params }: { params: Promise<{ slug: string; weekNum: string; day: string }> }) {
   const { slug, weekNum, day } = await params;
   const [year, month] = slug.split("-");
@@ -41,6 +59,10 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
 
   const praPasar = trade.praPasar || '';
   const eksekusi = trade.eksekusi || '';
+  const session = trade.session || 'LONDON';
+
+  // Trigger = timeframe terbawah yang "Pass"
+  const triggerDisplay = getLowestPassedTimeframe(trade);
 
   return (
     <>
@@ -68,15 +90,15 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
         {/* Header */}
         <header className="mb-10">
           <div className="eyebrow water text-sm">
-            {dayNames[d.getDay()].toUpperCase()} · {d.getDate()} {monthName} {year} · LONDON
+            {dayNames[d.getDay()].toUpperCase()} · {d.getDate()} {monthName} {year} · {session}
           </div>
           <h1 className="font-['Big_Shoulders'] font-black text-[clamp(36px,5.5vw,60px)] leading-tight">
             {trade.instrument} {trade.direction} —
           </h1>
         </header>
 
-        {/* Meta Info — lebih lebar ke kanan */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10 pb-6 border-b border-[#221F1C]">
+        {/* Meta Info — SATU BARIS dengan grid */}
+        <div className="grid grid-cols-4 gap-6 mb-10 pb-6 border-b border-[#221F1C]">
           <div>
             <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider">Instrumen</div>
             <div className="text-lg font-medium text-[#E8E6E1]">{trade.instrument}</div>
@@ -87,7 +109,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </div>
           <div>
             <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider">Trigger Entry</div>
-            <div className="text-lg font-medium text-[#E8E6E1]">{trade.trigger || "—"}</div>
+            <div className="text-lg font-medium text-[#E8E6E1]">{triggerDisplay}</div>
           </div>
           <div>
             <div className="font-mono text-xs uppercase text-[#6E6B65] tracking-wider">Hasil</div>
@@ -97,7 +119,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </div>
         </div>
 
-        {/* ===== PRA-PASAR — spasi besar ===== */}
+        {/* ===== PRA-PASAR ===== */}
         <section className="mb-16">
           <div className="eyebrow water text-sm">BACAAN PRA-PASAR</div>
           <h2 className="font-['Big_Shoulders'] font-bold text-2xl mb-6">Sebelum sesi dimulai</h2>
@@ -110,7 +132,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </div>
         </section>
 
-        {/* ===== EKSEKUSI — spasi besar ===== */}
+        {/* ===== EKSEKUSI ===== */}
         <section className="mb-16">
           <div className="eyebrow steel text-sm">APA YANG DILAKUKAN HARGA — EKSEKUSI</div>
           <h2 className="font-['Big_Shoulders'] font-bold text-2xl mb-6">Alasan Entry & Detail Eksekusi</h2>
