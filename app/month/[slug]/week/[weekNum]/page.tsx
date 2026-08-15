@@ -63,8 +63,14 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
   return (
     <>
-      {/* Tombol Beranda (kanan atas) */}
-      <div className="flex justify-end items-center py-3 px-4 border-b border-[#221F1C] mb-4">
+      {/* ===== NAVIGASI ATAS: Kembali ke Bulan & Beranda SEJAJAR ===== */}
+      <div className="flex items-center justify-between py-3 px-4 border-b border-[#221F1C] mb-4">
+        <Link
+          href={`/month/${slug}`}
+          className="text-sm font-mono text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 uppercase tracking-wider flex items-center gap-1"
+        >
+          <span>←</span> Kembali ke {monthName}
+        </Link>
         <Link
           href="/"
           className="font-mono text-xs uppercase tracking-widest text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 flex items-center gap-1.5"
@@ -74,17 +80,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
       </div>
 
       <div className="p-6 max-w-6xl mx-auto">
-        {/* Tombol kembali ke bulan */}
-        <div className="mb-4">
-          <Link
-            href={`/month/${slug}`}
-            className="inline-flex items-center gap-1 text-sm font-mono text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 uppercase tracking-wider"
-          >
-            <span>←</span> Kembali ke {monthName}
-          </Link>
-        </div>
-
-        {/* ===== HEADER UTAMA — ukuran turun 2 level ===== */}
+        {/* Header */}
         <header className="mb-10 mt-4">
           <div className="font-['Big_Shoulders'] font-black text-[clamp(28px,4.5vw,52px)] leading-tight">
             MINGGU {localWeekNumber} · {monthLabel} {first.getDate()} – {monthLabel} {last.getDate()}
@@ -94,7 +90,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           </p>
         </header>
 
-        {/* ===== TESIS PRA-PASAR ===== */}
+        {/* TESIS PRA-PASAR */}
         <section className="mb-10 border-b border-[#221F1C] pb-8">
           <div className="eyebrow water text-base md:text-lg">TESIS PRA-PASAR</div>
           <div className="body-copy text-base md:text-lg mt-2">
@@ -108,7 +104,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
         <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
 
-        {/* ===== MINGGU INI ===== */}
+        {/* MINGGU INI */}
         <section className="mb-10">
           <div className="sec-head">
             <h2 className="text-3xl md:text-4xl">Minggu Ini</h2>
@@ -198,7 +194,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
         <div className="ink-divider"></div>
 
-        {/* ===== REVIEW MINGGUAN ===== */}
+        {/* REVIEW MINGGUAN */}
         <section>
           <div className="sec-head">
             <h2 className="text-3xl md:text-4xl">Sabtu — Rincian Lengkap</h2>
