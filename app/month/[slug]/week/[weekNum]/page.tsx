@@ -20,6 +20,22 @@ const monthNames: Record<string, string> = {
 };
 const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
+// Helper: ekstrak ID YouTube
+function getYoutubeId(url: string): string | null {
+  if (!url) return null;
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=)([\w-]+)/,
+    /(?:youtu\.be\/)([\w-]+)/,
+    /(?:youtube\.com\/embed\/)([\w-]+)/,
+    /(?:youtube\.com\/v\/)([\w-]+)/,
+  ];
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match) return match[1];
+  }
+  return null;
+}
+
 export default async function WeekPage({ params }: { params: Promise<{ slug: string; weekNum: string }> }) {
   const { slug, weekNum } = await params;
   const [year, month] = slug.split("-");
@@ -37,6 +53,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const localWeekIndex = weeks.findIndex((w) => w.weekNumber === weekNumber);
   const localWeekNumber = localWeekIndex !== -1 ? localWeekIndex + 1 : weekNumber;
 
+  // Filter trades dalam rentang minggu
   const weekTrades = allTrades.filter((t) => {
     const d = new Date(t.date);
     return d >= targetWeek.start && d <= targetWeek.end;
@@ -44,28 +61,41 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
   if (weekTrades.length === 0) notFound();
 
-  const weeklyThesis = weekTrades[0]?.weeklyThesis || '';
-  const psychology = weekTrades[0]?.psychology || '';
-  const chartLesson = weekTrades[0]?.chartLesson || '';
+  // ===== PISAHKAN TRADE SUNDAY (untuk weekly thesis) =====
+  const sundayTrade = weekTrades.find((t) => {
+    const d = new Date(t.date);
+    return d.getDay() === 0; // Sunday
+  });
 
+  // Ambil weekly thesis dari Sunday trade (jika ada)
+  const weeklyThesis = sundayTrade?.weeklyThesis || sundayTrade?.notes || '';
+  const weeklyYoutube = sundayTrade?.link || '';
+
+  // Trade harian: hanya Senin–Jumat (1-5), Sunday diabaikan
+  const dailyTrades = weekTrades.filter((t) => {
+    const d = new Date(t.date);
+    return d.getDay() >= 1 && d.getDay() <= 5;
+  });
+
+  // Group daily trades by day
   const dayMap: Record<string, any[]> = {};
-  for (const t of weekTrades) {
+  for (const t of dailyTrades) {
     const key = new Date(t.date).toISOString().split("T")[0];
     if (!dayMap[key]) dayMap[key] = [];
     dayMap[key].push(t);
   }
   const dayKeys = Object.keys(dayMap).sort();
 
-  const netR = weekTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
-
-  // Gunakan targetWeek.start dan targetWeek.end untuk rentang tanggal yang benar
+  const netR = dailyTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
   const startDate = targetWeek.start;
   const endDate = targetWeek.end;
   const monthLabel = monthName.slice(0, 3).toUpperCase();
 
+  const youtubeId = getYoutubeId(weeklyYoutube);
+
   return (
     <>
-      {/* ===== NAVIGASI ATAS: Kembali ke Bulan & Beranda SEJAJAR ===== */}
+      {/* Navigasi atas */}
       <div className="flex items-center justify-between py-3 px-4 border-b border-[#221F1C] mb-8">
         <Link
           href={`/month/${slug}`}
@@ -82,17 +112,17 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
       </div>
 
       <div className="p-6 max-w-6xl mx-auto">
-        {/* ===== HEADER UTAMA — rentang tanggal diperbaiki ===== */}
+        {/* Header */}
         <header className="mb-10 mt-2">
           <div className="font-['Big_Shoulders'] font-black text-[clamp(28px,4.5vw,52px)] leading-tight">
             MINGGU {localWeekNumber} · {monthLabel} {startDate.getDate()} – {monthLabel} {endDate.getDate()}
           </div>
           <p className="text-lg md:text-xl text-[#A6A39C] mt-2">
-            {weekTrades.length} trade tercatat minggu ini. Net R {netR >= 0 ? "+" : ""}{netR.toFixed(1)}R
+            {dailyTrades.length} trade tercatat minggu ini. Net R {netR >= 0 ? "+" : ""}{netR.toFixed(1)}R
           </p>
         </header>
 
-        {/* ===== TESIS PRA-PASAR ===== */}
+        {/* ===== TESIS PRA-PASAR (dari Sunday trade) ===== */}
         <section className="mb-10 border-b border-[#221F1C] pb-8">
           <div className="eyebrow water text-base md:text-lg">TESIS PRA-PASAR</div>
           <div className="body-copy text-base md:text-lg mt-2">
@@ -102,11 +132,29 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
               <p className="text-[#6E6B65] italic">Belum ada tesis untuk minggu ini.</p>
             )}
           </div>
+
+          {/* Video YouTube dari Sunday trade */}
+          {youtubeId && (
+            <div className="mx-auto max-w-xs mt-4">
+              <div className="aspect-video">
+                <iframe
+                  src={`https://www.youtube.com/embed/${youtubeId}`}
+                  title="Weekly Thesis video"
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+              <div className="text-sm text-[#A6A39C] mt-2 text-center">
+                📹 Weekly Thesis — klik play untuk menonton
+              </div>
+            </div>
+          )}
         </section>
 
         <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
 
-        {/* ===== MINGGU INI ===== */}
+        {/* ===== MINGGU INI (hanya Senin–Jumat) ===== */}
         <section className="mb-10">
           <div className="sec-head">
             <h2 className="text-3xl md:text-4xl">Minggu Ini</h2>
@@ -152,16 +200,16 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
               );
             })}
 
-            {/* Hari kosong */}
-            {[0, 1, 2, 3, 4].map((i) => {
+            {/* Hari kosong (Senin–Jumat) */}
+            {[1, 2, 3, 4, 5].map((dayOffset) => {
               const d = new Date(targetWeek.start);
-              d.setDate(d.getDate() + i);
+              d.setDate(d.getDate() + (dayOffset - 1)); // Senin = 1
               if (d > targetWeek.end) return null;
               const dayKey = d.toISOString().split("T")[0];
               if (dayMap[dayKey]) return null;
               const dayName = dayNames[d.getDay()];
               return (
-                <div key={i} className="rail-row locked py-4 md:py-5 px-4 md:px-6">
+                <div key={dayOffset} className="rail-row locked py-4 md:py-5 px-4 md:px-6">
                   <div className="rail-day text-base md:text-lg">
                     {dayName}
                     <b className="text-2xl md:text-3xl">{d.getDate()}</b>
@@ -205,33 +253,31 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
             </p>
           </div>
 
-          {/* PSIKOLOGI */}
           <div className="journal-section">
             <div className="eyebrow text-base md:text-lg">PSIKOLOGI</div>
             <div className="pull">
-              {psychology ? (
-                <p className="text-lg md:text-xl">{psychology}</p>
+              {sundayTrade?.psychology ? (
+                <p className="text-lg md:text-xl">{sundayTrade.psychology}</p>
               ) : (
                 <p className="text-[#6E6B65] italic text-base md:text-lg">Belum ada catatan psikologi.</p>
               )}
             </div>
             <div className="body-copy text-base md:text-lg">
-              {psychology ? (
-                <div className="whitespace-pre-wrap text-[#E8E6E1]">{psychology}</div>
+              {sundayTrade?.psychology ? (
+                <div className="whitespace-pre-wrap text-[#E8E6E1]">{sundayTrade.psychology}</div>
               ) : (
                 <p className="text-[#6E6B65] italic">Belum ada catatan psikologi.</p>
               )}
             </div>
           </div>
 
-          {/* PELAJARAN CHART */}
           <div className="journal-section">
             <div className="eyebrow steel text-base md:text-lg">PELAJARAN CHART</div>
             <div className="body-copy text-base md:text-lg">
-              {chartLesson ? (
+              {sundayTrade?.chartLesson ? (
                 <div className="whitespace-pre-wrap text-[#E8E6E1]">
                   <p className="text-lg md:text-xl font-medium">✏️ Satu pelajaran utama:</p>
-                  <p>{chartLesson}</p>
+                  <p>{sundayTrade.chartLesson}</p>
                 </div>
               ) : (
                 <p className="text-[#6E6B65] italic">
@@ -241,17 +287,16 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
             </div>
           </div>
 
-          {/* HASIL */}
           <div className="journal-section">
             <div className="eyebrow text-base md:text-lg">HASIL</div>
             <div className="stat-strip">
               <div className="stat">
                 <div className="stat-label text-sm md:text-base">Trade Diambil</div>
-                <div className="stat-value text-3xl md:text-5xl">{weekTrades.length}</div>
+                <div className="stat-value text-3xl md:text-5xl">{dailyTrades.length}</div>
               </div>
               <div className="stat">
                 <div className="stat-label text-sm md:text-base">Grade</div>
-                <div className="stat-value gold text-3xl md:text-5xl">{weekTrades[0]?.grade || "B"}</div>
+                <div className="stat-value gold text-3xl md:text-5xl">{sundayTrade?.grade || "B"}</div>
               </div>
               <div className="stat">
                 <div className="stat-label text-sm md:text-base">Net R</div>
