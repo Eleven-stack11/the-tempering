@@ -88,7 +88,7 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      {/* Tombol Beranda (kanan atas) */}
+      {/* Tombol Beranda */}
       <div className="flex justify-end items-center mb-4">
         <Link
           href="/"
@@ -151,14 +151,14 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
       {/* Blade Rule */}
       <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
 
-      {/* ===== MINGGU-MINGGU ===== */}
+      {/* Weeks List */}
       <section>
         <div className="sec-head">
-          <h2 className="text-3xl md:text-4xl">Monthly note</h2>
-          <p className="text-base md:text-lg text-[#A6A39C]">{description}</p>
+          <h2>Minggu-Minggu</h2>
+          <p>{description}</p>
         </div>
 
-        <div className="rail text-base md:text-lg">
+        <div className="rail">
           {weeks.map((week, idx) => {
             const weekTrades = tradeGroups[week.weekNumber] || [];
             const weekR = weekTrades.reduce(
@@ -171,34 +171,33 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
             const dateRange = `${startDay}–${endDay} ${monthName} ${year}`;
 
             const hasTrade = weekTrades.length > 0;
-            const linkHref = hasTrade ? `/month/${slug}/week/${week.weekNumber}` : "#";
             const localWeekNumber = idx + 1;
+
+            // ===== SELALU BIKIN LINK, walaupun tidak ada trade =====
+            const linkHref = `/month/${slug}/week/${week.weekNumber}`;
 
             return (
               <Link
                 key={week.weekNumber}
                 href={linkHref}
-                className={`rail-row ${hasTrade ? "linked" : "locked"} py-4 md:py-5 px-4 md:px-6`}
+                className={`rail-row ${hasTrade ? "linked" : "locked"}`}
               >
-                <div className="rail-day text-base md:text-lg">
+                <div className="rail-day">
                   {monthLabel}
-                  <b className="text-2xl md:text-3xl">
+                  <b>
                     {startDay}–{endDay}
                   </b>
                 </div>
                 <div className="rail-body">
-                  <h4 className="text-lg md:text-xl font-medium">Minggu {localWeekNumber}</h4>
-                  <p className="text-base md:text-lg text-[#A6A39C]">
+                  <h4>Minggu {localWeekNumber}{!hasTrade && " — belum ditempa"}</h4>
+                  <p>
                     {dateRange} · {weekTrades.length} trade
                   </p>
                 </div>
                 {hasTrade ? (
                   <>
-                    {/* ===== TRADE & R DI KANAN ===== */}
-                    <div className="rail-tag text-base md:text-2xl font-bold tracking-wider">
-                      {weekTrades.length} TRADE
-                    </div>
-                    <div className={`rail-tag text-base md:text-2xl font-bold tracking-wider ${weekR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>
+                    <div className="rail-tag">{weekTrades.length} TRADE</div>
+                    <div className={`rail-tag ${weekR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>
                       {weekR >= 0 ? "+" : ""}
                       {weekR.toFixed(1)}R
                     </div>
@@ -221,11 +220,11 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
       {/* Monthly Note */}
       <section>
         <div className="sec-head">
-          <h2 className="text-3xl md:text-4xl">Catatan Bulanan</h2>
+          <h2>Catatan Bulanan</h2>
         </div>
-        <div className="max-w-2xl text-[#A6A39C] text-base md:text-lg leading-relaxed mb-12">
+        <div className="max-w-2xl text-[#A6A39C] text-base leading-relaxed mb-12">
           <p>{monthlyNote || "✏️ Tidak ada catatan bulanan. Isi properti `Monthly Note` di Notion."}</p>
-          <div className="placeholder-note mt-3 text-sm">
+          <div className="placeholder-note mt-3">
             ✏️ Untuk mengubah catatan, isi properti <code>Monthly Note</code> (Rich Text) di database Notion.
           </div>
         </div>
