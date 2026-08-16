@@ -52,17 +52,22 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const localWeekIndex = weeks.findIndex((w) => w.weekNumber === weekNumber);
   const localWeekNumber = localWeekIndex !== -1 ? localWeekIndex + 1 : weekNumber;
 
-  // Filter trades dalam rentang minggu
+  // Filter trades dalam rentang minggu (Senin–Jumat)
   const weekTrades = allTrades.filter((t) => {
     const d = new Date(t.date);
     return d >= targetWeek.start && d <= targetWeek.end;
   });
 
-  // ===== TETAP RENDER WALAUPUN TIDAK ADA TRADE =====
-  // Cari Sunday trade untuk weekly thesis (jika ada)
-  const sundayTrade = weekTrades.find((t) => {
+  // ===== CARI SUNDAY TRADE =====
+  // Sunday yang tepat sebelum targetWeek.start (Senin)
+  const sundayDate = new Date(targetWeek.start);
+  sundayDate.setDate(sundayDate.getDate() - 1); // mundur 1 hari ke Sunday
+
+  const sundayTrade = allTrades.find((t) => {
     const d = new Date(t.date);
-    return d.getDay() === 0;
+    return d.getFullYear() === sundayDate.getFullYear() &&
+           d.getMonth() === sundayDate.getMonth() &&
+           d.getDate() === sundayDate.getDate();
   });
 
   // Ambil weekly thesis dari Sunday trade (jika ada)
@@ -122,7 +127,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           </p>
         </header>
 
-        {/* ===== TESIS PRA-PASAR ===== */}
+        {/* ===== TESIS PRA-PASAR (dari Sunday trade) ===== */}
         <section className="mb-10 border-b border-[#221F1C] pb-8">
           <div className="eyebrow water text-base md:text-lg">TESIS PRA-PASAR</div>
           <div className="body-copy text-base md:text-lg mt-2">
@@ -164,7 +169,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           </div>
 
           <div className="rail text-base md:text-lg">
-            {/* Hari dengan trade */}
             {dayKeys.map((dayKey) => {
               const d = new Date(dayKey);
               const dayName = dayNames[d.getDay()];
@@ -201,7 +205,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
               );
             })}
 
-            {/* Hari kosong (Senin–Jumat) — selalu tampilkan 5 hari */}
+            {/* Hari kosong (Senin–Jumat) */}
             {[1, 2, 3, 4, 5].map((dayOffset) => {
               const d = new Date(targetWeek.start);
               d.setDate(d.getDate() + (dayOffset - 1));
