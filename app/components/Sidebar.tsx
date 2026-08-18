@@ -41,7 +41,7 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(true);
   const [collapsedMonths, setCollapsedMonths] = useState<Record<string, boolean>>({});
-  const [isYearCollapsed, setIsYearCollapsed] = useState(false); // toggle untuk 2026
+  const [isYearCollapsed, setIsYearCollapsed] = useState(false);
 
   // Load state sidebar dari localStorage
   useEffect(() => {
@@ -78,11 +78,11 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
 
   return (
     <>
-      {/* ===== TOMBOL HAMBURGER - Hanya muncul jika sidebar tertutup ===== */}
+      {/* ===== TOMBOL HAMBURGER - Muncul di pojok kiri saat sidebar tertutup ===== */}
       {!isOpen && (
         <button
           onClick={toggleSidebar}
-          className="fixed top-4 left-4 z-[99999] bg-[#151515] border border-[#2a2a2a] rounded-lg p-2 text-[#aaa] hover:text-white transition text-xl w-10 h-10 flex items-center justify-center"
+          className="fixed top-4 left-4 z-[99999] bg-[#151515] border border-[#2a2a2a] rounded-lg p-2 text-[#aaa] hover:text-white transition text-xl w-10 h-10 flex items-center justify-center cursor-pointer"
           aria-label="Open Sidebar"
           style={{ pointerEvents: 'auto' }}
         >
@@ -91,24 +91,22 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
       )}
 
       {/* ===== SIDEBAR ===== */}
-      <aside className={`sb-sidebar ${isOpen ? '' : 'collapsed'}`}>
-        {/* Mengubah struktur agar tombol tepat di kanan tulisan EL-DOCUMENTARY */}
-        <div className="sb-brand flex justify-between items-center w-full pr-4">
-          <div className="flex items-center gap-2">
-            <span className="sb-brand-mark"></span>
-            <span>EL-DOCUMENTARY</span>
-          </div>
-          
-          {/* Tombol Tutup Sidebar */}
-          {isOpen && (
-             <button
-               onClick={toggleSidebar}
-               className="text-[#aaa] hover:text-white transition text-lg p-1"
-               aria-label="Close Sidebar"
-             >
-               ◀
-             </button>
-          )}
+      <aside className={`sb-sidebar ${isOpen ? '' : 'collapsed'} relative`}>
+        
+        {/* Tombol Tutup Sidebar - Ditempatkan tepat di pojok kanan atas sidebar */}
+        {isOpen && (
+          <button
+            onClick={toggleSidebar}
+            className="absolute top-4 right-3 z-20 text-[#aaa] hover:text-white transition text-sm p-1.5 rounded hover:bg-[#222] flex items-center justify-center cursor-pointer"
+            aria-label="Close Sidebar"
+          >
+            ◀
+          </button>
+        )}
+
+        <div className="sb-brand">
+          <span className="sb-brand-mark"></span>
+          <span>EL-DOCUMENTARY</span>
         </div>
 
         <div className="sb-section">Tahun</div>
