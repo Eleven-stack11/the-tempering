@@ -1,9 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Big+Shoulders:opsz,wght@10..72,400;10..72,600;10..72,700;10..72,800;10..72,900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 :root {
   --sidebar-width: 260px;
   --topnav-height: 48px;
@@ -31,18 +27,10 @@
   --display: 'Big Shoulders', sans-serif;
   --body: 'IBM Plex Sans', sans-serif;
   --mono: 'IBM Plex Mono', monospace;
-  --container: 1080px;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  scroll-behavior: smooth;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
@@ -59,22 +47,9 @@ body {
   background-attachment: fixed;
 }
 
-a {
-  color: inherit;
-}
+a { color: inherit; text-decoration: none; }
 
-.page-container {
-  width: 100%;
-}
-
-.section-spacing {
-  margin-bottom: var(--section-spacing);
-}
-
-/* =========================================================
-   SIDEBAR
-   ========================================================= */
-
+/* ===== SIDEBAR ===== */
 .sb-sidebar {
   position: fixed;
   top: 0;
@@ -85,17 +60,14 @@ a {
   border-right: 1px solid var(--border);
   overflow-y: auto;
   overflow-x: hidden;
-  transition: width 0.3s ease, padding 0.3s ease, border-color 0.3s ease;
+  transition: width 0.3s ease, padding 0.3s ease;
   z-index: 40;
   padding: 20px 12px;
   scrollbar-width: thin;
 }
-
-.sb-sidebar.collapsed {
-  width: 0;
-  padding: 20px 0;
-  border-right-color: transparent;
-}
+.sb-sidebar.collapsed { width: 0; padding: 20px 0; border-right-color: transparent; }
+.sb-sidebar::-webkit-scrollbar { width: 5px; }
+.sb-sidebar::-webkit-scrollbar-thumb { background: #33322E; border-radius: 4px; }
 
 .sb-brand {
   font-family: var(--mono);
@@ -105,16 +77,12 @@ a {
   padding: 4px 8px 20px;
   white-space: nowrap;
 }
-
 .sb-brand-mark {
-  width: 7px;
-  height: 7px;
-  min-width: 7px;
+  width: 7px; height: 7px; min-width: 7px;
   background: var(--gold);
   transform: rotate(45deg);
   display: inline-block;
 }
-
 .sb-section {
   font-family: var(--mono);
   font-size: 10px;
@@ -124,11 +92,7 @@ a {
   padding: 10px 8px 6px;
   white-space: nowrap;
 }
-
-.sb-node {
-  white-space: nowrap;
-}
-
+.sb-node { white-space: nowrap; }
 .sb-item {
   display: flex;
   align-items: center;
@@ -142,51 +106,13 @@ a {
   text-decoration: none;
   transition: background 0.15s ease, color 0.15s ease;
 }
-
-.sb-item:hover {
-  background: var(--surface);
-  color: var(--text);
-}
-
-.sb-item.active {
-  background: var(--surface-2);
-  color: var(--gold);
-}
-
-.sb-item.locked {
-  opacity: 0.4;
-  cursor: default;
-  pointer-events: none;
-}
-
-.sb-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  color: inherit;
-}
-
-.sb-label {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.sb-chevron {
-  flex-shrink: 0;
-  color: var(--text-faint);
-  display: flex;
-}
-
-.sb-children {
-  padding-left: 14px;
-  margin-left: 15px;
-  border-left: 1px solid var(--border-soft);
-  margin-top: 2px;
-  margin-bottom: 4px;
-}
-
+.sb-item:hover { background: var(--surface); color: var(--text); }
+.sb-item.active { background: var(--surface-2); color: var(--gold); }
+.sb-item.locked { opacity: 0.4; cursor: default; pointer-events: none; }
+.sb-icon { display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: inherit; }
+.sb-label { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+.sb-chevron { flex-shrink: 0; color: var(--text-faint); display: flex; }
+.sb-children { padding-left: 14px; margin-left: 15px; border-left: 1px solid var(--border-soft); margin-top: 2px; margin-bottom: 4px; }
 .sb-badge {
   font-family: var(--mono);
   font-size: 10px;
@@ -196,22 +122,11 @@ a {
   color: var(--text-muted);
   flex-shrink: 0;
 }
+.sb-badge.be { color: var(--water-bright); background: rgba(46,86,149,0.12); }
 
-.sb-badge.be {
-  color: var(--water-bright);
-  background: rgba(46, 86, 149, 0.12);
-}
+@media (max-width: 768px) { .sb-sidebar { box-shadow: 0 0 40px rgba(0,0,0,0.6); } }
 
-@media (max-width: 768px) {
-  .sb-sidebar {
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
-  }
-}
-
-/* =========================================================
-   TOP NAV / BREADCRUMB
-   ========================================================= */
-
+/* ===== TOP NAV ===== */
 .topnav {
   display: flex;
   align-items: center;
@@ -223,7 +138,6 @@ a {
   flex-wrap: wrap;
   gap: 12px;
 }
-
 .topnav-crumb {
   display: flex;
   align-items: center;
@@ -235,7 +149,6 @@ a {
   color: var(--text-faint);
   flex-wrap: wrap;
 }
-
 .topnav-crumb a {
   color: var(--text-muted);
   text-decoration: underline;
@@ -243,20 +156,9 @@ a {
   text-underline-offset: 3px;
   transition: color 0.15s ease;
 }
-
-.topnav-crumb a:hover {
-  color: var(--gold);
-}
-
-.topnav-sep {
-  color: var(--text-faint);
-}
-
-.topnav-here {
-  color: var(--text);
-  font-weight: 600;
-}
-
+.topnav-crumb a:hover { color: var(--gold); }
+.topnav-sep { color: var(--text-faint); }
+.topnav-here { color: var(--text); font-weight: 600; }
 .topnav-home {
   display: flex;
   align-items: center;
@@ -269,15 +171,9 @@ a {
   text-decoration: none;
   transition: color 0.15s ease;
 }
+.topnav-home:hover { color: var(--gold); }
 
-.topnav-home:hover {
-  color: var(--gold);
-}
-
-/* =========================================================
-   EYEBROW LABEL
-   ========================================================= */
-
+/* ===== EYEBROW ===== */
 .eyebrow {
   font-family: var(--mono);
   font-size: 11px;
@@ -287,74 +183,23 @@ a {
   display: inline-block;
   margin-bottom: 6px;
 }
+.eyebrow.water { color: var(--water-bright); }
+.eyebrow.steel { color: var(--steel); }
 
-.eyebrow.water {
-  color: var(--water-bright);
-}
-
-.eyebrow.steel {
-  color: var(--steel);
-}
-
-/* =========================================================
-   STAT STRIP (grid statistik)
-   ========================================================= */
-
-.stat-strip {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-}
-
-.stat {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 20px;
-}
-
-.stat-label {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-faint);
-  margin-bottom: 8px;
-}
-
-.stat-value {
-  font-family: var(--display);
-  font-weight: 800;
-  font-size: 30px;
-  line-height: 1.1;
-  color: var(--text);
-}
-
-.stat-value.gold { color: var(--gold); }
-.stat-value.water { color: var(--water-bright); }
-.stat-value.rust { color: var(--rust); }
-
-@media (max-width: 768px) {
-  .stat-strip { grid-template-columns: repeat(2, 1fr); }
-}
-
-/* =========================================================
-   DIVIDERS
-   ========================================================= */
-
+/* ===== BLADE RULE ===== */
 .blade-rule {
   height: 1px;
   width: 100%;
   background: linear-gradient(90deg, transparent, var(--border) 15%, var(--border) 85%, transparent);
 }
 
+/* ===== INK DIVIDER ===== */
 .ink-divider {
   position: relative;
   height: 1px;
   background: var(--border-soft);
   margin: 40px 0;
 }
-
 .ink-divider::after {
   content: '';
   position: absolute;
@@ -366,37 +211,28 @@ a {
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
-/* =========================================================
-   SECTION HEADER
-   ========================================================= */
-
+/* ===== SECTION HEADER ===== */
 .sec-head {
   margin-bottom: 20px;
 }
-
 .sec-head h2 {
   font-family: var(--display);
   font-weight: 700;
   color: var(--text);
   margin-bottom: 6px;
 }
-
 .sec-head p {
   color: var(--text-muted);
   line-height: 1.6;
   max-width: 640px;
 }
 
-/* =========================================================
-   RAIL (daftar minggu / daftar hari)
-   ========================================================= */
-
+/* ===== RAIL (daftar minggu/hari) ===== */
 .rail {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-
 .rail-row {
   display: flex;
   align-items: center;
@@ -406,30 +242,18 @@ a {
   border: 1px solid var(--border);
   border-radius: 10px;
   text-decoration: none;
-  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
-
 a.rail-row.linked:hover {
   background: var(--surface-2);
   border-color: var(--gold-dim);
-  transform: translateX(2px);
 }
-
-.rail-row.locked {
-  opacity: 0.45;
-  cursor: default;
-}
-
-.rail-row.empty {
-  opacity: 0.65;
-  background: var(--bg-raised);
-}
-
+.rail-row.locked { opacity: 0.45; cursor: default; }
+.rail-row.empty { opacity: 0.65; background: var(--bg-raised); }
 .rail-row.review-row {
   border-color: var(--gold-dim);
-  background: linear-gradient(90deg, rgba(196, 154, 60, 0.06), transparent 60%);
+  background: linear-gradient(90deg, rgba(196,154,60,0.06), transparent 60%);
 }
-
 .rail-day {
   font-family: var(--mono);
   font-size: 11px;
@@ -438,9 +262,7 @@ a.rail-row.linked:hover {
   color: var(--text-faint);
   flex-shrink: 0;
   width: 56px;
-  text-align: left;
 }
-
 .rail-day b {
   display: block;
   font-family: var(--display);
@@ -449,12 +271,7 @@ a.rail-row.linked:hover {
   color: var(--text);
   margin-top: 2px;
 }
-
-.rail-body {
-  flex: 1;
-  min-width: 0;
-}
-
+.rail-body { flex: 1; min-width: 0; }
 .rail-body h4 {
   font-family: var(--body);
   font-weight: 600;
@@ -464,7 +281,6 @@ a.rail-row.linked:hover {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
 .rail-body p {
   font-size: 12px;
   color: var(--text-muted);
@@ -473,7 +289,6 @@ a.rail-row.linked:hover {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
 .rail-tag {
   font-family: var(--mono);
   font-size: 11px;
@@ -483,10 +298,8 @@ a.rail-row.linked:hover {
   min-width: 60px;
   flex-shrink: 0;
 }
-
 .rail-badge {
-  width: 32px;
-  height: 32px;
+  width: 32px; height: 32px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -495,17 +308,14 @@ a.rail-row.linked:hover {
   border: 1.5px solid var(--gold);
   color: var(--gold);
 }
-
 .rail-badge span {
   transform: rotate(-45deg);
   font-family: var(--mono);
   font-weight: 700;
   font-size: 12px;
 }
-
 .rail-badge.win { border-color: var(--water-bright); color: var(--water-bright); }
 .rail-badge.loss { border-color: var(--rust); color: var(--rust); }
-
 .rail-r {
   font-family: var(--mono);
   font-weight: 700;
@@ -515,37 +325,21 @@ a.rail-row.linked:hover {
   flex-shrink: 0;
   color: var(--text-muted);
 }
-
 .rail-r.win { color: var(--water-bright); }
 .rail-r.loss { color: var(--rust); }
 
 @media (max-width: 640px) {
-  .rail-row {
-    flex-wrap: wrap;
-    row-gap: 8px;
-  }
-  .rail-body {
-    order: 3;
-    width: 100%;
-    flex-basis: 100%;
-  }
+  .rail-row { flex-wrap: wrap; row-gap: 8px; }
+  .rail-body { order: 3; width: 100%; flex-basis: 100%; }
 }
 
-/* =========================================================
-   JOURNAL SECTION (review mingguan)
-   ========================================================= */
-
+/* ===== JOURNAL SECTION ===== */
 .journal-section {
   margin-bottom: 36px;
   padding-bottom: 32px;
   border-bottom: 1px solid var(--border-soft);
 }
-
-.journal-section:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
+.journal-section:last-child { border-bottom: none; padding-bottom: 0; }
 .pull {
   border-left: 3px solid var(--gold);
   padding: 2px 0 2px 20px;
@@ -553,20 +347,17 @@ a.rail-row.linked:hover {
   color: var(--text);
   font-style: italic;
 }
-
 .body-copy {
   color: var(--text-muted);
   line-height: 1.7;
   max-width: 720px;
 }
-
 .placeholder-note {
   font-family: var(--mono);
   font-size: 12px;
   color: var(--text-faint);
   font-style: italic;
 }
-
 .placeholder-note code {
   font-family: var(--mono);
   background: var(--surface-2);
@@ -576,14 +367,8 @@ a.rail-row.linked:hover {
   font-style: normal;
 }
 
-/* =========================================================
-   DAY HERO (halaman detail hari)
-   ========================================================= */
-
-.day-hero {
-  margin-bottom: var(--section-spacing);
-}
-
+/* ===== DAY HERO ===== */
+.day-hero { margin-bottom: var(--section-spacing); }
 .day-hero-date {
   font-family: var(--mono);
   font-size: 12px;
@@ -592,7 +377,6 @@ a.rail-row.linked:hover {
   color: var(--water-bright);
   margin-bottom: 16px;
 }
-
 .day-hero-title {
   font-family: var(--display);
   font-weight: 800;
@@ -601,20 +385,9 @@ a.rail-row.linked:hover {
   color: var(--text);
   margin-bottom: 28px;
 }
-
-.day-hero-title .direction {
-  color: var(--water-bright);
-  font-style: normal;
-}
-
-.day-hero-title .result-win {
-  color: var(--gold);
-}
-
-.day-hero-title .result-loss {
-  color: var(--rust);
-}
-
+.day-hero-title .direction { color: var(--water-bright); font-style: normal; }
+.day-hero-title .result-win { color: var(--gold); }
+.day-hero-title .result-loss { color: var(--rust); }
 .day-meta-table {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -623,16 +396,11 @@ a.rail-row.linked:hover {
   border-radius: 10px;
   overflow: hidden;
 }
-
 .day-meta-cell {
   padding: 20px;
   border-right: 1px solid var(--border-soft);
 }
-
-.day-meta-cell:last-child {
-  border-right: none;
-}
-
+.day-meta-cell:last-child { border-right: none; }
 .day-meta-cell .label {
   font-family: var(--mono);
   font-size: 11px;
@@ -641,14 +409,12 @@ a.rail-row.linked:hover {
   color: var(--text-faint);
   margin-bottom: 8px;
 }
-
 .day-meta-cell .val {
   font-family: var(--body);
   font-weight: 500;
   font-size: 16px;
   color: var(--text);
 }
-
 .day-meta-cell .val.win { color: var(--gold); }
 .day-meta-cell .val.loss { color: var(--rust); }
 
@@ -659,75 +425,7 @@ a.rail-row.linked:hover {
   .day-meta-cell:nth-last-child(-n+2) { border-bottom: none; }
 }
 
-/* =========================================================
-   PERBAIKAN TAMPILAN TABEL / DETAIL GENERIK
-   (dipakai untuk rich text dari Notion yang render dl/table mentah)
-   ========================================================= */
-
-dl, .meta-grid, .detail-grid {
-  display: grid;
-  grid-template-columns: 140px 1fr;
-  gap: 12px 24px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 20px;
-  border-radius: 8px;
-  margin: 20px 0;
-}
-
-dt, .meta-label {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-faint);
-}
-
-dd, .meta-value {
-  font-size: 14px;
-  color: var(--text);
-  font-weight: 500;
-  margin: 0;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 20px 0;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-th, td {
-  padding: 12px 16px;
-  text-align: left;
-  border-bottom: 1px solid var(--border-soft);
-}
-
-th {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-faint);
-  background: var(--surface-2);
-}
-
-td {
-  font-size: 14px;
-  color: var(--text);
-}
-
-/* Scrollbar Custom */
-::-webkit-scrollbar {
-  width: 5px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #33322E;
-  border-radius: 4px;
-}
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #33322E; border-radius: 4px; }
