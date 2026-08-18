@@ -80,10 +80,6 @@ export default async function HomePage() {
       <section>
         <div className="sec-head">
           <h2>2026</h2>
-          <p>
-            Setiap bulan menyimpan minggu-minggunya. Setiap minggu menyimpan hari-harinya.
-            Tidak ada yang dilewatkan, termasuk minggu-minggu yang berjalan buruk.
-          </p>
         </div>
 
         <div className="grid cols-3">
@@ -126,7 +122,7 @@ export default async function HomePage() {
       <footer className="site-footer">
         <div className="blade-rule static" style={{ marginBottom: 36 }}></div>
         <div className="quote">
-          "Pedang tidak mengingat dulunya ia besi.<br />Catatan ini yang mengingatnya."
+          "Shokunin 職人.<br />Bentuk pelatihan mencari kesempurnaan dengan sadar bahwa itu mustahil dicapai."
         </div>
         <div className="foot-meta">EL-DOCUMENTARY · JURNAL TRADING · DIPERBARUI SETIAP MINGGU</div>
       </footer>
