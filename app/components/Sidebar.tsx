@@ -41,6 +41,8 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(true);
   const [collapsedMonths, setCollapsedMonths] = useState<Record<string, boolean>>({});
+  // State untuk toggle tahun
+  const [isYearCollapsed, setIsYearCollapsed] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("sidebarOpen");
@@ -59,6 +61,11 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
 
   const toggleMonth = (key: string) => {
     setCollapsedMonths(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  // Toggle tahun
+  const toggleYear = () => {
+    setIsYearCollapsed(!isYearCollapsed);
   };
 
   const isActive = (href: string) => {
@@ -142,61 +149,64 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
 
         <div className="sb-section">Tahun</div>
 
-        <div className="sb-node open">
-          <div className="sb-item">
+        {/* NODE 2026 — dengan toggle */}
+        <div className={`sb-node ${isYearCollapsed ? '' : 'open'}`}>
+          <div className="sb-item" onClick={toggleYear}>
             <span className="sb-icon"><IconFolder /></span>
             <span className="sb-label">2026</span>
-            <span className="sb-chevron"><IconChevron open={true} /></span>
+            <span className="sb-chevron"><IconChevron open={!isYearCollapsed} /></span>
           </div>
-          <div className="sb-children">
-            {months.map((month) => {
-              const monthKey = month.key;
-              const isCollapsed = collapsedMonths[monthKey] !== false;
-              const weeks = month.weeks || [];
-              const hasWeeks = weeks.length > 0;
-              const isMonthActive = isActive(`/month/${monthKey}`);
+          {!isYearCollapsed && (
+            <div className="sb-children">
+              {months.map((month) => {
+                const monthKey = month.key;
+                const isCollapsed = collapsedMonths[monthKey] !== false;
+                const weeks = month.weeks || [];
+                const hasWeeks = weeks.length > 0;
+                const isMonthActive = isActive(`/month/${monthKey}`);
 
-              return (
-                <div key={monthKey} className="sb-node open">
-                  <div
-                    className={`sb-item ${isMonthActive ? 'active' : ''}`}
-                    onClick={() => hasWeeks && toggleMonth(monthKey)}
-                  >
-                    <span className="sb-icon"><IconCalendar /></span>
-                    <span className="sb-label">{month.name}</span>
-                    {hasWeeks && (
-                      <span className="sb-chevron"><IconChevron open={!isCollapsed} /></span>
+                return (
+                  <div key={monthKey} className={`sb-node ${isCollapsed ? '' : 'open'}`}>
+                    <div
+                      className={`sb-item ${isMonthActive ? 'active' : ''}`}
+                      onClick={() => hasWeeks && toggleMonth(monthKey)}
+                    >
+                      <span className="sb-icon"><IconCalendar /></span>
+                      <span className="sb-label">{month.name}</span>
+                      {hasWeeks && (
+                        <span className="sb-chevron"><IconChevron open={!isCollapsed} /></span>
+                      )}
+                    </div>
+                    {hasWeeks && !isCollapsed && (
+                      <div className="sb-children">
+                        {weeks.map((week) => {
+                          const isWeekActive = isActive(week.href);
+                          const isLocked = week.count === 0;
+
+                          return (
+                            <div key={week.key} className="sb-node">
+                              <Link
+                                href={week.href}
+                                className={`sb-item ${isWeekActive ? 'active' : ''} ${isLocked ? 'locked' : ''}`}
+                              >
+                                <span className="sb-icon">
+                                  {isLocked ? <IconLocked /> : <IconFile />}
+                                </span>
+                                <span className="sb-label">Minggu {week.localNumber || week.number}</span>
+                                {!isLocked && week.count > 0 && (
+                                  <span className="sb-badge be">{week.count}</span>
+                                )}
+                              </Link>
+                            </div>
+                          );
+                        })}
+                      </div>
                     )}
                   </div>
-                  {hasWeeks && !isCollapsed && (
-                    <div className="sb-children">
-                      {weeks.map((week) => {
-                        const isWeekActive = isActive(week.href);
-                        const isLocked = week.count === 0;
-
-                        return (
-                          <div key={week.key} className="sb-node">
-                            <Link
-                              href={week.href}
-                              className={`sb-item ${isWeekActive ? 'active' : ''} ${isLocked ? 'locked' : ''}`}
-                            >
-                              <span className="sb-icon">
-                                {isLocked ? <IconLocked /> : <IconFile />}
-                              </span>
-                              <span className="sb-label">Minggu {week.localNumber || week.number}</span>
-                              {!isLocked && week.count > 0 && (
-                                <span className="sb-badge be">{week.count}</span>
-                              )}
-                            </Link>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </aside>
     </>
