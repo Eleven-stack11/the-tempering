@@ -38,9 +38,10 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
   const allTrades = await fetchTrades();
 
+  // ===== FILTER: hanya trade (isTrade = true) =====
   const trades = allTrades.filter((t) => {
     const d = new Date(t.date);
-    return !isNaN(d.getTime()) && d.getFullYear() === yearNum && d.getMonth() === monthIndex;
+    return !isNaN(d.getTime()) && d.getFullYear() === yearNum && d.getMonth() === monthIndex && t.isTrade === true;
   });
 
   if (trades.length === 0) notFound();
@@ -88,27 +89,18 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      {/* Tombol Beranda */}
       <div className="flex justify-end items-center mb-4">
-        <Link
-          href="/"
-          className="font-mono text-xs uppercase tracking-widest text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 flex items-center gap-1.5"
-        >
+        <Link href="/" className="font-mono text-xs uppercase tracking-widest text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 flex items-center gap-1.5">
           <span>←</span> Beranda
         </Link>
       </div>
 
-      {/* Tombol kembali ke 2026 */}
       <div className="mb-4">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1 text-sm font-mono text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 uppercase tracking-wider"
-        >
+        <Link href="/" className="inline-flex items-center gap-1 text-sm font-mono text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 uppercase tracking-wider">
           <span>←</span> Kembali ke 2026
         </Link>
       </div>
 
-      {/* Header */}
       <header className="mb-8">
         <div className="eyebrow steel">BULAN {String(monthIndex + 1).padStart(2, "0")} · {year}</div>
         <h1 className="font-['Big_Shoulders'] font-black text-[clamp(44px,7vw,80px)] leading-tight">
@@ -119,7 +111,6 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
         </p>
       </header>
 
-      {/* Stat Strip */}
       <section className="mb-8">
         <div className="stat-strip">
           <div className="stat">
@@ -148,10 +139,8 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
         </div>
       </section>
 
-      {/* Blade Rule */}
       <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
 
-      {/* Weeks List */}
       <section>
         <div className="sec-head">
           <h2>Minggu-Minggu</h2>
@@ -172,34 +161,23 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
             const hasTrade = weekTrades.length > 0;
             const localWeekNumber = idx + 1;
-
-            // ===== SELALU BIKIN LINK, walaupun tidak ada trade =====
             const linkHref = `/month/${slug}/week/${week.weekNumber}`;
 
             return (
-              <Link
-                key={week.weekNumber}
-                href={linkHref}
-                className={`rail-row ${hasTrade ? "linked" : "locked"}`}
-              >
+              <Link key={week.weekNumber} href={linkHref} className={`rail-row ${hasTrade ? "linked" : "locked"}`}>
                 <div className="rail-day">
                   {monthLabel}
-                  <b>
-                    {startDay}–{endDay}
-                  </b>
+                  <b>{startDay}–{endDay}</b>
                 </div>
                 <div className="rail-body">
                   <h4>Minggu {localWeekNumber}{!hasTrade && " — belum ditempa"}</h4>
-                  <p>
-                    {dateRange} · {weekTrades.length} trade
-                  </p>
+                  <p>{dateRange} · {weekTrades.length} trade</p>
                 </div>
                 {hasTrade ? (
                   <>
                     <div className="rail-tag">{weekTrades.length} TRADE</div>
                     <div className={`rail-tag ${weekR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>
-                      {weekR >= 0 ? "+" : ""}
-                      {weekR.toFixed(1)}R
+                      {weekR >= 0 ? "+" : ""}{weekR.toFixed(1)}R
                     </div>
                   </>
                 ) : (
@@ -214,10 +192,8 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
         </div>
       </section>
 
-      {/* Divider */}
       <div className="ink-divider"></div>
 
-      {/* Monthly Note */}
       <section>
         <div className="sec-head">
           <h2>Catatan Bulanan</h2>
