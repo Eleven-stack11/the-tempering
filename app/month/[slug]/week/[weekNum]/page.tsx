@@ -108,14 +108,26 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
             </div>
           </div>
 
-          {/* Statistik kanan — tabel kecil rapi */}
+          {/* ===== STATISTIK — HORIZONTAL (Satu Baris) ===== */}
           <div className="flex-shrink-0">
-            <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm font-mono text-[#A6A39C] bg-[#1A1918] border border-[#2C2A27] rounded-lg px-4 py-3 min-w-[180px]">
-              <div className="text-[#6E6B65] uppercase tracking-wider text-[10px]">Trade</div>
-              <div className="text-right font-bold text-[#E8E6E1]">{trades.length}</div>
-              <div className="text-[#6E6B65] uppercase tracking-wider text-[10px]">Net R</div>
-              <div className={`text-right font-bold ${netR >= 0 ? 'text-[#2E5695]' : 'text-[#8B3A1F]'}`}>
-                {netR >= 0 ? '+' : ''}{netR.toFixed(1)}R
+            <div className="grid grid-cols-4 gap-x-4 text-sm font-mono text-[#A6A39C] bg-[#1A1918] border border-[#2C2A27] rounded-lg px-4 py-2 min-w-[200px]">
+              <div className="text-center">
+                <div className="text-[#6E6B65] uppercase tracking-wider text-[9px]">Trade</div>
+                <div className="font-bold text-[#E8E6E1] text-base">{trades.length}</div>
+              </div>
+              <div className="text-center border-l border-[#2C2A27] pl-3">
+                <div className="text-[#6E6B65] uppercase tracking-wider text-[9px]">Net R</div>
+                <div className={`font-bold text-base ${netR >= 0 ? 'text-[#2E5695]' : 'text-[#8B3A1F]'}`}>
+                  {netR >= 0 ? '+' : ''}{netR.toFixed(1)}R
+                </div>
+              </div>
+              <div className="text-center border-l border-[#2C2A27] pl-3">
+                <div className="text-[#6E6B65] uppercase tracking-wider text-[9px]">Win</div>
+                <div className="font-bold text-[#C49A3C] text-base">{trades.filter(t => t.result === "Win").length}</div>
+              </div>
+              <div className="text-center border-l border-[#2C2A27] pl-3">
+                <div className="text-[#6E6B65] uppercase tracking-wider text-[9px]">Loss</div>
+                <div className="font-bold text-[#8B3A1F] text-base">{trades.filter(t => t.result === "Loss").length}</div>
               </div>
             </div>
           </div>
