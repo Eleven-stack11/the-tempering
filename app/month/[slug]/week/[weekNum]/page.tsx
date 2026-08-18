@@ -52,6 +52,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const localWeekIndex = weeks.findIndex((w) => w.weekNumber === weekNumber);
   const localWeekNumber = localWeekIndex !== -1 ? localWeekIndex + 1 : weekNumber;
 
+  // Sunday trade untuk thesis
   const sundayDate = new Date(targetWeek.start);
   sundayDate.setDate(sundayDate.getDate() - 1);
   const sundayTrade = allTrades.find((t) => {
@@ -66,6 +67,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const psychology = sundayTrade?.psychology || '';
   const chartLesson = sundayTrade?.chartLesson || '';
 
+  // Semua entri dalam rentang minggu
   const allWeekEntries = allTrades.filter((t) => {
     const d = new Date(t.date);
     return d >= targetWeek.start && d <= targetWeek.end;
@@ -74,6 +76,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const trades = allWeekEntries.filter(t => t.isTrade === true);
   const readings = allWeekEntries.filter(t => t.isTrade === false && t.notes && t.notes.trim().length > 0);
 
+  // Gabungkan dalam dayMap
   const dayMap: Record<string, { trades: any[]; readings: any[] }> = {};
   for (const t of trades) {
     const key = new Date(t.date).toISOString().split("T")[0];
@@ -104,6 +107,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
         </p>
       </header>
 
+      {/* Tesis Pra-Pasar */}
       <section className="section-spacing border-b border-[#221F1C] pb-8">
         <div className="eyebrow water text-base md:text-lg">TESIS PRA-PASAR</div>
         <div className="body-copy text-base md:text-lg mt-2">
@@ -129,6 +133,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
       <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
 
+      {/* Minggu Ini */}
       <section className="section-spacing">
         <div className="sec-head">
           <h2 className="text-3xl md:text-4xl">Minggu Ini</h2>
@@ -149,6 +154,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
             const hasTrade = dayData.trades.length > 0;
             const hasReading = dayData.readings.length > 0;
 
+            // Jika ada trade
             if (hasTrade) {
               const dayTrades = dayData.trades;
               const dayR = dayTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
@@ -165,7 +171,9 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
                     <h4>{dayTrades.length} trade — {dayTrades.map(t => t.title).join(", ")}</h4>
                     <p>{dayTrades.map(t => `${t.instrument} ${t.direction}`).join(" · ")}</p>
                     {hasReading && (
-                      <p className="text-sm text-[#6E6B65] mt-1">📝 + {dayData.readings.length} update reading</p>
+                      <p className="text-sm text-[#6E6B65] mt-1">
+                        📝 + {dayData.readings.length} update reading
+                      </p>
                     )}
                   </div>
                   <div className={`rail-badge ${dayR >= 0 ? "win" : "loss"}`}>
@@ -178,6 +186,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
               );
             }
 
+            // Jika tidak ada trade tapi ada reading
             if (hasReading) {
               const readingTexts = dayData.readings.map(r => r.notes || r.praPasar || '').filter(t => t.length > 0);
               return (
@@ -198,6 +207,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
               );
             }
 
+            // Tidak ada entri
             return (
               <div key={dayKey} className="rail-row empty">
                 <div className="rail-day">
@@ -213,6 +223,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
             );
           })}
 
+          {/* Review Sabtu */}
           <div className="rail-row review-row">
             <div className="rail-day" style={{ color: "var(--gold)" }}>SAB</div>
             <div className="rail-body">
@@ -227,6 +238,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
       <div className="ink-divider"></div>
 
+      {/* Review Mingguan Detail */}
       <section>
         <div className="sec-head">
           <h2 className="text-3xl md:text-4xl">Sabtu — Rincian Lengkap</h2>
