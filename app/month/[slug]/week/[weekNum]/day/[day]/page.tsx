@@ -20,6 +20,21 @@ const monthNames: Record<string, string> = {
 };
 const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
+function getYoutubeId(url: string): string | null {
+  if (!url) return null;
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=)([\w-]+)/,
+    /(?:youtu\.be\/)([\w-]+)/,
+    /(?:youtube\.com\/embed\/)([\w-]+)/,
+    /(?:youtube\.com\/v\/)([\w-]+)/,
+  ];
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match) return match[1];
+  }
+  return null;
+}
+
 export default async function DayPage({ params }: { params: Promise<{ slug: string; weekNum: string; day: string }> }) {
   const { slug, weekNum, day } = await params;
   const [year, month] = slug.split("-");
@@ -41,21 +56,21 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
 
   const sessionDisplay = trade.session || 'LONDON';
   const triggerDisplay = trade.trigger || '—';
+  const youtubeId = getYoutubeId(trade.link);
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      {/* Kembali ke minggu */}
-      <div className="mb-6">
+    <>
+      <header className="mb-4">
         <Link
           href={`/month/${slug}/week/${weekNum}`}
           className="inline-flex items-center gap-1 text-sm font-mono text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 uppercase tracking-wider"
         >
           <span>←</span> Kembali ke Minggu {weekNum}
         </Link>
-      </div>
+      </header>
 
       {/* DAY HERO */}
-      <div className="day-hero-new">
+      <div className="day-hero">
         <div className="day-hero-date">
           {dayNames[d.getDay()].toUpperCase()} · {d.getDate()} {monthName} {year} · {sessionDisplay}
         </div>
@@ -85,52 +100,76 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
         </div>
       </div>
 
+      {/* YouTube Embed (jika ada) */}
+      {youtubeId && (
+        <div className="mx-auto max-w-xs my-6">
+          <div className="aspect-video">
+            <iframe
+              src={`https://www.youtube.com/embed/${youtubeId}`}
+              className="w-full h-full"
+              allowFullScreen
+            />
+          </div>
+          <div className="text-sm text-[#A6A39C] mt-2 text-center">📹 Rekaman sesi — klik play untuk menonton</div>
+        </div>
+      )}
+
       {/* Pra-pasar */}
-      <section className="mt-8 mb-16">
+      <section className="section-spacing border-b border-[#221F1C] pb-8">
         <div className="eyebrow water text-sm">BACAAN PRA-PASAR</div>
-        <div className="text-[#E8E6E1] text-base leading-relaxed max-w-4xl min-h-[100px]">
-          {trade.praPasar ? <div className="whitespace-pre-wrap">{trade.praPasar}</div> : <p className="text-[#6E6B65] italic">Belum ada catatan pra-pasar.</p>}
+        <div className="text-[#E8E6E1] text-base leading-relaxed max-w-4xl min-h-[80px] mt-2">
+          {trade.praPasar ? (
+            <div className="whitespace-pre-wrap">{trade.praPasar}</div>
+          ) : (
+            <p className="text-[#6E6B65] italic">Belum ada catatan pra-pasar.</p>
+          )}
         </div>
       </section>
 
       {/* Eksekusi */}
-      <section className="mb-16">
+      <section className="section-spacing border-b border-[#221F1C] pb-8">
         <div className="eyebrow steel text-sm">APA YANG DILAKUKAN HARGA — EKSEKUSI</div>
-        <div className="text-[#E8E6E1] text-base leading-relaxed max-w-4xl min-h-[100px]">
-          {trade.eksekusi ? <div className="whitespace-pre-wrap">{trade.eksekusi}</div> : <p className="text-[#6E6B65] italic">Belum ada catatan eksekusi.</p>}
+        <div className="text-[#E8E6E1] text-base leading-relaxed max-w-4xl min-h-[80px] mt-2">
+          {trade.eksekusi ? (
+            <div className="whitespace-pre-wrap">{trade.eksekusi}</div>
+          ) : (
+            <p className="text-[#6E6B65] italic">Belum ada catatan eksekusi.</p>
+          )}
         </div>
       </section>
 
       {/* Hasil */}
-      <section className="pt-4 border-t border-[#221F1C]">
+      <section className="section-spacing">
         <div className="eyebrow text-sm">HASIL</div>
         <h2 className="font-['Big_Shoulders'] font-bold text-2xl mb-6">Grade & hasil akhir</h2>
+
         <div className="stat-strip">
           <div className="stat">
-            <div className="stat-label text-xs uppercase tracking-wider">Grade Setup</div>
+            <div className="stat-label">Grade Setup</div>
             <div className="stat-value gold">{trade.grade}</div>
           </div>
           <div className="stat">
-            <div className="stat-label text-xs uppercase tracking-wider">Hasil Akhir</div>
+            <div className="stat-label">Hasil Akhir</div>
             <div className={`stat-value ${isWin ? "gold" : "rust"}`}>
               {isWin ? "Profit" : isLoss ? "Rugi" : "Scratch"}
             </div>
           </div>
           <div className="stat">
-            <div className="stat-label text-xs uppercase tracking-wider">Hasil R</div>
+            <div className="stat-label">Hasil R</div>
             <div className={`stat-value ${isWin ? "water" : "rust"}`}>
               {isWin ? "+" : ""}{trade.r}R
             </div>
           </div>
           <div className="stat">
-            <div className="stat-label text-xs uppercase tracking-wider">Pelanggaran</div>
+            <div className="stat-label">Pelanggaran</div>
             <div className="stat-value">0</div>
           </div>
         </div>
+
         <div className="text-[#A6A39C] text-base max-w-3xl mt-6 leading-relaxed">
           <p>✏️ Kesimpulan jujur — kenapa grade ini, dan perbaikan untuk lain kali.</p>
         </div>
       </section>
-    </div>
+    </>
   );
 }
