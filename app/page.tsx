@@ -44,7 +44,6 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* ===== HEADER ===== */}
       <header style={{ marginBottom: "40px" }}>
         <div className="eyebrow">TRADING LOG</div>
         <h1
@@ -62,7 +61,6 @@ export default async function HomePage() {
 
       <div className="blade-rule" style={{ marginBottom: "32px" }} />
 
-      {/* ===== STATISTIK ===== */}
       <section style={{ marginBottom: "48px" }}>
         <div className="stat-strip">
           <div className="stat">
@@ -87,7 +85,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ===== 2026 & BULAN ===== */}
       <section style={{ marginBottom: "64px" }}>
         <h2
           style={{
@@ -136,7 +133,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ===== FOOTER ===== */}
       <footer className="site-footer" style={{ paddingTop: "32px", marginTop: "0" }}>
         <div className="blade-rule static" style={{ marginBottom: "36px" }} />
 
