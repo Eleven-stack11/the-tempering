@@ -68,7 +68,7 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
 
   return (
     <>
-      {/* ===== TOMBOL TOGGLE — EMAS, PASTI TERLIHAT ===== */}
+      {/* ===== TOMBOL TOGGLE — KECIL & TRANSPARAN ===== */}
       <div
         style={{
           position: 'fixed',
@@ -76,29 +76,37 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
           left: '16px',
           zIndex: 99999999,
           display: 'block',
+          opacity: 0.2,
+          transition: 'opacity 0.3s ease',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.opacity = '1';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.opacity = '0.2';
         }}
       >
         <button
           onClick={toggleSidebar}
           style={{
-            background: '#C49A3C', // EMAS
-            color: '#0F0F0E',      // Teks hitam
+            background: '#C49A3C',
+            color: '#0F0F0E',
             border: 'none',
-            borderRadius: '6px',
-            padding: '8px 12px',
-            fontSize: '20px',
+            borderRadius: '4px',
+            padding: '4px 8px',
+            fontSize: '16px',
             fontWeight: 'bold',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '44px',
-            height: '44px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.9)',
+            width: '32px',
+            height: '32px',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.8)',
             transition: 'transform 0.2s, background 0.2s',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'scale(1.05)';
+            e.currentTarget.style.transform = 'scale(1.1)';
             e.currentTarget.style.background = '#D4AF37';
           }}
           onMouseLeave={(e) => {
