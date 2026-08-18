@@ -69,7 +69,6 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
         </Link>
       </header>
 
-      {/* DAY HERO */}
       <div className="day-hero">
         <div className="day-hero-date">
           {dayNames[d.getDay()].toUpperCase()} · {d.getDate()} {monthName} {year} · {sessionDisplay}
@@ -100,7 +99,6 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
         </div>
       </div>
 
-      {/* YouTube Embed (jika ada) */}
       {youtubeId && (
         <div className="mx-auto max-w-xs my-6">
           <div className="aspect-video">
@@ -114,7 +112,6 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
         </div>
       )}
 
-      {/* Pra-pasar */}
       <section className="section-spacing border-b border-[#221F1C] pb-8">
         <div className="eyebrow water text-sm">BACAAN PRA-PASAR</div>
         <div className="text-[#E8E6E1] text-base leading-relaxed max-w-4xl min-h-[80px] mt-2">
@@ -126,7 +123,6 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
         </div>
       </section>
 
-      {/* Eksekusi */}
       <section className="section-spacing border-b border-[#221F1C] pb-8">
         <div className="eyebrow steel text-sm">APA YANG DILAKUKAN HARGA — EKSEKUSI</div>
         <div className="text-[#E8E6E1] text-base leading-relaxed max-w-4xl min-h-[80px] mt-2">
@@ -138,7 +134,6 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
         </div>
       </section>
 
-      {/* Hasil */}
       <section className="section-spacing">
         <div className="eyebrow text-sm">HASIL</div>
         <h2 className="font-['Big_Shoulders'] font-bold text-2xl mb-6">Grade & hasil akhir</h2>
