@@ -3,20 +3,43 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function TopNav() {
+interface TopNavProps {
+  breadcrumb?: { label: string; href: string }[];
+}
+
+export default function TopNav({ breadcrumb = [] }: TopNavProps) {
   const pathname = usePathname();
 
-  // Jangan tampilkan di homepage
-  if (pathname === "/") return null;
+  // Jika di homepage, tidak tampil
+  if (pathname === '/') return null;
+
+  // Default breadcrumb: coba ambil dari pathname
+  let crumbs = breadcrumb;
+  if (crumbs.length === 0 && pathname) {
+    const parts = pathname.split('/').filter(Boolean);
+    // Contoh: /month/2026-08/week/32/day/2026-08-13
+    // Kita buat sederhana: hanya tampilkan label terakhir
+    const last = parts[parts.length - 1];
+    crumbs = [{ label: last || 'Halaman', href: '#' }];
+  }
 
   return (
-    <div className="flex justify-end items-center py-3 px-4 border-b border-[#221F1C] mb-4">
-      <Link
-        href="/"
-        className="font-mono text-xs uppercase tracking-widest text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 flex items-center gap-1.5"
-      >
+    <nav className="topnav">
+      <div className="topnav-crumb">
+        {crumbs.map((c, i) => (
+          <span key={i}>
+            {i > 0 && <span className="topnav-sep">/</span>}
+            {i === crumbs.length - 1 ? (
+              <span className="topnav-here">{c.label}</span>
+            ) : (
+              <Link href={c.href}>{c.label}</Link>
+            )}
+          </span>
+        ))}
+      </div>
+      <Link href="/" className="topnav-home">
         <span>←</span> Beranda
       </Link>
-    </div>
+    </nav>
   );
 }
