@@ -52,7 +52,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const localWeekIndex = weeks.findIndex((w) => w.weekNumber === weekNumber);
   const localWeekNumber = localWeekIndex !== -1 ? localWeekIndex + 1 : weekNumber;
 
-  // Sunday trade untuk thesis
   const sundayDate = new Date(targetWeek.start);
   sundayDate.setDate(sundayDate.getDate() - 1);
   const sundayTrade = allTrades.find((t) => {
@@ -67,7 +66,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const psychology = sundayTrade?.psychology || '';
   const chartLesson = sundayTrade?.chartLesson || '';
 
-  // Semua entri dalam rentang minggu
   const allWeekEntries = allTrades.filter((t) => {
     const d = new Date(t.date);
     return d >= targetWeek.start && d <= targetWeek.end;
@@ -76,7 +74,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const trades = allWeekEntries.filter(t => t.isTrade === true);
   const readings = allWeekEntries.filter(t => t.isTrade === false && t.notes && t.notes.trim().length > 0);
 
-  // Gabungkan dalam dayMap
   const dayMap: Record<string, { trades: any[]; readings: any[] }> = {};
   for (const t of trades) {
     const key = new Date(t.date).toISOString().split("T")[0];
@@ -98,7 +95,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
   return (
     <>
-      {/* Navigasi */}
       <div className="flex items-center justify-between py-3 px-4 border-b border-[#221F1C] mb-8">
         <Link href={`/month/${slug}`} className="text-sm font-mono text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 uppercase tracking-wider flex items-center gap-1">
           <span>←</span> Kembali ke {monthName}
@@ -109,7 +105,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
       </div>
 
       <div className="p-6 max-w-6xl mx-auto">
-        {/* Header */}
         <header className="mb-10 mt-2">
           <div className="font-['Big_Shoulders'] font-black text-[clamp(28px,4.5vw,52px)] leading-tight">
             MINGGU {localWeekNumber} · {monthLabel} {startDate.getDate()} – {monthLabel} {endDate.getDate()}
@@ -119,7 +114,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           </p>
         </header>
 
-        {/* Tesis */}
         <section className="mb-10 border-b border-[#221F1C] pb-8">
           <div className="eyebrow water text-base md:text-lg">TESIS PRA-PASAR</div>
           <div className="body-copy text-base md:text-lg mt-2">
@@ -145,7 +139,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
         <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
 
-        {/* Minggu Ini */}
         <section className="mb-10">
           <div className="sec-head">
             <h2 className="text-3xl md:text-4xl">Minggu Ini</h2>
@@ -166,7 +159,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
               const hasTrade = dayData.trades.length > 0;
               const hasReading = dayData.readings.length > 0;
 
-              // Jika ada trade
               if (hasTrade) {
                 const dayTrades = dayData.trades;
                 const dayR = dayTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
@@ -202,7 +194,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
                 );
               }
 
-              // Jika tidak ada trade tapi ada reading
               if (hasReading) {
                 const readingTexts = dayData.readings.map(r => r.notes || r.praPasar || '').filter(t => t.length > 0);
                 return (
@@ -223,7 +214,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
                 );
               }
 
-              // Tidak ada entri
               return (
                 <div key={dayKey} className="rail-row locked py-4 md:py-5 px-4 md:px-6">
                   <div className="rail-day text-base md:text-lg">
@@ -239,7 +229,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
               );
             })}
 
-            {/* Review Sabtu */}
             <div className="rail-row review py-4 md:py-5 px-4 md:px-6">
               <div className="rail-day text-base md:text-lg" style={{ color: "var(--gold)" }}>SAB</div>
               <div className="rail-body">
@@ -254,7 +243,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
         <div className="ink-divider"></div>
 
-        {/* Review Mingguan */}
         <section>
           <div className="sec-head">
             <h2 className="text-3xl md:text-4xl">Sabtu — Rincian Lengkap</h2>
