@@ -116,16 +116,15 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ===== FOOTER DENGAN SHOKUNIN (KIRI) & KAIZEN (KANAN) ===== */}
+      {/* ===== FOOTER ===== */}
       <footer className="site-footer">
         <div className="blade-rule static" style={{ marginBottom: 36 }}></div>
 
-        {/* Flex dengan justify-between: kiri vs kanan */}
         <div className="flex flex-col md:flex-row justify-between gap-6 mb-8">
-          <div className="quote" style={{ maxWidth: '480px', margin: 0, textAlign: 'left' }}>
+          <div className="quote max-w-[480px] text-left">
             "Shokunin 職人.<br />Bentuk pelatihan mencari kesempurnaan dengan sadar bahwa itu mustahil dicapai."
           </div>
-          <div className="quote" style={{ maxWidth: '480px', margin: 0, textAlign: 'left' }}>
+          <div className="quote max-w-[480px] text-left md:text-right">
             "Kaizen 改善.<br />Proses menjadi lebih baik 1% setiap hari — perbaikan berkelanjutan."
           </div>
         </div>
