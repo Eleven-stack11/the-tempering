@@ -21,7 +21,6 @@ const monthNames: Record<string, string> = {
 export default async function HomePage() {
   const allTrades = await fetchTrades();
 
-  // ===== FILTER: hanya trade yang diambil (Entered) dan isTrade = true =====
   const trades = allTrades.filter((t) => t.status === "Entered" && t.isTrade === true);
 
   const monthMap: Record<string, any[]> = {};
@@ -37,7 +36,7 @@ export default async function HomePage() {
 
   const totalSessions = trades.length;
   const setupA = trades.filter((t) => t.grade === "A").length;
-  const violations = 0; // sesuaikan jika ada properti violations
+  const violations = 0;
   const netR = trades.reduce(
     (sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0),
     0
@@ -117,13 +116,19 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <div className="ink-divider"></div>
-
+      {/* ===== FOOTER DENGAN SHOKUNIN + KAIZEN ===== */}
       <footer className="site-footer">
         <div className="blade-rule static" style={{ marginBottom: 36 }}></div>
-        <div className="quote">
-          "Shokunin 職人.<br />Bentuk pelatihan mencari kesempurnaan dengan sadar bahwa itu mustahil dicapai."
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className="quote" style={{ maxWidth: '100%' }}>
+            "Shokunin 職人.<br />Bentuk pelatihan mencari kesempurnaan dengan sadar bahwa itu mustahil dicapai."
+          </div>
+          <div className="quote" style={{ maxWidth: '100%', textAlign: 'left' }}>
+            "Kaizen 改善.<br />Proses menjadi lebih baik 1% setiap hari — perbaikan berkelanjutan."
+          </div>
         </div>
+
         <div className="foot-meta">EL-DOCUMENTARY · JURNAL TRADING · DIPERBARUI SETIAP MINGGU</div>
       </footer>
     </div>
