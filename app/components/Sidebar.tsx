@@ -68,22 +68,33 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
 
   return (
     <>
-      {/* ===== TOMBOL TOGGLE — KECIL & TRANSPARAN ===== */}
+      {/* ===== TOMBOL TOGGLE — POP-UP SAAT HOVER DI AREA KIRI ATAS ===== */}
       <div
         style={{
           position: 'fixed',
-          top: '16px',
-          left: '16px',
+          top: '12px',
+          left: '12px',
           zIndex: 99999999,
           display: 'block',
-          opacity: 0.2,
-          transition: 'opacity 0.3s ease',
+          width: '40px',
+          height: '40px',
+          cursor: 'default',
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.opacity = '1';
+          const btn = e.currentTarget.querySelector('button');
+          if (btn) {
+            btn.style.opacity = '1';
+            btn.style.transform = 'scale(1)';
+            btn.style.pointerEvents = 'auto';
+          }
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.opacity = '0.2';
+          const btn = e.currentTarget.querySelector('button');
+          if (btn) {
+            btn.style.opacity = '0';
+            btn.style.transform = 'scale(0.7)';
+            btn.style.pointerEvents = 'none';
+          }
         }}
       >
         <button
@@ -93,25 +104,28 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
             color: '#0F0F0E',
             border: 'none',
             borderRadius: '4px',
-            padding: '4px 8px',
-            fontSize: '16px',
+            padding: '4px 6px',
+            fontSize: '14px',
             fontWeight: 'bold',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '32px',
-            height: '32px',
-            boxShadow: '0 2px 10px rgba(0,0,0,0.8)',
-            transition: 'transform 0.2s, background 0.2s',
+            width: '28px',
+            height: '28px',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.9)',
+            transition: 'opacity 0.2s ease, transform 0.2s ease',
+            opacity: 0,
+            transform: 'scale(0.7)',
+            pointerEvents: 'none',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'scale(1.1)';
             e.currentTarget.style.background = '#D4AF37';
+            e.currentTarget.style.transform = 'scale(1.1)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'scale(1)';
             e.currentTarget.style.background = '#C49A3C';
+            e.currentTarget.style.transform = 'scale(1)';
           }}
           aria-label="Toggle Sidebar"
         >
