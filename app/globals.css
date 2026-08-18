@@ -407,6 +407,7 @@ body {
 .journal-section .body-copy strong { color: var(--text); font-weight: 500; }
 .journal-section .body-copy em { color: var(--water-bright); font-style: normal; }
 
+/* ---------- Placeholder Note ---------- */
 .placeholder-note {
   font-family: var(--mono);
   font-size: 12px;
@@ -603,7 +604,7 @@ details.transcript .transcript-body {
   .hero { padding: 56px 0 44px; }
 }
 
-/* ---------- Custom Scrollbar (Sidebar) ---------- */
+/* ---------- Custom Scrollbar ---------- */
 .scrollbar-thin::-webkit-scrollbar {
   width: 4px;
 }
@@ -617,4 +618,28 @@ details.transcript .transcript-body {
 .scrollbar-thin {
   scrollbar-width: thin;
   scrollbar-color: #56534E transparent;
+}
+
+/* ===== TAMBAHAN: Footer Quotes (Shokunin & Kaizen) ===== */
+.footer-quotes {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+  width: 100%;
+}
+.footer-quotes .quote {
+  margin-bottom: 0;
+  max-width: 480px;
+}
+
+@media (min-width: 768px) {
+  .footer-quotes {
+    flex-direction: row;
+  }
+  .footer-quotes .quote.right {
+    text-align: right;
+    margin-left: auto;
+  }
 }
