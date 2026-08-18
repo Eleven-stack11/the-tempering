@@ -21,10 +21,9 @@ const monthNames: Record<string, string> = {
 export default async function HomePage() {
   const allTrades = await fetchTrades();
 
-  // ===== FILTER: hanya trade dengan status "Entered" =====
-  const trades = allTrades.filter((t) => t.status === "Entered");
+  // ===== FILTER: hanya trade yang diambil (Entered) dan isTrade = true =====
+  const trades = allTrades.filter((t) => t.status === "Entered" && t.isTrade === true);
 
-  // Kelompokkan berdasarkan bulan
   const monthMap: Record<string, any[]> = {};
   for (const t of trades) {
     const d = new Date(t.date);
@@ -38,7 +37,7 @@ export default async function HomePage() {
 
   const totalSessions = trades.length;
   const setupA = trades.filter((t) => t.grade === "A").length;
-  const violations = 0; // sesuaikan jika Anda punya properti violations
+  const violations = 0; // sesuaikan jika ada properti violations
   const netR = trades.reduce(
     (sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0),
     0
@@ -46,19 +45,15 @@ export default async function HomePage() {
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      {/* Hero */}
       <header className="mb-12">
         <div className="eyebrow">TRADING LOG</div>
         <h1 className="font-['Big_Shoulders'] font-black text-[clamp(48px,8vw,96px)] leading-[0.92] mb-4">
           <em className="text-[#2E5695] not-italic"> Journey</em>
         </h1>
-       
       </header>
 
-      {/* Blade Rule */}
       <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
 
-      {/* Stat Strip */}
       <section className="mb-12">
         <div className="stat-strip">
           <div className="stat">
@@ -82,12 +77,12 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Grid Bulan */}
       <section>
         <div className="sec-head">
           <h2>2026</h2>
           <p>
-            Rekam jejak setiap bulan, setiap minggu, dan setiap hari dalam trading.
+            Setiap bulan menyimpan minggu-minggunya. Setiap minggu menyimpan hari-harinya.
+            Tidak ada yang dilewatkan, termasuk minggu-minggu yang berjalan buruk.
           </p>
         </div>
 
@@ -115,8 +110,6 @@ export default async function HomePage() {
               </Link>
             );
           })}
-
-          {/* Locked future month */}
           <div className="tile locked">
             <div className="tile-eyebrow">
               <span>BULAN 09</span>
@@ -128,14 +121,38 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Ink Divider */}
       <div className="ink-divider"></div>
 
-      {/* Footer */}
+      <section>
+        <div className="sec-head">
+          <h2>Mengapa Ini Dibuat</h2>
+        </div>
+        <div className="max-w-2xl text-[#A6A39C] text-base leading-relaxed mb-12">
+          <p className="mb-4">
+            Yang Metal ingin memotong bersih lalu melangkah pergi. Ia tidak secara alami mau
+            berdiam dengan sebuah trade yang rugi dan menuliskan, dalam kalimat penuh, tepatnya
+            di mana pembacaan itu keliru. Ketidaknyamanan itu justru adalah intinya.
+          </p>
+          <p className="mb-4">
+            Setiap entri di sini mengikuti bentuk yang sama: apa yang saya harapkan sebelum
+            sesi, apa yang sebenarnya dilakukan pasar, di mana keduanya berbeda, dan apa yang
+            saya ubah karenanya. Tidak ada entri yang dihapus karena memalukan.{" "}
+            <strong className="text-[#E8E6E1]">
+              Kerugian tetap ditampilkan. Itulah yang membuat catatan ini jujur.
+            </strong>
+          </p>
+          <p>
+            Air adalah elemen yang masih kurang dalam diri saya — mengalir, beradaptasi,
+            membiarkan rencana melentur tanpa patah. Seluruh proyek ini adalah usaha untuk
+            membangunnya.
+          </p>
+        </div>
+      </section>
+
       <footer className="site-footer">
         <div className="blade-rule static" style={{ marginBottom: 36 }}></div>
         <div className="quote">
-          "Shokunin 職人.<br />semangat hidup untuk terus mengejar kesempurnaan."
+          "Pedang tidak mengingat dulunya ia besi.<br />Catatan ini yang mengingatnya."
         </div>
         <div className="foot-meta">EL-DOCUMENTARY · JURNAL TRADING · DIPERBARUI SETIAP MINGGU</div>
       </footer>
