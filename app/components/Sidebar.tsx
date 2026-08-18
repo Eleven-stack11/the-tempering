@@ -62,4 +62,108 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
 
   useEffect(() => {
     const saved = localStorage.getItem("sidebarOpen");
-   
+    if (saved !== null) setIsOpen(saved === "true");
+  }, []);
+
+  const toggleSidebar = () => {
+    const newState = !isOpen;
+    setIsOpen(newState);
+    localStorage.setItem("sidebarOpen", String(newState));
+  };
+
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--sidebar-width",
+      isOpen ? "260px" : "0px"
+    );
+  }, [isOpen]);
+
+  const toggleMonth = (key: string) => {
+    setCollapsedMonths(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const toggleYear = () => {
+    setIsYearCollapsed(!isYearCollapsed);
+  };
+
+  const isActive = (href: string) => pathname === href || (href && pathname?.startsWith(href));
+
+  return (
+    <>
+      <button
+        onClick={toggleSidebar}
+        className={`fixed top-4 z-[99999] bg-[#151515] border border-[#2a2a2a] rounded-lg p-2 text-[#aaa] hover:text-white transition text-xl w-10 h-10 flex items-center justify-center ${
+          isOpen ? 'left-[268px]' : 'left-4'
+        }`}
+        aria-label="Toggle Sidebar"
+        style={{ pointerEvents: 'auto' }}
+      >
+        {isOpen ? "◀" : "☰"}
+      </button>
+
+      <aside className={`sb-sidebar ${isOpen ? '' : 'collapsed'}`}>
+        <div className="sb-brand">
+          <span className="sb-brand-mark"></span>
+          <span>EL-DOCUMENTARY</span>
+        </div>
+        <div className="sb-section">Tahun</div>
+        <div className={`sb-node ${isYearCollapsed ? '' : 'open'}`}>
+          <div className="sb-item" onClick={toggleYear}>
+            <span className="sb-icon"><IconFolder /></span>
+            <span className="sb-label">2026</span>
+            <span className="sb-chevron"><IconChevron open={!isYearCollapsed} /></span>
+          </div>
+          {!isYearCollapsed && (
+            <div className="sb-children">
+              {months.map((month) => {
+                const monthKey = month.key;
+                const isCollapsed = collapsedMonths[monthKey] !== false;
+                const weeks = month.weeks || [];
+                const hasWeeks = weeks.length > 0;
+                const isMonthActive = isActive(`/month/${monthKey}`);
+                return (
+                  <div key={monthKey} className={`sb-node ${isCollapsed ? '' : 'open'}`}>
+                    <div
+                      className={`sb-item ${isMonthActive ? 'active' : ''}`}
+                      onClick={() => hasWeeks && toggleMonth(monthKey)}
+                    >
+                      <span className="sb-icon"><IconCalendar /></span>
+                      <span className="sb-label">{month.name}</span>
+                      {hasWeeks && (
+                        <span className="sb-chevron"><IconChevron open={!isCollapsed} /></span>
+                      )}
+                    </div>
+                    {hasWeeks && !isCollapsed && (
+                      <div className="sb-children">
+                        {weeks.map((week) => {
+                          const isWeekActive = isActive(week.href);
+                          const isLocked = week.count === 0;
+                          return (
+                            <div key={week.key} className="sb-node">
+                              <Link
+                                href={week.href}
+                                className={`sb-item ${isWeekActive ? 'active' : ''} ${isLocked ? 'locked' : ''}`}
+                              >
+                                <span className="sb-icon">
+                                  {isLocked ? <IconLocked /> : <IconFile />}
+                                </span>
+                                <span className="sb-label">Minggu {week.localNumber || week.number}</span>
+                                {!isLocked && week.count > 0 && (
+                                  <span className="sb-badge be">{week.count}</span>
+                                )}
+                              </Link>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </aside>
+    </>
+  );
+}
