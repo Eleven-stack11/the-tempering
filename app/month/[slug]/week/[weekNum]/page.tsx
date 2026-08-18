@@ -67,17 +67,16 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const psychology = sundayTrade?.psychology || '';
   const chartLesson = sundayTrade?.chartLesson || '';
 
-  // ===== SEMUA ENTRI DALAM RENTANG MINGGU =====
+  // Semua entri dalam rentang minggu
   const allWeekEntries = allTrades.filter((t) => {
     const d = new Date(t.date);
     return d >= targetWeek.start && d <= targetWeek.end;
   });
 
-  // Pisahkan trade (isTrade = true) dan update reading (isTrade = false)
   const trades = allWeekEntries.filter(t => t.isTrade === true);
   const readings = allWeekEntries.filter(t => t.isTrade === false && t.notes && t.notes.trim().length > 0);
 
-  // Gabungkan dalam dayMap dengan flag
+  // Gabungkan dalam dayMap
   const dayMap: Record<string, { trades: any[]; readings: any[] }> = {};
   for (const t of trades) {
     const key = new Date(t.date).toISOString().split("T")[0];
@@ -89,8 +88,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
     if (!dayMap[key]) dayMap[key] = { trades: [], readings: [] };
     dayMap[key].readings.push(r);
   }
-
-  const dayKeys = Object.keys(dayMap).sort();
 
   const netR = trades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
   const startDate = targetWeek.start;
@@ -148,11 +145,13 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
         <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
 
-        {/* ===== MINGGU INI (Senin–Jumat) ===== */}
+        {/* Minggu Ini */}
         <section className="mb-10">
           <div className="sec-head">
             <h2 className="text-3xl md:text-4xl">Minggu Ini</h2>
             <p className="text-base md:text-lg text-[#A6A39C]">
+              Lima sesi kontak dengan rencana di atas. Hari yang terkunci adalah hari yang tidak dicatat — itu juga adalah data.
+            </p>
           </div>
 
           <div className="rail text-base md:text-lg">
@@ -167,7 +166,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
               const hasTrade = dayData.trades.length > 0;
               const hasReading = dayData.readings.length > 0;
 
-              // Jika ada trade, tampilkan sebagai link ke halaman hari
+              // Jika ada trade
               if (hasTrade) {
                 const dayTrades = dayData.trades;
                 const dayR = dayTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
@@ -203,7 +202,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
                 );
               }
 
-              // Jika tidak ada trade tapi ada reading, tampilkan sebagai update reading
+              // Jika tidak ada trade tapi ada reading
               if (hasReading) {
                 const readingTexts = dayData.readings.map(r => r.notes || r.praPasar || '').filter(t => t.length > 0);
                 return (
@@ -224,7 +223,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
                 );
               }
 
-              // Tidak ada entri sama sekali
+              // Tidak ada entri
               return (
                 <div key={dayKey} className="rail-row locked py-4 md:py-5 px-4 md:px-6">
                   <div className="rail-day text-base md:text-lg">
@@ -255,11 +254,13 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
         <div className="ink-divider"></div>
 
-        {/* Review Mingguan (Psikologi, Pelajaran Chart, Hasil) */}
+        {/* Review Mingguan */}
         <section>
           <div className="sec-head">
             <h2 className="text-3xl md:text-4xl">Sabtu — Rincian Lengkap</h2>
-            <p className="text-base md:text-lg text-[#A6A39C]">Tesis hari Minggu dibandingkan dengan apa yang benar-benar terjadi. Tidak ada revisi rencana setelah kejadian.</p>
+            <p className="text-base md:text-lg text-[#A6A39C]">
+              Tesis hari Minggu dibandingkan dengan apa yang benar-benar terjadi. Tidak ada revisi rencana setelah kejadian.
+            </p>
           </div>
 
           <div className="journal-section">
@@ -289,7 +290,9 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
                   <p>{chartLesson}</p>
                 </div>
               ) : (
-                <p className="text-[#6E6B65] italic"><strong>✏️ Satu pelajaran utama, jangan lebih dari itu.</strong> Belum diisi.</p>
+                <p className="text-[#6E6B65] italic">
+                  <strong>✏️ Satu pelajaran utama, jangan lebih dari itu.</strong> Belum diisi.
+                </p>
               )}
             </div>
           </div>
