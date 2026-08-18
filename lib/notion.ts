@@ -67,18 +67,28 @@ export async function fetchTrades(): Promise<any[]> {
     return data.results.map((page: any) => {
       const date = page.properties.Date?.date?.start || '';
 
-      // ===== AMBIL PROPERTI MENTAH (untuk deteksi isTrade) =====
+      // === AMBIL NILAI PROPERTI (bukan hanya keberadaan) ===
       const instrumentRaw = page.properties.Instrument?.select?.name || '';
       const positionRaw = page.properties.Position?.select?.name || '';
-      const rrPropExists = !!page.properties.RR; // properti RR ada (meskipun value kosong?)
 
-      // ===== DETEKSI APAKAH INI TRADE =====
-      const hasInstrument = !!instrumentRaw;
-      const hasPosition = !!positionRaw;
-      const hasRR = rrPropExists; // atau bisa cek value, tapi lebih aman cek existence
+      // RR: ambil nilai mentah (bisa dari select, multi_select, atau rich_text)
+      let rrRaw = null;
+      const rrProp = page.properties.RR;
+      if (rrProp) {
+        if (rrProp.type === 'select') rrRaw = rrProp.select?.name;
+        else if (rrProp.type === 'multi_select') rrRaw = rrProp.multi_select?.[0]?.name;
+        else if (rrProp.type === 'rich_text') rrRaw = rrProp.rich_text?.[0]?.plain_text;
+        else if (rrProp.type === 'number') rrRaw = rrProp.number;
+        else if (rrProp.type === 'title') rrRaw = rrProp.title?.[0]?.plain_text;
+      }
+
+      // === DETEKSI TRADE: hanya jika salah satu nilai terisi ===
+      const hasInstrument = instrumentRaw.trim().length > 0;
+      const hasPosition = positionRaw.trim().length > 0;
+      const hasRR = rrRaw !== null && rrRaw !== undefined && String(rrRaw).trim().length > 0;
       const isTrade = hasInstrument || hasPosition || hasRR;
 
-      // === PROPERTI LAIN (tetap) ===
+      // === PROPERTI LAIN ===
       const praPasar = getRichText(page, 'Pra-pasar');
       const eksekusi = getRichText(page, 'Eksekusi');
       const monthlyNote = getRichText(page, 'Monthly Note');
@@ -90,17 +100,6 @@ export async function fetchTrades(): Promise<any[]> {
       const time = page.properties.Time?.select?.name || page.properties.Session?.select?.name || '';
       const youtubeLink = page.properties.YouTube?.url || '';
       const status = page.properties.Status?.select?.name || 'Entered';
-
-      // RR
-      let rrRaw = null;
-      const rrProp = page.properties.RR;
-      if (rrProp) {
-        if (rrProp.type === 'select') rrRaw = rrProp.select?.name;
-        else if (rrProp.type === 'multi_select') rrRaw = rrProp.multi_select?.[0]?.name;
-        else if (rrProp.type === 'rich_text') rrRaw = rrProp.rich_text?.[0]?.plain_text;
-        else if (rrProp.type === 'number') rrRaw = rrProp.number;
-        else if (rrProp.type === 'title') rrRaw = rrProp.title?.[0]?.plain_text;
-      }
 
       const halfRisk = page.properties['Half risk (if not...)']?.checkbox || false;
       const setupGrade = page.properties['Setup Grade']?.select?.name || 'B';
@@ -152,7 +151,7 @@ export async function fetchTrades(): Promise<any[]> {
         weeklyThesis,
         psychology,
         chartLesson,
-        isTrade, // <-- INI
+        isTrade, // <-- sudah benar
         dailyFilter,
         h4Filter,
         h1Filter,
