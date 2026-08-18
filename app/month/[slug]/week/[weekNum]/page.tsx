@@ -100,22 +100,43 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
   return (
     <>
-      {/* ===== HEADER: JUDUL KIRI, STATISTIK KANAN ===== */}
+      {/* ===== HEADER: JUDUL KIRI, STATISTIK KANAN (1 BARIS HORIZONTAL SEJAJAR) ===== */}
       <header className="mb-10">
-        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
           {/* Judul kiri */}
-          <div>
-            <div className="font-['Big_Shoulders'] font-black text-[clamp(28px,4.5vw,52px)] leading-tight">
-              MINGGU {localWeekNumber} · {monthLabel} {startDate.getDate()} – {monthLabel} {endDate.getDate()}
-            </div>
+          <div className="font-['Big_Shoulders'] font-black text-[clamp(24px,3.5vw,42px)] leading-tight text-left">
+            MINGGU {localWeekNumber} · {monthLabel} {startDate.getDate()} – {monthLabel} {endDate.getDate()}
           </div>
 
-          {/* Statistik kanan — right-aligned, vertikal, teks biasa */}
-          <div className="flex-shrink-0 text-right font-mono text-sm leading-relaxed text-[#A6A39C]">
-            <div><span className="text-[#6E6B65]">Trade</span> <span className="font-bold text-[#E8E6E1]">{trades.length}</span></div>
-            <div><span className="text-[#6E6B65]">Net R</span> <span className={`font-bold ${netR >= 0 ? 'text-[#2E5695]' : 'text-[#8B3A1F]'}`}>{netR >= 0 ? '+' : ''}{netR.toFixed(1)}R</span></div>
-            <div><span className="text-[#6E6B65]">Win</span> <span className="font-bold text-[#C49A3C]">{winCount}</span></div>
-            <div><span className="text-[#6E6B65]">Loss</span> <span className="font-bold text-[#8B3A1F]">{lossCount}</span></div>
+          {/* Statistik kanan — 1 Baris Horizontal Right-Aligned dengan Pembagi */}
+          <div className="flex items-center justify-end flex-wrap gap-2 font-mono text-sm text-[#A6A39C] whitespace-nowrap">
+            <span>
+              <span className="text-[#6E6B65]">Trade </span>
+              <span className="font-bold text-[#E8E6E1]">{trades.length}</span>
+            </span>
+
+            <span className="text-[#56534E]">·</span>
+
+            <span>
+              <span className="text-[#6E6B65]">Net R </span>
+              <span className={`font-bold ${netR >= 0 ? 'text-[#2E5695]' : 'text-[#8B3A1F]'}`}>
+                {netR >= 0 ? '+' : ''}{netR.toFixed(1)}R
+              </span>
+            </span>
+
+            <span className="text-[#56534E]">·</span>
+
+            <span>
+              <span className="text-[#6E6B65]">Win </span>
+              <span className="font-bold text-[#C49A3C]">{winCount}</span>
+            </span>
+
+            <span className="text-[#56534E]">·</span>
+
+            <span>
+              <span className="text-[#6E6B65]">Loss </span>
+              <span className="font-bold text-[#8B3A1F]">{lossCount}</span>
+            </span>
           </div>
         </div>
       </header>
