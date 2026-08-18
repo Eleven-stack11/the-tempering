@@ -58,14 +58,14 @@ export default function TopNav() {
   return (
     <nav className="topnav">
       <div className="topnav-crumb">
-        <Link href="/">Beranda</Link>
+        <Link href="/" className="crumb-link">Beranda</Link>
         {crumbs.map((crumb, index) => (
-          <span key={index}>
+          <span key={index} className="crumb-wrapper">
             <span className="sep">/</span>
             {index === crumbs.length - 1 ? (
               <span className="here">{crumb.label}</span>
             ) : (
-              <Link href={crumb.href}>{crumb.label}</Link>
+              <Link href={crumb.href} className="crumb-link">{crumb.label}</Link>
             )}
           </span>
         ))}
