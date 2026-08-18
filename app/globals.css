@@ -1,14 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Big+Shoulders:opsz,wght@10..72,400;10..72,600;10..72,700;10..72,800;10..72,900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* Layout System */
   --sidebar-width: 260px;
   --topnav-height: 48px;
   --content-max-width: 1180px;
   --page-gutter: clamp(16px, 3vw, 48px);
   --section-spacing: clamp(32px, 4vh, 56px);
-
-  /* Spacing */
+  
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -19,7 +17,6 @@
   --space-8: 64px;
   --space-9: 80px;
 
-  /* Design Tokens */
   --bg: #0F0F0E;
   --bg-raised: #171614;
   --surface: #1A1918;
@@ -647,7 +644,6 @@ details.transcript .transcript-body {
   margin-bottom: 0;
   max-width: 480px;
 }
-
 @media (min-width: 768px) {
   .footer-quotes {
     flex-direction: row;
@@ -659,22 +655,18 @@ details.transcript .transcript-body {
 }
 
 /* ============================================================
-   LAYOUT SYSTEM & SIDEBAR
+   LAYOUT SYSTEM (Tanpa Tailwind)
    ============================================================ */
-
-/* --- Layout Container --- */
 .page-container {
   max-width: var(--content-max-width);
   margin: 0 auto;
   padding: 0 var(--page-gutter);
   width: 100%;
 }
-
 .section-spacing {
   margin-bottom: var(--section-spacing);
 }
 
-/* --- TopNav --- */
 .topnav {
   padding: 0 var(--page-gutter);
   height: var(--topnav-height);
@@ -688,7 +680,6 @@ details.transcript .transcript-body {
   top: 0;
   z-index: 50;
 }
-
 .topnav-crumb {
   display: flex;
   align-items: center;
@@ -728,7 +719,7 @@ details.transcript .transcript-body {
 }
 .topnav-home:hover { color: var(--gold); }
 
-/* --- Day Hero (new) --- */
+/* ---------- Day Hero (New) ---------- */
 .day-hero-new {
   padding: var(--space-7) 0 var(--space-6);
   border-bottom: 1px solid var(--border-soft);
@@ -793,12 +784,14 @@ details.transcript .transcript-body {
 .day-meta-cell .val.win { color: var(--gold); }
 .day-meta-cell .val.loss { color: var(--rust); }
 
-/* --- Sidebar --- */
+/* ============================================================
+   SIDEBAR (Full CSS)
+   ============================================================ */
 .sb-sidebar {
   position: fixed;
   top: 0;
   left: 0;
-  width: var(--sidebar-width);
+  width: 260px;
   height: 100vh;
   background: var(--bg);
   border-right: 1px solid var(--border);
