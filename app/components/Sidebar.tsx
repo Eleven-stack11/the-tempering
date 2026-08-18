@@ -68,41 +68,42 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
 
   return (
     <>
-      {/* ===== TOMBOL TOGGLE — INLINE STYLE, PASTI MUNCUL ===== */}
+      {/* ===== TOMBOL TOGGLE — EMAS, PASTI TERLIHAT ===== */}
       <div
         style={{
           position: 'fixed',
           top: '16px',
           left: '16px',
-          zIndex: 9999999,
+          zIndex: 99999999,
           display: 'block',
         }}
       >
         <button
           onClick={toggleSidebar}
           style={{
-            background: '#1A1918',
-            border: '1px solid #2C2A27',
-            borderRadius: '8px',
-            padding: '6px 10px',
-            color: '#A6A39C',
-            fontSize: '22px',
-            lineHeight: '1',
+            background: '#C49A3C', // EMAS
+            color: '#0F0F0E',      // Teks hitam
+            border: 'none',
+            borderRadius: '6px',
+            padding: '8px 12px',
+            fontSize: '20px',
+            fontWeight: 'bold',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '40px',
-            height: '40px',
-            transition: 'background 0.2s, color 0.2s',
+            width: '44px',
+            height: '44px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.9)',
+            transition: 'transform 0.2s, background 0.2s',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#2C2A27';
-            e.currentTarget.style.color = '#E8E6E1';
+            e.currentTarget.style.transform = 'scale(1.05)';
+            e.currentTarget.style.background = '#D4AF37';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = '#1A1918';
-            e.currentTarget.style.color = '#A6A39C';
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.background = '#C49A3C';
           }}
           aria-label="Toggle Sidebar"
         >
