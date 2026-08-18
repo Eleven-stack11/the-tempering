@@ -615,7 +615,7 @@ details.transcript .transcript-body {
   scrollbar-color: #56534E transparent;
 }
 
-/* ===== PAGE CONTAINER ===== */
+/* ===== LAYOUT SYSTEM ===== */
 .page-container {
   max-width: 1180px;
   margin: 0 auto;
@@ -636,7 +636,6 @@ details.transcript .transcript-body {
   margin-bottom: 0;
   max-width: 480px;
 }
-
 @media (min-width: 768px) {
   .footer-quotes {
     flex-direction: row;
@@ -678,6 +677,13 @@ details.transcript .transcript-body {
   color: var(--gold);
   padding: 4px 8px 20px;
   white-space: nowrap;
+  background: transparent !important;
+}
+.sb-brand img {
+  background: transparent !important;
+  display: block;
+  max-height: 24px;
+  width: auto;
 }
 .sb-brand-mark {
   width: 7px; height: 7px; min-width: 7px;
@@ -734,4 +740,69 @@ details.transcript .transcript-body {
 
 @media (max-width: 768px) {
   .sb-sidebar { box-shadow: 0 0 40px rgba(0,0,0,0.6); }
+}
+
+/* ===== TOP NAV ===== */
+.topnav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 0 clamp(16px, 3vw, 48px);
+  border-bottom: 1px solid var(--border-soft);
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.topnav-crumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  flex-wrap: wrap;
+}
+.topnav-crumb a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.topnav-crumb a:hover {
+  color: var(--gold);
+}
+.topnav-crumb a::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  background: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpolyline points='15 18 9 12 15 6' stroke='currentColor' stroke-width='2' fill='none'/%3E%3C/svg%3E") center/contain no-repeat;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpolyline points='15 18 9 12 15 6' stroke='currentColor' stroke-width='2' fill='none'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+.topnav-crumb .sep {
+  color: var(--border);
+}
+.topnav-crumb .here {
+  color: var(--text);
+  font-weight: 600;
+}
+.topnav-home {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: color 0.15s;
+  text-decoration: none;
+}
+.topnav-home:hover {
+  color: var(--gold);
 }
