@@ -43,7 +43,14 @@ export default async function HomePage() {
   );
 
   return (
-    <div className="page-container" style={{ paddingTop: "24px", paddingBottom: "48px" }}>
+    <div
+      style={{
+        maxWidth: "1180px",
+        margin: "0 auto",
+        padding: "24px 20px 48px",
+        width: "100%",
+      }}
+    >
       {/* ===== HEADER ===== */}
       <header style={{ marginBottom: "40px" }}>
         <div
@@ -169,7 +176,6 @@ export default async function HomePage() {
             marginBottom: "32px",
           }}
         >
-          {/* Desktop: flex row, Mobile: flex column */}
           <div
             style={{
               display: "flex",
@@ -177,7 +183,7 @@ export default async function HomePage() {
               justifyContent: "space-between",
               gap: "24px",
             }}
-            className="md:flex-row"
+            className="md-flex-row"
           >
             {/* Kiri — Shokunin */}
             <div style={{ maxWidth: "480px", textAlign: "left" }}>
@@ -209,7 +215,7 @@ export default async function HomePage() {
                 maxWidth: "480px",
                 textAlign: "left",
               }}
-              className="md:text-right"
+              className="md-text-right"
             >
               <h4
                 style={{
@@ -234,13 +240,12 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Media query untuk desktop: Kaizen rata kanan */}
           <style>{`
             @media (min-width: 768px) {
-              .md\\:flex-row {
+              .md-flex-row {
                 flex-direction: row !important;
               }
-              .md\\:text-right {
+              .md-text-right {
                 text-align: right !important;
               }
             }
