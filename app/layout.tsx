@@ -84,7 +84,9 @@ export default async function RootLayout({
           }}
         >
           <TopNav />
-          <div className="max-w-6xl mx-auto p-6">{children}</div>
+          <div className="max-w-6xl mx-auto px-4 sm:px-8 md:px-12 py-6 md:py-8">
+            {children}
+          </div>
         </main>
       </body>
     </html>
