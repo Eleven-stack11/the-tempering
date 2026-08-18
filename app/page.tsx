@@ -43,7 +43,7 @@ export default async function HomePage() {
   );
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
+    <>
       <header className="mb-12">
         <div className="eyebrow">TRADING LOG</div>
         <h1 className="font-['Big_Shoulders'] font-black text-[clamp(48px,8vw,96px)] leading-[0.92] mb-4">
@@ -53,7 +53,7 @@ export default async function HomePage() {
 
       <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
 
-      <section className="mb-12">
+      <section className="section-spacing">
         <div className="stat-strip">
           <div className="stat">
             <div className="stat-label">Sesi Tercatat</div>
@@ -130,6 +130,6 @@ export default async function HomePage() {
 
         <div className="foot-meta">EL-DOCUMENTARY · JURNAL TRADING · DIPERBARUI SETIAP MINGGU</div>
       </footer>
-    </div>
+    </>
   );
 }
