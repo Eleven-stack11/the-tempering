@@ -76,16 +76,14 @@ export default async function RootLayout({
       <body className="bg-[#0F0F0E] text-[#E8E6E1] antialiased">
         <Sidebar months={monthList} />
         <main
-          className="min-h-screen transition-all duration-300 ease-in-out px-6 md:px-12 pt-8 pb-12"
+          className="min-h-screen transition-all duration-300 ease-in-out px-6 md:px-12 pt-6 pb-12"
           style={{
             marginLeft: "var(--sidebar-width, 260px)",
             maxWidth: "calc(100% - var(--sidebar-width, 260px))",
           }}
         >
           <TopNav />
-          <div className="page-container mt-4">
-            {children}
-          </div>
+          <div className="mt-4">{children}</div>
         </main>
       </body>
     </html>
