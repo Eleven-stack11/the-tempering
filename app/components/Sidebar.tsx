@@ -1,4 +1,5 @@
 'use client';
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -19,58 +20,43 @@ interface MonthItem {
   weeks?: WeekItem[];
 }
 
+// ===== IKON SVG =====
 const IconFolder = () => (
-  <svg viewBox="0 0 24 24">
-    <rect x="3" y="4" width="18" height="17" rx="0" />
-    <line x1="3" y1="9" x2="21" y2="9" />
-    <line x1="8" y1="2" x2="8" y2="6" />
-    <line x1="16" y1="2" x2="16" y2="6" />
-  </svg>
+  <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="0"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
 );
-
 const IconCalendar = () => (
-  <svg viewBox="0 0 24 24">
-    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-  </svg>
+  <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
 );
-
 const IconFile = () => (
-  <svg viewBox="0 0 24 24">
-    <rect x="3" y="4" width="18" height="17" />
-    <line x1="3" y1="9" x2="21" y2="9" />
-  </svg>
+  <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
 );
-
 const IconLocked = () => (
-  <svg viewBox="0 0 24 24">
-    <rect x="4" y="9" width="16" height="11" />
-    <path d="M8 9V6a4 4 0 0 1 8 0v3" />
-  </svg>
+  <svg viewBox="0 0 24 24"><rect x="4" y="9" width="16" height="11"/><path d="M8 9V6a4 4 0 0 1 8 0v3"/></svg>
 );
-
 const IconChevron = ({ open }: { open: boolean }) => (
-  <svg viewBox="0 0 24 24">
-    <polyline points="9 6 15 12 9 18" />
-  </svg>
+  <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
 );
 
 export default function Sidebar({ months }: { months: MonthItem[] }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(true);
   const [collapsedMonths, setCollapsedMonths] = useState<Record<string, boolean>>({});
-  const [isYearCollapsed, setIsYearCollapsed] = useState(false);
+  const [isYearCollapsed, setIsYearCollapsed] = useState(false); // toggle untuk 2026
 
+  // Load state sidebar dari localStorage
   useEffect(() => {
     const saved = localStorage.getItem("sidebarOpen");
     if (saved !== null) setIsOpen(saved === "true");
   }, []);
 
+  // Toggle sidebar (buka/tutup)
   const toggleSidebar = () => {
     const newState = !isOpen;
     setIsOpen(newState);
     localStorage.setItem("sidebarOpen", String(newState));
   };
 
+  // Update CSS variable saat isOpen berubah
   useEffect(() => {
     document.documentElement.style.setProperty(
       "--sidebar-width",
@@ -78,10 +64,12 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
     );
   }, [isOpen]);
 
+  // Toggle collapse untuk bulan
   const toggleMonth = (key: string) => {
     setCollapsedMonths(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
+  // Toggle collapse untuk tahun
   const toggleYear = () => {
     setIsYearCollapsed(!isYearCollapsed);
   };
@@ -90,23 +78,42 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
 
   return (
     <>
-      <button
-        onClick={toggleSidebar}
-        className={`fixed top-4 z-[99999] bg-[#151515] border border-[#2a2a2a] rounded-lg p-2 text-[#aaa] hover:text-white transition text-xl w-10 h-10 flex items-center justify-center ${
-          isOpen ? 'left-[268px]' : 'left-4'
-        }`}
-        aria-label="Toggle Sidebar"
-        style={{ pointerEvents: 'auto' }}
-      >
-        {isOpen ? "◀" : "☰"}
-      </button>
+      {/* ===== TOMBOL HAMBURGER - Hanya muncul jika sidebar tertutup ===== */}
+      {!isOpen && (
+        <button
+          onClick={toggleSidebar}
+          className="fixed top-4 left-4 z-[99999] bg-[#151515] border border-[#2a2a2a] rounded-lg p-2 text-[#aaa] hover:text-white transition text-xl w-10 h-10 flex items-center justify-center"
+          aria-label="Open Sidebar"
+          style={{ pointerEvents: 'auto' }}
+        >
+          ☰
+        </button>
+      )}
 
+      {/* ===== SIDEBAR ===== */}
       <aside className={`sb-sidebar ${isOpen ? '' : 'collapsed'}`}>
-        <div className="sb-brand">
-          <span className="sb-brand-mark"></span>
-          <span>EL-DOCUMENTARY</span>
+        {/* Mengubah struktur agar tombol tepat di kanan tulisan EL-DOCUMENTARY */}
+        <div className="sb-brand flex justify-between items-center w-full pr-4">
+          <div className="flex items-center gap-2">
+            <span className="sb-brand-mark"></span>
+            <span>EL-DOCUMENTARY</span>
+          </div>
+          
+          {/* Tombol Tutup Sidebar */}
+          {isOpen && (
+             <button
+               onClick={toggleSidebar}
+               className="text-[#aaa] hover:text-white transition text-lg p-1"
+               aria-label="Close Sidebar"
+             >
+               ◀
+             </button>
+          )}
         </div>
+
         <div className="sb-section">Tahun</div>
+
+        {/* Node 2026 — dengan toggle collapse */}
         <div className={`sb-node ${isYearCollapsed ? '' : 'open'}`}>
           <div className="sb-item" onClick={toggleYear}>
             <span className="sb-icon"><IconFolder /></span>
@@ -121,6 +128,7 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
                 const weeks = month.weeks || [];
                 const hasWeeks = weeks.length > 0;
                 const isMonthActive = isActive(`/month/${monthKey}`);
+
                 return (
                   <div key={monthKey} className={`sb-node ${isCollapsed ? '' : 'open'}`}>
                     <div
@@ -138,6 +146,7 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
                         {weeks.map((week) => {
                           const isWeekActive = isActive(week.href);
                           const isLocked = week.count === 0;
+
                           return (
                             <div key={week.key} className="sb-node">
                               <Link
