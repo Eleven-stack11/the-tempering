@@ -84,7 +84,9 @@ export default async function RootLayout({
           }}
         >
           <TopNav />
-          {children}
+          <div className="page-container" style={{ paddingTop: "20px", paddingBottom: "60px" }}>
+            {children}
+          </div>
         </main>
       </body>
     </html>
