@@ -43,105 +43,146 @@ export default async function HomePage() {
   );
 
   return (
-    <>
-      <header className="mb-12">
-        <div className="eyebrow">TRADING LOG</div>
-        <h1 className="font-['Big_Shoulders'] font-black text-[clamp(48px,8vw,96px)] leading-[0.92] mb-4">
-          <em className="text-[#2E5695] not-italic"> Journey</em>
+    <div className="max-w-[1180px] mx-auto px-4 md:px-8 py-6">
+      {/* Header */}
+      <header className="mb-8">
+        <div className="font-mono text-xs tracking-widest text-[#C49A3C] uppercase mb-2">
+          TRADING LOG
+        </div>
+        <h1 className="font-['Big_Shoulders'] font-black text-5xl md:text-7xl leading-none text-white">
+          <em className="text-[#2E5695] not-italic">Journey</em>
         </h1>
       </header>
 
-      <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
+      <div className="h-[1px] bg-[#221F1C] w-full mb-8" />
 
-      <section className="section-spacing">
-        <div className="stat-strip">
-          <div className="stat">
-            <div className="stat-label">Sesi Tercatat</div>
-            <div className="stat-value">{totalSessions}</div>
+      {/* Grid 4 Kolom Sesi/Statistik */}
+      <section className="mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="bg-[#1A1918] border border-[#2C2A27] rounded-lg p-5">
+            <div className="font-mono text-[11px] tracking-wider uppercase text-[#6E6B65] mb-2">
+              Sesi Tercatat
+            </div>
+            <div className="font-['Big_Shoulders'] text-3xl font-extrabold text-white">
+              {totalSessions}
+            </div>
           </div>
-          <div className="stat">
-            <div className="stat-label">Setup A+ / A</div>
-            <div className="stat-value gold">{setupA}</div>
+
+          <div className="bg-[#1A1918] border border-[#2C2A27] rounded-lg p-5">
+            <div className="font-mono text-[11px] tracking-wider uppercase text-[#6E6B65] mb-2">
+              Setup A+ / A
+            </div>
+            <div className="font-['Big_Shoulders'] text-3xl font-extrabold text-[#C49A3C]">
+              {setupA}
+            </div>
           </div>
-          <div className="stat">
-            <div className="stat-label">Pelanggaran</div>
-            <div className="stat-value rust">{violations}</div>
+
+          <div className="bg-[#1A1918] border border-[#2C2A27] rounded-lg p-5">
+            <div className="font-mono text-[11px] tracking-wider uppercase text-[#6E6B65] mb-2">
+              Pelanggaran
+            </div>
+            <div className="font-['Big_Shoulders'] text-3xl font-extrabold text-[#8B3A1F]">
+              {violations}
+            </div>
           </div>
-          <div className="stat">
-            <div className="stat-label">Net R</div>
-            <div className={`stat-value ${netR >= 0 ? "water" : "rust"}`}>
-              {netR >= 0 ? "+" : ""}{netR.toFixed(1)}R
+
+          <div className="bg-[#1A1918] border border-[#2C2A27] rounded-lg p-5">
+            <div className="font-mono text-[11px] tracking-wider uppercase text-[#6E6B65] mb-2">
+              Net R
+            </div>
+            <div
+              className={`font-['Big_Shoulders'] text-3xl font-extrabold ${
+                netR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"
+              }`}
+            >
+              {netR >= 0 ? "+" : ""}
+              {netR.toFixed(1)}R
             </div>
           </div>
         </div>
       </section>
 
-      <section>
-        <div className="sec-head">
-          <h2>2026</h2>
-        </div>
+      {/* Kartu Bulan */}
+      <section className="mb-16">
+        <h2 className="font-['Big_Shoulders'] text-3xl font-bold text-white mb-4">
+          2026
+        </h2>
 
-        <div className="grid cols-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {monthKeys.map((key) => {
-            const [year, month] = key.split("-");
+            const [, month] = key.split("-");
             const monthName = monthNames[month] || month;
             const monthTrades = monthMap[key];
             return (
-              <Link key={key} href={`/month/${key}`} className="tile">
-                <div className="tile-eyebrow">
+              <Link
+                key={key}
+                href={`/month/${key}`}
+                className="bg-[#1A1918] border border-[#2C2A27] rounded-lg p-5 hover:border-[#3D3A35] hover:bg-[#201F1C] transition-all block"
+              >
+                <div className="flex items-center justify-between font-mono text-[11px] text-[#6E6B65] uppercase tracking-wider mb-2">
                   <span>BULAN {month}</span>
-                  <span className="tile-arrow">→</span>
+                  <span>→</span>
                 </div>
-                <h3>{monthName}</h3>
-                <p>{monthTrades.length} trade tercatat</p>
+                <h3 className="font-['Big_Shoulders'] text-3xl font-bold text-white mb-1">
+                  {monthName}
+                </h3>
+                <p className="text-xs text-[#A6A39C] mb-4">
+                  {monthTrades.length} trade tercatat
+                </p>
 
-                {/* Perbaikan spasi pada teks statistik kartu */}
-                <div className="tile-stats flex items-center justify-between mt-4 pt-3 border-t border-[var(--border-soft)]">
-                  <span className="text-sm">
-                    <b className="text-[var(--text)]">{monthTrades.length}</b> trade
+                {/* Teks terpisah rapi kiri-kanan */}
+                <div className="flex items-center justify-between pt-3 border-t border-[#221F1C] font-mono text-xs">
+                  <span className="text-[#A6A39C]">
+                    <b className="text-white font-bold">{monthTrades.length}</b> trade
                   </span>
-                  <span className="text-xs font-mono text-[var(--text-faint)]">
-                    NQ / ES
-                  </span>
+                  <span className="text-[#A6A39C] font-semibold">NQ / ES</span>
                 </div>
               </Link>
             );
           })}
-          <div className="tile locked">
-            <div className="tile-eyebrow">
+
+          <div className="bg-[#1A1918]/50 border border-[#2C2A27] rounded-lg p-5 opacity-60">
+            <div className="flex items-center justify-between font-mono text-[11px] text-[#6E6B65] uppercase tracking-wider mb-2">
               <span>BULAN 09</span>
-              <span className="lock-icon">🔒</span>
+              <span>🔒</span>
             </div>
-            <h3>September</h3>
-            <p>Belum ditempa.</p>
+            <h3 className="font-['Big_Shoulders'] text-3xl font-bold text-white mb-1">
+              September
+            </h3>
+            <p className="text-xs text-[#6E6B65]">Belum ditempa.</p>
           </div>
         </div>
       </section>
 
-      <footer className="site-footer">
-        <div className="blade-rule static" style={{ marginBottom: 36 }}></div>
-
-        {/* Perbaikan struktur Shokunin (Kiri) dan Kaizen (Kanan) */}
-        <div className="home-quotes">
-          <div className="quote-left">
-            <div className="quote-heading">"Shokunin 職人."</div>
-            <p className="quote-body">
+      {/* Footer & Filosofi Kiri-Kanan */}
+      <footer className="pt-8 border-t border-[#221F1C]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+          {/* Kiri */}
+          <div className="text-left">
+            <h4 className="text-base font-semibold text-white mb-1">
+              "Shokunin 職人."
+            </h4>
+            <p className="text-xs text-[#A6A39C] leading-relaxed">
               Bentuk pelatihan mencari kesempurnaan dengan sadar bahwa itu mustahil dicapai.
             </p>
           </div>
 
-          <div className="quote-right">
-            <div className="quote-heading">"Kaizen 改善."</div>
-            <p className="quote-body">
+          {/* Kanan */}
+          <div className="text-right">
+            <h4 className="text-base font-semibold text-white mb-1">
+              "Kaizen 改善."
+            </h4>
+            <p className="text-xs text-[#A6A39C] leading-relaxed">
               Proses menjadi lebih baik 1% setiap hari — perbaikan berkelanjutan.
             </p>
           </div>
         </div>
 
-        <div className="foot-meta">
+        {/* Tagline Bawah Full-Width Center */}
+        <div className="text-center font-mono text-[11px] tracking-widest text-[#6E6B65] uppercase pt-4 border-t border-[#221F1C]/50">
           EL-DOCUMENTARY · JURNAL TRADING · DIPERBARUI SETIAP MINGGU
         </div>
       </footer>
-    </>
+    </div>
   );
 }
