@@ -43,55 +43,61 @@ export default async function HomePage() {
   );
 
   return (
-    <div className="max-w-6xl mx-auto px-4 md:px-8 py-6">
-      {/* Header */}
-      <header className="mb-10">
-        <div className="font-mono text-xs tracking-widest text-[#C49A3C] uppercase mb-2">
+    <div className="page-container" style={{ paddingTop: "24px", paddingBottom: "48px" }}>
+      {/* ===== HEADER ===== */}
+      <header style={{ marginBottom: "40px" }}>
+        <div
+          style={{
+            fontFamily: "var(--mono)",
+            fontSize: "11px",
+            letterSpacing: "0.14em",
+            textTransform: "uppercase",
+            color: "var(--gold)",
+            marginBottom: "8px",
+          }}
+        >
           TRADING LOG
         </div>
-        <h1 className="font-['Big_Shoulders'] font-black text-5xl md:text-7xl leading-none text-white">
-          <em className="text-[#2E5695] not-italic">Journey</em>
+        <h1
+          style={{
+            fontFamily: "var(--display)",
+            fontWeight: 900,
+            fontSize: "clamp(48px, 8vw, 80px)",
+            lineHeight: "1",
+            color: "var(--text)",
+          }}
+        >
+          <em style={{ fontStyle: "normal", color: "var(--water-bright)" }}>Journey</em>
         </h1>
       </header>
 
-      <div className="h-[1px] bg-[#221F1C] w-full mb-8" />
+      <div
+        style={{
+          height: "1px",
+          width: "100%",
+          background: "var(--border-soft)",
+          marginBottom: "32px",
+        }}
+      />
 
-      {/* Statistik */}
-      <section className="mb-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="bg-[#1A1918] border border-[#2C2A27] rounded-lg p-5">
-            <div className="font-mono text-[11px] tracking-wider uppercase text-[#6E6B65] mb-2">
-              Sesi Tercatat
-            </div>
-            <div className="font-['Big_Shoulders'] text-3xl font-extrabold text-white">
-              {totalSessions}
-            </div>
+      {/* ===== STATISTIK ===== */}
+      <section style={{ marginBottom: "48px" }}>
+        <div className="stat-strip">
+          <div className="stat">
+            <div className="stat-label">Sesi Tercatat</div>
+            <div className="stat-value">{totalSessions}</div>
           </div>
-          <div className="bg-[#1A1918] border border-[#2C2A27] rounded-lg p-5">
-            <div className="font-mono text-[11px] tracking-wider uppercase text-[#6E6B65] mb-2">
-              Setup A+ / A
-            </div>
-            <div className="font-['Big_Shoulders'] text-3xl font-extrabold text-[#C49A3C]">
-              {setupA}
-            </div>
+          <div className="stat">
+            <div className="stat-label">Setup A+ / A</div>
+            <div className="stat-value gold">{setupA}</div>
           </div>
-          <div className="bg-[#1A1918] border border-[#2C2A27] rounded-lg p-5">
-            <div className="font-mono text-[11px] tracking-wider uppercase text-[#6E6B65] mb-2">
-              Pelanggaran
-            </div>
-            <div className="font-['Big_Shoulders'] text-3xl font-extrabold text-[#8B3A1F]">
-              {violations}
-            </div>
+          <div className="stat">
+            <div className="stat-label">Pelanggaran</div>
+            <div className="stat-value rust">{violations}</div>
           </div>
-          <div className="bg-[#1A1918] border border-[#2C2A27] rounded-lg p-5">
-            <div className="font-mono text-[11px] tracking-wider uppercase text-[#6E6B65] mb-2">
-              Net R
-            </div>
-            <div
-              className={`font-['Big_Shoulders'] text-3xl font-extrabold ${
-                netR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"
-              }`}
-            >
+          <div className="stat">
+            <div className="stat-label">Net R</div>
+            <div className={`stat-value ${netR >= 0 ? "water" : "rust"}`}>
               {netR >= 0 ? "+" : ""}
               {netR.toFixed(1)}R
             </div>
@@ -99,73 +105,160 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 2026 & Bulan */}
-      <section className="mb-16">
-        <h2 className="font-['Big_Shoulders'] text-3xl font-bold text-white mb-4">2026</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* ===== 2026 & BULAN ===== */}
+      <section style={{ marginBottom: "64px" }}>
+        <h2
+          style={{
+            fontFamily: "var(--display)",
+            fontWeight: 700,
+            fontSize: "clamp(28px, 3vw, 40px)",
+            color: "var(--text)",
+            marginBottom: "16px",
+          }}
+        >
+          2026
+        </h2>
+
+        <div className="grid cols-3">
           {monthKeys.map((key) => {
             const [, month] = key.split("-");
             const monthName = monthNames[month] || month;
             const monthTrades = monthMap[key];
             return (
-              <Link
-                key={key}
-                href={`/month/${key}`}
-                className="bg-[#1A1918] border border-[#2C2A27] rounded-lg p-5 hover:border-[#3D3A35] hover:bg-[#201F1C] transition-all block"
-              >
-                <div className="flex items-center justify-between font-mono text-[11px] text-[#6E6B65] uppercase tracking-wider mb-2">
+              <Link key={key} href={`/month/${key}`} className="tile">
+                <div className="tile-eyebrow">
                   <span>BULAN {month}</span>
-                  <span>→</span>
+                  <span className="tile-arrow">→</span>
                 </div>
-                <h3 className="font-['Big_Shoulders'] text-3xl font-bold text-white mb-1">
-                  {monthName}
-                </h3>
-                <p className="text-xs text-[#A6A39C] mb-4">
-                  {monthTrades.length} trade tercatat
-                </p>
-                <div className="flex items-center justify-between pt-3 border-t border-[#221F1C] font-mono text-xs">
-                  <span className="text-[#A6A39C]">
-                    <b className="text-white font-bold">{monthTrades.length}</b> trade
+                <h3>{monthName}</h3>
+                <p>{monthTrades.length} trade tercatat</p>
+                <div className="tile-stats">
+                  <span>
+                    <b>{monthTrades.length}</b> trade
                   </span>
-                  <span className="text-[#A6A39C] font-semibold">NQ / ES</span>
+                  <span>
+                    <b>NQ / ES</b>
+                  </span>
                 </div>
               </Link>
             );
           })}
-          <div className="bg-[#1A1918]/50 border border-[#2C2A27] rounded-lg p-5 opacity-60">
-            <div className="flex items-center justify-between font-mono text-[11px] text-[#6E6B65] uppercase tracking-wider mb-2">
+          <div className="tile locked">
+            <div className="tile-eyebrow">
               <span>BULAN 09</span>
-              <span>🔒</span>
+              <span className="lock-icon">🔒</span>
             </div>
-            <h3 className="font-['Big_Shoulders'] text-3xl font-bold text-white mb-1">
-              September
-            </h3>
-            <p className="text-xs text-[#6E6B65]">Belum ditempa.</p>
+            <h3>September</h3>
+            <p>Belum ditempa.</p>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="pt-8 border-t border-[#221F1C]">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-          <div className="text-left">
-            <h4 className="text-base font-semibold text-white mb-1">
-              "Shokunin 職人."
-            </h4>
-            <p className="text-xs text-[#A6A39C] leading-relaxed">
-              Bentuk pelatihan mencari kesempurnaan dengan sadar bahwa itu mustahil dicapai.
-            </p>
+      {/* ===== FOOTER — SHOKUNIN (KIRI) & KAIZEN (KANAN) ===== */}
+      <footer
+        style={{
+          paddingTop: "32px",
+          borderTop: "1px solid var(--border-soft)",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "24px",
+            marginBottom: "32px",
+          }}
+        >
+          {/* Desktop: flex row, Mobile: flex column */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              gap: "24px",
+            }}
+            className="md:flex-row"
+          >
+            {/* Kiri — Shokunin */}
+            <div style={{ maxWidth: "480px", textAlign: "left" }}>
+              <h4
+                style={{
+                  fontFamily: "var(--display)",
+                  fontWeight: 600,
+                  fontSize: "18px",
+                  color: "var(--text)",
+                  marginBottom: "4px",
+                }}
+              >
+                "Shokunin 職人."
+              </h4>
+              <p
+                style={{
+                  fontSize: "14px",
+                  color: "var(--text-muted)",
+                  lineHeight: 1.6,
+                }}
+              >
+                Bentuk pelatihan mencari kesempurnaan dengan sadar bahwa itu mustahil dicapai.
+              </p>
+            </div>
+
+            {/* Kanan — Kaizen */}
+            <div
+              style={{
+                maxWidth: "480px",
+                textAlign: "left",
+              }}
+              className="md:text-right"
+            >
+              <h4
+                style={{
+                  fontFamily: "var(--display)",
+                  fontWeight: 600,
+                  fontSize: "18px",
+                  color: "var(--text)",
+                  marginBottom: "4px",
+                }}
+              >
+                "Kaizen 改善."
+              </h4>
+              <p
+                style={{
+                  fontSize: "14px",
+                  color: "var(--text-muted)",
+                  lineHeight: 1.6,
+                }}
+              >
+                Proses menjadi lebih baik 1% setiap hari — perbaikan berkelanjutan.
+              </p>
+            </div>
           </div>
-          <div className="text-left md:text-right">
-            <h4 className="text-base font-semibold text-white mb-1">
-              "Kaizen 改善."
-            </h4>
-            <p className="text-xs text-[#A6A39C] leading-relaxed">
-              Proses menjadi lebih baik 1% setiap hari — perbaikan berkelanjutan.
-            </p>
-          </div>
+
+          {/* Media query untuk desktop: Kaizen rata kanan */}
+          <style>{`
+            @media (min-width: 768px) {
+              .md\\:flex-row {
+                flex-direction: row !important;
+              }
+              .md\\:text-right {
+                text-align: right !important;
+              }
+            }
+          `}</style>
         </div>
-        <div className="text-center font-mono text-[11px] tracking-widest text-[#6E6B65] uppercase pt-4 border-t border-[#221F1C]/50">
+
+        <div
+          style={{
+            textAlign: "center",
+            fontFamily: "var(--mono)",
+            fontSize: "11px",
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color: "var(--text-faint)",
+            paddingTop: "16px",
+            borderTop: "1px solid var(--border-soft)",
+          }}
+        >
           EL-DOCUMENTARY · JURNAL TRADING · DIPERBARUI SETIAP MINGGU
         </div>
       </footer>
