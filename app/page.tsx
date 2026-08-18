@@ -43,8 +43,8 @@ export default async function HomePage() {
   );
 
   return (
-    <div className="max-w-[1180px] mx-auto px-4 md:px-8 py-6">
-      {/* ===== HEADER ===== */}
+    <div className="max-w-6xl mx-auto px-4 md:px-8 py-6">
+      {/* Header */}
       <header className="mb-10">
         <div className="font-mono text-xs tracking-widest text-[#C49A3C] uppercase mb-2">
           TRADING LOG
@@ -56,7 +56,7 @@ export default async function HomePage() {
 
       <div className="h-[1px] bg-[#221F1C] w-full mb-8" />
 
-      {/* ===== STATISTIK ===== */}
+      {/* Statistik */}
       <section className="mb-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="bg-[#1A1918] border border-[#2C2A27] rounded-lg p-5">
@@ -67,7 +67,6 @@ export default async function HomePage() {
               {totalSessions}
             </div>
           </div>
-
           <div className="bg-[#1A1918] border border-[#2C2A27] rounded-lg p-5">
             <div className="font-mono text-[11px] tracking-wider uppercase text-[#6E6B65] mb-2">
               Setup A+ / A
@@ -76,7 +75,6 @@ export default async function HomePage() {
               {setupA}
             </div>
           </div>
-
           <div className="bg-[#1A1918] border border-[#2C2A27] rounded-lg p-5">
             <div className="font-mono text-[11px] tracking-wider uppercase text-[#6E6B65] mb-2">
               Pelanggaran
@@ -85,7 +83,6 @@ export default async function HomePage() {
               {violations}
             </div>
           </div>
-
           <div className="bg-[#1A1918] border border-[#2C2A27] rounded-lg p-5">
             <div className="font-mono text-[11px] tracking-wider uppercase text-[#6E6B65] mb-2">
               Net R
@@ -102,12 +99,9 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ===== 2026 & BULAN ===== */}
+      {/* 2026 & Bulan */}
       <section className="mb-16">
-        <h2 className="font-['Big_Shoulders'] text-3xl font-bold text-white mb-4">
-          2026
-        </h2>
-
+        <h2 className="font-['Big_Shoulders'] text-3xl font-bold text-white mb-4">2026</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {monthKeys.map((key) => {
             const [, month] = key.split("-");
@@ -129,7 +123,6 @@ export default async function HomePage() {
                 <p className="text-xs text-[#A6A39C] mb-4">
                   {monthTrades.length} trade tercatat
                 </p>
-
                 <div className="flex items-center justify-between pt-3 border-t border-[#221F1C] font-mono text-xs">
                   <span className="text-[#A6A39C]">
                     <b className="text-white font-bold">{monthTrades.length}</b> trade
@@ -139,7 +132,6 @@ export default async function HomePage() {
               </Link>
             );
           })}
-
           <div className="bg-[#1A1918]/50 border border-[#2C2A27] rounded-lg p-5 opacity-60">
             <div className="flex items-center justify-between font-mono text-[11px] text-[#6E6B65] uppercase tracking-wider mb-2">
               <span>BULAN 09</span>
@@ -153,10 +145,9 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ===== FOOTER — SHOKUNIN (KIRI) & KAIZEN (KANAN) ===== */}
+      {/* Footer */}
       <footer className="pt-8 border-t border-[#221F1C]">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-          {/* Kiri — Shokunin */}
           <div className="text-left">
             <h4 className="text-base font-semibold text-white mb-1">
               "Shokunin 職人."
@@ -165,8 +156,6 @@ export default async function HomePage() {
               Bentuk pelatihan mencari kesempurnaan dengan sadar bahwa itu mustahil dicapai.
             </p>
           </div>
-
-          {/* Kanan — Kaizen */}
           <div className="text-left md:text-right">
             <h4 className="text-base font-semibold text-white mb-1">
               "Kaizen 改善."
@@ -176,7 +165,6 @@ export default async function HomePage() {
             </p>
           </div>
         </div>
-
         <div className="text-center font-mono text-[11px] tracking-widest text-[#6E6B65] uppercase pt-4 border-t border-[#221F1C]/50">
           EL-DOCUMENTARY · JURNAL TRADING · DIPERBARUI SETIAP MINGGU
         </div>
