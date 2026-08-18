@@ -3,7 +3,6 @@ import "./globals.css";
 import Sidebar from "./components/Sidebar";
 import TopNav from "./components/TopNav";
 import { fetchTrades, getWeekNumber } from "@/lib/notion";
-import SidebarToggle from "./components/SidebarToggle";
 
 export const metadata: Metadata = {
   title: "EL-Documentary — Trading Journal",
@@ -75,7 +74,6 @@ export default async function RootLayout({
   return (
     <html lang="id">
       <body className="bg-[#0F0F0E] text-[#E8E6E1] antialiased">
-        <SidebarToggle />
         <Sidebar months={monthList} />
         <main
           className="min-h-screen transition-all duration-300 ease-in-out"
