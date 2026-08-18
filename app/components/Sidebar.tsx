@@ -65,14 +65,40 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
 
   return (
     <>
-      {/* ===== TOMBOL TOGGLE — DI LUAR SIDEBAR, SELALU TERLIHAT ===== */}
+      {/* ===== TOMBOL TOGGLE — DIPERKUAT ===== */}
       <button
         onClick={toggleSidebar}
-        className="fixed top-4 left-4 z-[99999] bg-[#151515] border border-[#2a2a2a] rounded-lg p-2 text-[#aaa] hover:text-white transition text-xl w-10 h-10 flex items-center justify-center"
+        style={{
+          position: 'fixed',
+          top: '16px',
+          left: '16px',
+          zIndex: 999999,
+          background: '#1A1918',
+          border: '1px solid #2C2A27',
+          borderRadius: '8px',
+          padding: '8px 10px',
+          color: '#A6A39C',
+          fontSize: '20px',
+          lineHeight: '1',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '40px',
+          height: '40px',
+          transition: 'background 0.2s, color 0.2s',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = '#2C2A27';
+          e.currentTarget.style.color = '#E8E6E1';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = '#1A1918';
+          e.currentTarget.style.color = '#A6A39C';
+        }}
         aria-label="Toggle Sidebar"
-        style={{ pointerEvents: 'auto' }}
       >
-        {isOpen ? "◀" : "☰"}
+        {isOpen ? '✕' : '☰'}
       </button>
 
       {/* ===== SIDEBAR ===== */}
