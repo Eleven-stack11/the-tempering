@@ -98,7 +98,7 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
         </p>
       </header>
 
-      <section className="mb-8">
+      <section className="section-spacing">
         <div className="stat-strip">
           <div className="stat">
             <div className="stat-label">Sesi Tercatat</div>
