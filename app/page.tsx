@@ -94,12 +94,14 @@ export default async function HomePage() {
                 </div>
                 <h3>{monthName}</h3>
                 <p>{monthTrades.length} trade tercatat</p>
-                <div className="tile-stats">
-                  <span>
-                    <b>{monthTrades.length}</b> trade
+
+                {/* Perbaikan spasi pada teks statistik kartu */}
+                <div className="tile-stats flex items-center justify-between mt-4 pt-3 border-t border-[var(--border-soft)]">
+                  <span className="text-sm">
+                    <b className="text-[var(--text)]">{monthTrades.length}</b> trade
                   </span>
-                  <span>
-                    <b>NQ / ES</b>
+                  <span className="text-xs font-mono text-[var(--text-faint)]">
+                    NQ / ES
                   </span>
                 </div>
               </Link>
@@ -119,16 +121,26 @@ export default async function HomePage() {
       <footer className="site-footer">
         <div className="blade-rule static" style={{ marginBottom: 36 }}></div>
 
-        <div className="footer-quotes">
-          <div className="quote">
-            "Shokunin 職人.<br />Bentuk pelatihan mencari kesempurnaan dengan sadar bahwa itu mustahil dicapai."
+        {/* Perbaikan struktur Shokunin (Kiri) dan Kaizen (Kanan) */}
+        <div className="home-quotes">
+          <div className="quote-left">
+            <div className="quote-heading">"Shokunin 職人."</div>
+            <p className="quote-body">
+              Bentuk pelatihan mencari kesempurnaan dengan sadar bahwa itu mustahil dicapai.
+            </p>
           </div>
-          <div className="quote right">
-            "Kaizen 改善.<br />Proses menjadi lebih baik 1% setiap hari — perbaikan berkelanjutan."
+
+          <div className="quote-right">
+            <div className="quote-heading">"Kaizen 改善."</div>
+            <p className="quote-body">
+              Proses menjadi lebih baik 1% setiap hari — perbaikan berkelanjutan.
+            </p>
           </div>
         </div>
 
-        <div className="foot-meta">EL-DOCUMENTARY · JURNAL TRADING · DIPERBARUI SETIAP MINGGU</div>
+        <div className="foot-meta">
+          EL-DOCUMENTARY · JURNAL TRADING · DIPERBARUI SETIAP MINGGU
+        </div>
       </footer>
     </>
   );
