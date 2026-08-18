@@ -19,7 +19,6 @@ interface MonthItem {
   weeks?: WeekItem[];
 }
 
-// ===== IKON SVG =====
 const IconFolder = () => (
   <svg viewBox="0 0 24 24">
     <rect x="3" y="4" width="18" height="17" rx="0" />
@@ -42,4 +41,25 @@ const IconFile = () => (
   </svg>
 );
 
-const IconLocked = () =>
+const IconLocked = () => (
+  <svg viewBox="0 0 24 24">
+    <rect x="4" y="9" width="16" height="11" />
+    <path d="M8 9V6a4 4 0 0 1 8 0v3" />
+  </svg>
+);
+
+const IconChevron = ({ open }: { open: boolean }) => (
+  <svg viewBox="0 0 24 24">
+    <polyline points="9 6 15 12 9 18" />
+  </svg>
+);
+
+export default function Sidebar({ months }: { months: MonthItem[] }) {
+  const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(true);
+  const [collapsedMonths, setCollapsedMonths] = useState<Record<string, boolean>>({});
+  const [isYearCollapsed, setIsYearCollapsed] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("sidebarOpen");
+   
