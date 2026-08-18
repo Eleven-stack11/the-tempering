@@ -66,9 +66,19 @@ export async function fetchTrades(): Promise<any[]> {
 
     return data.results.map((page: any) => {
       const date = page.properties.Date?.date?.start || '';
-      const position = page.properties.Position?.select?.name || 'Long';
 
-      // === PROPERTI ===
+      // ===== AMBIL PROPERTI MENTAH (untuk deteksi isTrade) =====
+      const instrumentRaw = page.properties.Instrument?.select?.name || '';
+      const positionRaw = page.properties.Position?.select?.name || '';
+      const rrPropExists = !!page.properties.RR; // properti RR ada (meskipun value kosong?)
+
+      // ===== DETEKSI APAKAH INI TRADE =====
+      const hasInstrument = !!instrumentRaw;
+      const hasPosition = !!positionRaw;
+      const hasRR = rrPropExists; // atau bisa cek value, tapi lebih aman cek existence
+      const isTrade = hasInstrument || hasPosition || hasRR;
+
+      // === PROPERTI LAIN (tetap) ===
       const praPasar = getRichText(page, 'Pra-pasar');
       const eksekusi = getRichText(page, 'Eksekusi');
       const monthlyNote = getRichText(page, 'Monthly Note');
@@ -76,14 +86,12 @@ export async function fetchTrades(): Promise<any[]> {
       const psychology = getRichText(page, 'Psikologi');
       const chartLesson = getRichText(page, 'Pelajaran Chart');
 
-      // === SESSION & TIME ===
       const session = page.properties.Session?.select?.name || page.properties.Time?.select?.name || 'LONDON';
       const time = page.properties.Time?.select?.name || page.properties.Session?.select?.name || '';
-
-      // === LINK YOUTUBE ===
       const youtubeLink = page.properties.YouTube?.url || '';
+      const status = page.properties.Status?.select?.name || 'Entered';
 
-      // === RR ===
+      // RR
       let rrRaw = null;
       const rrProp = page.properties.RR;
       if (rrProp) {
@@ -96,9 +104,7 @@ export async function fetchTrades(): Promise<any[]> {
 
       const halfRisk = page.properties['Half risk (if not...)']?.checkbox || false;
       const setupGrade = page.properties['Setup Grade']?.select?.name || 'B';
-      const status = page.properties.Status?.select?.name || 'Entered';
 
-      // === FILTERS ===
       const dailyFilter = page.properties['Daily filter']?.select?.name || '';
       const h4Filter = page.properties['4H filter']?.select?.name || '';
       const h1Filter = page.properties['1H close filter']?.select?.name || '';
@@ -128,9 +134,9 @@ export async function fetchTrades(): Promise<any[]> {
       return {
         id: page.id,
         date,
-        title: `${position} ${page.properties.Instrument?.select?.name || 'NQ'}`,
-        instrument: page.properties.Instrument?.select?.name || 'NQ',
-        direction: position === 'Short' ? 'Short' : 'Long',
+        title: `${positionRaw || instrumentRaw} ${instrumentRaw || 'NQ'}`.trim() || 'Untitled',
+        instrument: instrumentRaw || 'NQ',
+        direction: positionRaw === 'Short' ? 'Short' : (positionRaw || 'Long'),
         trigger,
         result: rrData.result,
         grade,
@@ -140,12 +146,13 @@ export async function fetchTrades(): Promise<any[]> {
         eksekusi,
         monthlyNote,
         session,
-        time, // <-- TIME
-        link: youtubeLink, // <-- LINK YOUTUBE
+        time,
+        link: youtubeLink,
         status,
         weeklyThesis,
         psychology,
         chartLesson,
+        isTrade, // <-- INI
         dailyFilter,
         h4Filter,
         h1Filter,
