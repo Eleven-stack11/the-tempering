@@ -126,7 +126,7 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
                     </div>
                     {hasWeeks && !isCollapsed && (
                       <div className="sb-children">
-                        {month.weeks.map((week) => {
+                        {month.weeks!.map((week) => {
                           const isWeekActive = isActive(week.href);
                           const isLocked = week.count === 0;
 
@@ -220,8 +220,6 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
         .sb-node.open>.sb-children { display: block; }
         .sb-children .sb-item { padding-left: 34px; }
         .sb-children .sb-children .sb-item { padding-left: 50px; }
-        .sidebar-scroll::-webkit-scrollbar { width: 4px; }
-        .sidebar-scroll::-webkit-scrollbar-thumb { background: var(--steel-dim); }
       `}</style>
     </>
   );
