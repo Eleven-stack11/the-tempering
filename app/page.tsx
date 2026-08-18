@@ -20,7 +20,6 @@ const monthNames: Record<string, string> = {
 
 export default async function HomePage() {
   const allTrades = await fetchTrades();
-
   const trades = allTrades.filter((t) => t.status === "Entered" && t.isTrade === true);
 
   const monthMap: Record<string, any[]> = {};
@@ -46,15 +45,7 @@ export default async function HomePage() {
     <>
       <header style={{ marginBottom: "40px" }}>
         <div className="eyebrow">TRADING LOG</div>
-        <h1
-          style={{
-            fontFamily: "var(--display)",
-            fontWeight: 900,
-            fontSize: "clamp(48px, 8vw, 80px)",
-            lineHeight: "1",
-            color: "var(--text)",
-          }}
-        >
+        <h1 style={{ fontFamily: "var(--display)", fontWeight: 900, fontSize: "clamp(48px, 8vw, 80px)", lineHeight: "1", color: "var(--text)" }}>
           <em style={{ fontStyle: "normal", color: "var(--water-bright)" }}>Journey</em>
         </h1>
       </header>
@@ -86,18 +77,7 @@ export default async function HomePage() {
       </section>
 
       <section style={{ marginBottom: "64px" }}>
-        <h2
-          style={{
-            fontFamily: "var(--display)",
-            fontWeight: 700,
-            fontSize: "clamp(28px, 3vw, 40px)",
-            color: "var(--text)",
-            marginBottom: "16px",
-          }}
-        >
-          2026
-        </h2>
-
+        <h2 style={{ fontFamily: "var(--display)", fontWeight: 700, fontSize: "clamp(28px, 3vw, 40px)", color: "var(--text)", marginBottom: "16px" }}>2026</h2>
         <div className="grid cols-3">
           {monthKeys.map((key) => {
             const [, month] = key.split("-");
@@ -112,12 +92,8 @@ export default async function HomePage() {
                 <h3>{monthName}</h3>
                 <p>{monthTrades.length} trade tercatat</p>
                 <div className="tile-stats">
-                  <span>
-                    <b>{monthTrades.length}</b> trade
-                  </span>
-                  <span>
-                    <b>NQ / ES</b>
-                  </span>
+                  <span><b>{monthTrades.length}</b> trade</span>
+                  <span><b>NQ / ES</b></span>
                 </div>
               </Link>
             );
@@ -135,7 +111,6 @@ export default async function HomePage() {
 
       <footer className="site-footer" style={{ paddingTop: "32px", marginTop: "0" }}>
         <div className="blade-rule static" style={{ marginBottom: "36px" }} />
-
         <div className="footer-quotes">
           <div className="quote">
             "Shokunin 職人.<br />Bentuk pelatihan mencari kesempurnaan dengan sadar bahwa itu mustahil dicapai."
@@ -144,7 +119,6 @@ export default async function HomePage() {
             "Kaizen 改善.<br />Proses menjadi lebih baik 1% setiap hari — perbaikan berkelanjutan."
           </div>
         </div>
-
         <div className="foot-meta">EL-DOCUMENTARY · JURNAL TRADING · DIPERBARUI SETIAP MINGGU</div>
       </footer>
     </>
