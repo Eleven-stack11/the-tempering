@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Sidebar from "./components/Sidebar";
+import TopNav from "./components/TopNav";
 import { fetchTrades, getWeekNumber } from "@/lib/notion";
 
 export const metadata: Metadata = {
@@ -14,11 +15,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const allTrades = await fetchTrades();
-
-  // ===== FILTER: HANYA TRADE (isTrade = true) UNTUK SIDEBAR =====
   const trades = allTrades.filter((t) => t.isTrade === true);
 
-  // Bangun data bulan + minggu (hanya dari trade)
   const monthMap: Record<
     string,
     {
@@ -80,12 +78,13 @@ export default async function RootLayout({
         <main
           className="min-h-screen transition-all duration-300 ease-in-out"
           style={{
-            marginLeft: "var(--sidebar-width, 256px)",
-            padding: "1.5rem 2rem 1.5rem 3rem",
-            maxWidth: "calc(100% - var(--sidebar-width, 256px) + 40px)",
+            marginLeft: "var(--sidebar-width, 260px)",
+            padding: "0",
+            maxWidth: "calc(100% - var(--sidebar-width, 260px) + 40px)",
           }}
         >
-          <div className="max-w-6xl mx-auto">{children}</div>
+          <TopNav />
+          <div className="max-w-6xl mx-auto p-6">{children}</div>
         </main>
       </body>
     </html>
