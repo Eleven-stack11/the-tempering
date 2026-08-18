@@ -80,11 +80,6 @@ export default async function HomePage() {
       <section>
         <div className="sec-head">
           <h2>2026</h2>
-          <p>
-            Setiap bulan menyimpan minggu-minggunya. Setiap minggu menyimpan hari-harinya.
-            Tidak ada yang dilewatkan, termasuk minggu-minggu yang berjalan buruk.
-          </p>
-        </div>
 
         <div className="grid cols-3">
           {monthKeys.map((key) => {
@@ -123,36 +118,10 @@ export default async function HomePage() {
 
       <div className="ink-divider"></div>
 
-      <section>
-        <div className="sec-head">
-          <h2>Mengapa Ini Dibuat</h2>
-        </div>
-        <div className="max-w-2xl text-[#A6A39C] text-base leading-relaxed mb-12">
-          <p className="mb-4">
-            Yang Metal ingin memotong bersih lalu melangkah pergi. Ia tidak secara alami mau
-            berdiam dengan sebuah trade yang rugi dan menuliskan, dalam kalimat penuh, tepatnya
-            di mana pembacaan itu keliru. Ketidaknyamanan itu justru adalah intinya.
-          </p>
-          <p className="mb-4">
-            Setiap entri di sini mengikuti bentuk yang sama: apa yang saya harapkan sebelum
-            sesi, apa yang sebenarnya dilakukan pasar, di mana keduanya berbeda, dan apa yang
-            saya ubah karenanya. Tidak ada entri yang dihapus karena memalukan.{" "}
-            <strong className="text-[#E8E6E1]">
-              Kerugian tetap ditampilkan. Itulah yang membuat catatan ini jujur.
-            </strong>
-          </p>
-          <p>
-            Air adalah elemen yang masih kurang dalam diri saya — mengalir, beradaptasi,
-            membiarkan rencana melentur tanpa patah. Seluruh proyek ini adalah usaha untuk
-            membangunnya.
-          </p>
-        </div>
-      </section>
-
       <footer className="site-footer">
         <div className="blade-rule static" style={{ marginBottom: 36 }}></div>
         <div className="quote">
-          "Pedang tidak mengingat dulunya ia besi.<br />Catatan ini yang mengingatnya."
+          "Shokunin 職人, bentuk pelatihan mencari kesempurnaan meskipun tau bahwa itu tidak mungkin dicapai"
         </div>
         <div className="foot-meta">EL-DOCUMENTARY · JURNAL TRADING · DIPERBARUI SETIAP MINGGU</div>
       </footer>
