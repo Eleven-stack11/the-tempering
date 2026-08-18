@@ -10,17 +10,15 @@ interface TopNavProps {
 export default function TopNav({ breadcrumb = [] }: TopNavProps) {
   const pathname = usePathname();
 
-  // Jika di homepage, tidak tampil
-  if (pathname === '/') return null;
+  // Jangan tampilkan di homepage
+  if (pathname === "/") return null;
 
-  // Default breadcrumb: coba ambil dari pathname
+  // Jika breadcrumb tidak diberikan, buat sederhana dari pathname
   let crumbs = breadcrumb;
   if (crumbs.length === 0 && pathname) {
     const parts = pathname.split('/').filter(Boolean);
-    // Contoh: /month/2026-08/week/32/day/2026-08-13
-    // Kita buat sederhana: hanya tampilkan label terakhir
-    const last = parts[parts.length - 1];
-    crumbs = [{ label: last || 'Halaman', href: '#' }];
+    const last = parts[parts.length - 1] || 'Halaman';
+    crumbs = [{ label: last, href: '#' }];
   }
 
   return (
