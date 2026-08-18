@@ -13,9 +13,12 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const trades = await fetchTrades();
+  const allTrades = await fetchTrades();
 
-  // Bangun data bulan + minggu
+  // ===== FILTER: HANYA TRADE (isTrade = true) UNTUK SIDEBAR =====
+  const trades = allTrades.filter((t) => t.isTrade === true);
+
+  // Bangun data bulan + minggu (hanya dari trade)
   const monthMap: Record<
     string,
     {
@@ -52,13 +55,12 @@ export default async function RootLayout({
     .reverse()
     .map((key) => {
       const data = monthMap[key];
-      // Urutkan minggu, lalu beri nomor lokal (1,2,3,4)
       const weeksArray = Object.keys(data.weeks)
         .sort((a, b) => Number(a) - Number(b))
         .map((w, index) => ({
           key: `${key}-week-${w}`,
           number: Number(w),
-          localNumber: index + 1, // tambahkan nomor lokal
+          localNumber: index + 1,
           count: data.weeks[Number(w)],
           href: `/month/${key}/week/${w}`,
         }));
