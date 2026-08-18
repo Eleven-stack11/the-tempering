@@ -43,7 +43,7 @@ export default async function HomePage() {
   );
 
   return (
-    <div className="page-container" style={{ paddingTop: "20px", paddingBottom: "60px" }}>
+    <>
       {/* ===== HEADER ===== */}
       <header style={{ marginBottom: "40px" }}>
         <div className="eyebrow">TRADING LOG</div>
@@ -151,6 +151,6 @@ export default async function HomePage() {
 
         <div className="foot-meta">EL-DOCUMENTARY · JURNAL TRADING · DIPERBARUI SETIAP MINGGU</div>
       </footer>
-    </div>
+    </>
   );
 }
