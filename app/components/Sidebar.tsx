@@ -22,19 +22,36 @@ interface MonthItem {
 
 // ===== IKON SVG =====
 const IconFolder = () => (
-  <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="0"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="17" rx="0"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
 );
 const IconCalendar = () => (
-  <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
 );
 const IconFile = () => (
-  <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="17"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
 );
 const IconLocked = () => (
-  <svg viewBox="0 0 24 24"><rect x="4" y="9" width="16" height="11"/><path d="M8 9V6a4 4 0 0 1 8 0v3"/></svg>
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><rect x="4" y="9" width="16" height="11"/><path d="M8 9V6a4 4 0 0 1 8 0v3"/></svg>
 );
 const IconChevron = ({ open }: { open: boolean }) => (
-  <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" style={{ transform: open ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}><polyline points="9 6 15 12 9 18"/></svg>
+);
+
+// Ikon Estetik untuk Toggle Sidebar (Tutup & Buka)
+const IconSidebarCollapse = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+    <line x1="9" y1="3" x2="9" y2="21"/>
+    <path d="M15 15l-3-3 3-3"/>
+  </svg>
+);
+
+const IconSidebarExpand = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+    <line x1="9" y1="3" x2="9" y2="21"/>
+    <path d="M13 9l3 3-3 3"/>
+  </svg>
 );
 
 export default function Sidebar({ months }: { months: MonthItem[] }) {
@@ -78,43 +95,95 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
 
   return (
     <>
-      {/* ===== TOMBOL HAMBURGER - Muncul jika sidebar tertutup ===== */}
+      {/* ===== TOMBOL BUKA SIDEBAR (Saat Sidebar Tertutup) ===== */}
       {!isOpen && (
         <button
           onClick={toggleSidebar}
-          className="fixed top-4 left-4 z-[99999] bg-[#151515] border border-[#2a2a2a] rounded-lg text-[#aaa] hover:text-white transition text-xl flex items-center justify-center cursor-pointer"
-          style={{ width: '40px', height: '40px', minWidth: '40px', pointerEvents: 'auto' }}
           aria-label="Open Sidebar"
+          style={{
+            position: 'fixed',
+            top: '16px',
+            left: '16px',
+            zIndex: 99999,
+            backgroundColor: '#141413',
+            border: '1px solid #2a2a28',
+            color: '#cba358',
+            borderRadius: '8px',
+            width: '36px',
+            height: '36px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+            transition: 'all 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = '#cba358';
+            e.currentTarget.style.backgroundColor = '#1e1e1c';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = '#2a2a28';
+            e.currentTarget.style.backgroundColor = '#141413';
+          }}
         >
-          ☰
+          <IconSidebarExpand />
         </button>
       )}
 
       {/* ===== SIDEBAR ===== */}
-      <aside className={`sb-sidebar ${isOpen ? '' : 'collapsed'} relative`}>
+      <aside className={`sb-sidebar ${isOpen ? '' : 'collapsed'}`}>
         
-        {/* Tombol Tutup Sidebar - Terkunci posisi dan ukurannya di pojok kanan atas */}
-        {isOpen && (
-          <button
-            onClick={toggleSidebar}
-            className="absolute top-4 right-3 z-20 text-[#aaa] hover:text-white transition text-xs rounded hover:bg-[#222] flex items-center justify-center cursor-pointer border-0"
-            style={{ 
-              width: '28px', 
-              height: '28px', 
-              minWidth: '28px', 
-              maxWidth: '28px', 
-              backgroundColor: 'transparent', 
-              padding: 0 
-            }}
-            aria-label="Close Sidebar"
-          >
-            ◀
-          </button>
-        )}
+        {/* BRAND HEADER — Tulisan & Tombol Tutup Sejajar */}
+        <div 
+          className="sb-brand" 
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between', 
+            width: '100%',
+            paddingRight: '8px'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span className="sb-brand-mark"></span>
+            <span>EL-DOCUMENTARY</span>
+          </div>
 
-        <div className="sb-brand">
-          <span className="sb-brand-mark"></span>
-          <span>EL-DOCUMENTARY</span>
+          {/* Tombol Tutup Sidebar Estetik di Kanan */}
+          {isOpen && (
+            <button
+              onClick={toggleSidebar}
+              aria-label="Close Sidebar"
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: '#888888',
+                cursor: 'pointer',
+                padding: '4px',
+                borderRadius: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.2s ease',
+                outline: 'none',
+                boxShadow: 'none',
+                width: '28px',
+                height: '28px',
+                minWidth: '28px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = '#cba358';
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = '#888888';
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
+              <IconSidebarCollapse />
+            </button>
+          )}
         </div>
 
         <div className="sb-section">Tahun</div>
