@@ -100,44 +100,73 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
   return (
     <>
-      {/* ===== HEADER: JUDUL KIRI, STATISTIK KANAN (1 BARIS HORIZONTAL SEJAJAR & BERJARAK) ===== */}
-      <header className="py-6 mb-12 border-b border-[#221F1C]">
-        <div className="flex flex-row justify-between items-center w-full gap-6">
-          {/* Judul Kiri */}
-          <div className="font-['Big_Shoulders'] font-black text-xl sm:text-2xl md:text-3xl tracking-wide text-white whitespace-nowrap">
-            MINGGU {localWeekNumber} · {monthLabel} {startDate.getDate()} – {monthLabel} {endDate.getDate()}
-          </div>
+      {/* ===== HEADER: SEJAJAR LURUS KIRI & KANAN (1 BARIS HORIZONTAL) ===== */}
+      <header
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: '100%',
+          marginTop: '1rem',
+          marginBottom: '3rem',
+          paddingBottom: '1.25rem',
+          borderBottom: '1px solid #221F1C'
+        }}
+      >
+        {/* Judul Kiri */}
+        <div
+          style={{
+            fontFamily: "'Big Shoulders', sans-serif",
+            fontWeight: 900,
+            fontSize: '1.75rem',
+            letterSpacing: '0.025em',
+            color: '#FFFFFF',
+            whiteSpace: 'nowrap'
+          }}
+        >
+          MINGGU {localWeekNumber} · {monthLabel} {startDate.getDate()} – {monthLabel} {endDate.getDate()}
+        </div>
 
-          {/* Statistik Kanan — 1 Baris Sejajar Lurus di Kanan */}
-          <div className="flex items-center justify-end gap-3 sm:gap-4 font-mono text-xs sm:text-sm text-[#A6A39C] whitespace-nowrap">
-            <div className="flex items-center gap-1.5">
-              <span className="text-[#6E6B65]">Trade</span>
-              <span className="font-bold text-[#E8E6E1]">{trades.length}</span>
-            </div>
+        {/* Data Trade Kanan — Mengisi Ruang Kosong Kanan */}
+        <div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.85rem',
+            fontFamily: "'IBM Plex Mono', monospace",
+            fontSize: '0.875rem',
+            color: '#A6A39C',
+            whiteSpace: 'nowrap'
+          }}
+        >
+          <span>
+            <span style={{ color: '#6E6B65' }}>Trade </span>
+            <strong style={{ color: '#E8E6E1', fontWeight: 700 }}>{trades.length}</strong>
+          </span>
 
-            <span className="text-[#56534E]">·</span>
+          <span style={{ color: '#56534E' }}>·</span>
 
-            <div className="flex items-center gap-1.5">
-              <span className="text-[#6E6B65]">Net R</span>
-              <span className={`font-bold ${netR >= 0 ? 'text-[#2E5695]' : 'text-[#8B3A1F]'}`}>
-                {netR >= 0 ? '+' : ''}{netR.toFixed(1)}R
-              </span>
-            </div>
+          <span>
+            <span style={{ color: '#6E6B65' }}>Net R </span>
+            <strong style={{ color: netR >= 0 ? '#2E5695' : '#8B3A1F', fontWeight: 700 }}>
+              {netR >= 0 ? '+' : ''}{netR.toFixed(1)}R
+            </strong>
+          </span>
 
-            <span className="text-[#56534E]">·</span>
+          <span style={{ color: '#56534E' }}>·</span>
 
-            <div className="flex items-center gap-1.5">
-              <span className="text-[#6E6B65]">Win</span>
-              <span className="font-bold text-[#C49A3C]">{winCount}</span>
-            </div>
+          <span>
+            <span style={{ color: '#6E6B65' }}>Win </span>
+            <strong style={{ color: '#C49A3C', fontWeight: 700 }}>{winCount}</strong>
+          </span>
 
-            <span className="text-[#56534E]">·</span>
+          <span style={{ color: '#56534E' }}>·</span>
 
-            <div className="flex items-center gap-1.5">
-              <span className="text-[#6E6B65]">Loss</span>
-              <span className="font-bold text-[#8B3A1F]">{lossCount}</span>
-            </div>
-          </div>
+          <span>
+            <span style={{ color: '#6E6B65' }}>Loss </span>
+            <strong style={{ color: '#8B3A1F', fontWeight: 700 }}>{lossCount}</strong>
+          </span>
         </div>
       </header>
 
@@ -186,7 +215,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
             const hasTrade = dayData.trades.length > 0;
             const hasReading = dayData.readings.length > 0;
 
-            // Jika ada trade
             if (hasTrade) {
               const dayTrades = dayData.trades;
               const dayR = dayTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
@@ -218,7 +246,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
               );
             }
 
-            // Jika tidak ada trade tapi ada reading
             if (hasReading) {
               const readingTexts = dayData.readings.map(r => r.notes || r.praPasar || '').filter(t => t.length > 0);
               return (
@@ -239,7 +266,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
               );
             }
 
-            // Tidak ada entri
             return (
               <div key={dayKey} className="rail-row empty">
                 <div className="rail-day">
@@ -255,7 +281,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
             );
           })}
 
-          {/* Review Sabtu */}
           <div className="rail-row review-row">
             <div className="rail-day" style={{ color: "var(--gold)" }}>SAB</div>
             <div className="rail-body">
