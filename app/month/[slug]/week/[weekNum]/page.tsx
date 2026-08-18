@@ -202,7 +202,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
                     <div className="rail-body">
                       <h4 className="text-lg md:text-xl font-medium text-[#C49A3C]">📝 Update Reading</h4>
                       {readingTexts.map((text, idx) => (
-                        <p key={idx} className="text-sm text-[#A6A39C] italic mt-1">“{text.slice(0, 120)}”</p>
+                        <p key={idx} className="text-base md:text-lg text-[#E8E6E1] leading-relaxed mt-2">“{text.slice(0, 120)}”</p>
                       ))}
                     </div>
                     <div className="rail-tag"></div>
