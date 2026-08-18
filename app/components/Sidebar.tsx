@@ -22,19 +22,19 @@ interface MonthItem {
 
 // ===== IKON SVG =====
 const IconFolder = () => (
-  <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="0"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+  <svg viewBox="0 0 24 24" width="15" height="15"><rect x="3" y="4" width="18" height="17" rx="0"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
 );
 const IconCalendar = () => (
-  <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+  <svg viewBox="0 0 24 24" width="15" height="15"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
 );
 const IconFile = () => (
-  <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+  <svg viewBox="0 0 24 24" width="15" height="15"><rect x="3" y="4" width="18" height="17"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
 );
 const IconLocked = () => (
-  <svg viewBox="0 0 24 24"><rect x="4" y="9" width="16" height="11"/><path d="M8 9V6a4 4 0 0 1 8 0v3"/></svg>
+  <svg viewBox="0 0 24 24" width="15" height="15"><rect x="4" y="9" width="16" height="11"/><path d="M8 9V6a4 4 0 0 1 8 0v3"/></svg>
 );
 const IconChevron = ({ open }: { open: boolean }) => (
-  <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+  <svg viewBox="0 0 24 24" width="11" height="11"><polyline points="9 6 15 12 9 18"/></svg>
 );
 
 export default function Sidebar({ months }: { months: MonthItem[] }) {
@@ -65,41 +65,47 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
 
   return (
     <>
-      {/* ===== TOMBOL TOGGLE — DIPERKUAT ===== */}
-      <button
-        onClick={toggleSidebar}
+      {/* ===== TOMBOL TOGGLE — INLINE STYLE KUAT ===== */}
+      <div
         style={{
           position: 'fixed',
           top: '16px',
           left: '16px',
-          zIndex: 999999,
-          background: '#1A1918',
-          border: '1px solid #2C2A27',
-          borderRadius: '8px',
-          padding: '8px 10px',
-          color: '#A6A39C',
-          fontSize: '20px',
-          lineHeight: '1',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '40px',
-          height: '40px',
-          transition: 'background 0.2s, color 0.2s',
+          zIndex: 9999999,
+          display: 'block',
         }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = '#2C2A27';
-          e.currentTarget.style.color = '#E8E6E1';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = '#1A1918';
-          e.currentTarget.style.color = '#A6A39C';
-        }}
-        aria-label="Toggle Sidebar"
       >
-        {isOpen ? '✕' : '☰'}
-      </button>
+        <button
+          onClick={toggleSidebar}
+          style={{
+            background: '#1A1918',
+            border: '1px solid #2C2A27',
+            borderRadius: '8px',
+            padding: '6px 10px',
+            color: '#A6A39C',
+            fontSize: '22px',
+            lineHeight: '1',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '40px',
+            height: '40px',
+            transition: 'background 0.2s, color 0.2s',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = '#2C2A27';
+            e.currentTarget.style.color = '#E8E6E1';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = '#1A1918';
+            e.currentTarget.style.color = '#A6A39C';
+          }}
+          aria-label="Toggle Sidebar"
+        >
+          {isOpen ? '✕' : '☰'}
+        </button>
+      </div>
 
       {/* ===== SIDEBAR ===== */}
       <aside className={`sb-sidebar ${isOpen ? '' : 'collapsed'}`}>
