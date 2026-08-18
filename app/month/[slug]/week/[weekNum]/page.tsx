@@ -100,51 +100,51 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
   return (
     <>
-      {/* ===== HEADER: JUDUL KIRI, STATISTIK KANAN (1 BARIS HORIZONTAL SEJAJAR) ===== */}
-      <header className="mb-10">
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-          {/* Judul kiri */}
-          <div className="font-['Big_Shoulders'] font-black text-[clamp(24px,3.5vw,42px)] leading-tight text-left">
+      {/* ===== HEADER: JUDUL KIRI, STATISTIK KANAN (1 BARIS HORIZONTAL SEJAJAR & BERJARAK) ===== */}
+      <header className="py-6 mb-12 border-b border-[#221F1C]">
+        <div className="flex flex-row justify-between items-center w-full gap-6">
+          {/* Judul Kiri */}
+          <div className="font-['Big_Shoulders'] font-black text-xl sm:text-2xl md:text-3xl tracking-wide text-white whitespace-nowrap">
             MINGGU {localWeekNumber} · {monthLabel} {startDate.getDate()} – {monthLabel} {endDate.getDate()}
           </div>
 
-          {/* Statistik kanan — 1 Baris Horizontal Right-Aligned dengan Pembagi */}
-          <div className="flex items-center justify-end flex-wrap gap-2 font-mono text-sm text-[#A6A39C] whitespace-nowrap">
-            <span>
-              <span className="text-[#6E6B65]">Trade </span>
+          {/* Statistik Kanan — 1 Baris Sejajar Lurus di Kanan */}
+          <div className="flex items-center justify-end gap-3 sm:gap-4 font-mono text-xs sm:text-sm text-[#A6A39C] whitespace-nowrap">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[#6E6B65]">Trade</span>
               <span className="font-bold text-[#E8E6E1]">{trades.length}</span>
-            </span>
+            </div>
 
             <span className="text-[#56534E]">·</span>
 
-            <span>
-              <span className="text-[#6E6B65]">Net R </span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[#6E6B65]">Net R</span>
               <span className={`font-bold ${netR >= 0 ? 'text-[#2E5695]' : 'text-[#8B3A1F]'}`}>
                 {netR >= 0 ? '+' : ''}{netR.toFixed(1)}R
               </span>
-            </span>
+            </div>
 
             <span className="text-[#56534E]">·</span>
 
-            <span>
-              <span className="text-[#6E6B65]">Win </span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[#6E6B65]">Win</span>
               <span className="font-bold text-[#C49A3C]">{winCount}</span>
-            </span>
+            </div>
 
             <span className="text-[#56534E]">·</span>
 
-            <span>
-              <span className="text-[#6E6B65]">Loss </span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[#6E6B65]">Loss</span>
               <span className="font-bold text-[#8B3A1F]">{lossCount}</span>
-            </span>
+            </div>
           </div>
         </div>
       </header>
 
       {/* ===== TESIS PRA-PASAR ===== */}
-      <section className="mb-10 border-b border-[#221F1C] pb-8">
+      <section className="mb-12 border-b border-[#221F1C] pb-10">
         <div className="eyebrow water text-base md:text-lg">TESIS PRA-PASAR</div>
-        <div className="body-copy text-base md:text-lg mt-2">
+        <div className="body-copy text-base md:text-lg mt-3">
           {weeklyThesis ? (
             <div className="whitespace-pre-wrap text-[#E8E6E1]">{weeklyThesis}</div>
           ) : (
@@ -152,7 +152,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           )}
         </div>
         {youtubeId && (
-          <div className="mx-auto max-w-xs mt-4">
+          <div className="mx-auto max-w-xs mt-6">
             <div className="aspect-video">
               <iframe
                 src={`https://www.youtube.com/embed/${youtubeId}`}
@@ -165,13 +165,11 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
         )}
       </section>
 
-      <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
-
       {/* ===== MINGGU INI ===== */}
-      <section className="mb-10">
-        <div className="sec-head">
+      <section className="mb-12">
+        <div className="sec-head mb-6">
           <h2 className="text-3xl md:text-4xl">Minggu Ini</h2>
-          <p className="text-base md:text-lg text-[#A6A39C]">
+          <p className="text-base md:text-lg text-[#A6A39C] mt-1">
             Lima sesi kontak dengan rencana di atas. Hari yang terkunci adalah hari yang tidak dicatat — itu juga adalah data.
           </p>
         </div>
@@ -270,27 +268,27 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
         </div>
       </section>
 
-      <div className="ink-divider"></div>
+      <div className="ink-divider my-10"></div>
 
       {/* ===== REVIEW MINGGUAN ===== */}
       <section>
-        <div className="sec-head">
+        <div className="sec-head mb-6">
           <h2 className="text-3xl md:text-4xl">Sabtu — Rincian Lengkap</h2>
-          <p className="text-base md:text-lg text-[#A6A39C]">
+          <p className="text-base md:text-lg text-[#A6A39C] mt-1">
             Tesis hari Minggu dibandingkan dengan apa yang benar-benar terjadi. Tidak ada revisi rencana setelah kejadian.
           </p>
         </div>
 
-        <div className="journal-section">
+        <div className="journal-section mb-8">
           <div className="eyebrow text-base md:text-lg">PSIKOLOGI</div>
-          <div className="pull">
+          <div className="pull mt-2">
             {psychology ? (
               <p className="text-lg md:text-xl">{psychology}</p>
             ) : (
               <p className="text-[#6E6B65] italic text-base md:text-lg">Belum ada catatan psikologi.</p>
             )}
           </div>
-          <div className="body-copy text-base md:text-lg">
+          <div className="body-copy text-base md:text-lg mt-2">
             {psychology ? (
               <div className="whitespace-pre-wrap text-[#E8E6E1]">{psychology}</div>
             ) : (
@@ -299,9 +297,9 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           </div>
         </div>
 
-        <div className="journal-section">
+        <div className="journal-section mb-8">
           <div className="eyebrow steel text-base md:text-lg">PELAJARAN CHART</div>
-          <div className="body-copy text-base md:text-lg">
+          <div className="body-copy text-base md:text-lg mt-2">
             {chartLesson ? (
               <div className="whitespace-pre-wrap text-[#E8E6E1]">
                 <p className="text-lg md:text-xl font-medium">✏️ Satu pelajaran utama:</p>
@@ -317,7 +315,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
         <div className="journal-section">
           <div className="eyebrow text-base md:text-lg">HASIL</div>
-          <div className="stat-strip">
+          <div className="stat-strip mt-3">
             <div className="stat">
               <div className="stat-label">Trade Diambil</div>
               <div className="stat-value">{trades.length}</div>
