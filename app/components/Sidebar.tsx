@@ -78,13 +78,13 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
 
   return (
     <>
-      {/* ===== TOMBOL HAMBURGER - Muncul di pojok kiri saat sidebar tertutup ===== */}
+      {/* ===== TOMBOL HAMBURGER - Muncul jika sidebar tertutup ===== */}
       {!isOpen && (
         <button
           onClick={toggleSidebar}
-          className="fixed top-4 left-4 z-[99999] bg-[#151515] border border-[#2a2a2a] rounded-lg p-2 text-[#aaa] hover:text-white transition text-xl w-10 h-10 flex items-center justify-center cursor-pointer"
+          className="fixed top-4 left-4 z-[99999] bg-[#151515] border border-[#2a2a2a] rounded-lg text-[#aaa] hover:text-white transition text-xl flex items-center justify-center cursor-pointer"
+          style={{ width: '40px', height: '40px', minWidth: '40px', pointerEvents: 'auto' }}
           aria-label="Open Sidebar"
-          style={{ pointerEvents: 'auto' }}
         >
           ☰
         </button>
@@ -93,11 +93,19 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
       {/* ===== SIDEBAR ===== */}
       <aside className={`sb-sidebar ${isOpen ? '' : 'collapsed'} relative`}>
         
-        {/* Tombol Tutup Sidebar - Ditempatkan tepat di pojok kanan atas sidebar */}
+        {/* Tombol Tutup Sidebar - Terkunci posisi dan ukurannya di pojok kanan atas */}
         {isOpen && (
           <button
             onClick={toggleSidebar}
-            className="absolute top-4 right-3 z-20 text-[#aaa] hover:text-white transition text-sm p-1.5 rounded hover:bg-[#222] flex items-center justify-center cursor-pointer"
+            className="absolute top-4 right-3 z-20 text-[#aaa] hover:text-white transition text-xs rounded hover:bg-[#222] flex items-center justify-center cursor-pointer border-0"
+            style={{ 
+              width: '28px', 
+              height: '28px', 
+              minWidth: '28px', 
+              maxWidth: '28px', 
+              backgroundColor: 'transparent', 
+              padding: 0 
+            }}
             aria-label="Close Sidebar"
           >
             ◀
