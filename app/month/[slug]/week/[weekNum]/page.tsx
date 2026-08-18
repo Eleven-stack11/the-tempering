@@ -67,6 +67,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const psychology = sundayTrade?.psychology || '';
   const chartLesson = sundayTrade?.chartLesson || '';
 
+  // Semua entri dalam rentang minggu
   const allWeekEntries = allTrades.filter((t) => {
     const d = new Date(t.date);
     return d >= targetWeek.start && d <= targetWeek.end;
@@ -75,6 +76,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const trades = allWeekEntries.filter(t => t.isTrade === true);
   const readings = allWeekEntries.filter(t => t.isTrade === false && t.notes && t.notes.trim().length > 0);
 
+  // Gabungkan dalam dayMap
   const dayMap: Record<string, { trades: any[]; readings: any[] }> = {};
   for (const t of trades) {
     const key = new Date(t.date).toISOString().split("T")[0];
@@ -88,20 +90,19 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   }
 
   const netR = trades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
+  const winCount = trades.filter(t => t.result === "Win").length;
+  const lossCount = trades.filter(t => t.result === "Loss").length;
   const startDate = targetWeek.start;
   const endDate = targetWeek.end;
   const monthLabel = monthName.slice(0, 3).toUpperCase();
 
   const youtubeId = getYoutubeId(weeklyYoutube);
 
-  const wins = trades.filter(t => t.result === "Win").length;
-  const losses = trades.filter(t => t.result === "Loss").length;
-
   return (
     <>
-      {/* ===== HEADER ===== */}
+      {/* ===== HEADER: JUDUL KIRI, STATISTIK KANAN ===== */}
       <header className="mb-10">
-        <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
           {/* Judul kiri */}
           <div>
             <div className="font-['Big_Shoulders'] font-black text-[clamp(28px,4.5vw,52px)] leading-tight">
@@ -109,28 +110,12 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
             </div>
           </div>
 
-          {/* ===== STATISTIK — RIGHT-ALIGNED, TIDAK MELEBAR ===== */}
-          <div className="flex-shrink-0">
-            <div className="grid grid-cols-4 gap-x-5 text-sm font-mono text-[#A6A39C] bg-[#1A1918] border border-[#2C2A27] rounded-lg px-5 py-2">
-              <div className="text-center">
-                <div className="text-[#6E6B65] uppercase tracking-wider text-[9px]">Trade</div>
-                <div className="font-bold text-[#E8E6E1] text-base">{trades.length}</div>
-              </div>
-              <div className="text-center border-l border-[#2C2A27] pl-4">
-                <div className="text-[#6E6B65] uppercase tracking-wider text-[9px]">Net R</div>
-                <div className={`font-bold text-base ${netR >= 0 ? 'text-[#2E5695]' : 'text-[#8B3A1F]'}`}>
-                  {netR >= 0 ? '+' : ''}{netR.toFixed(1)}R
-                </div>
-              </div>
-              <div className="text-center border-l border-[#2C2A27] pl-4">
-                <div className="text-[#6E6B65] uppercase tracking-wider text-[9px]">Win</div>
-                <div className="font-bold text-[#C49A3C] text-base">{wins}</div>
-              </div>
-              <div className="text-center border-l border-[#2C2A27] pl-4">
-                <div className="text-[#6E6B65] uppercase tracking-wider text-[9px]">Loss</div>
-                <div className="font-bold text-[#8B3A1F] text-base">{losses}</div>
-              </div>
-            </div>
+          {/* Statistik kanan — right-aligned, vertikal, teks biasa */}
+          <div className="flex-shrink-0 text-right font-mono text-sm leading-relaxed text-[#A6A39C]">
+            <div><span className="text-[#6E6B65]">Trade</span> <span className="font-bold text-[#E8E6E1]">{trades.length}</span></div>
+            <div><span className="text-[#6E6B65]">Net R</span> <span className={`font-bold ${netR >= 0 ? 'text-[#2E5695]' : 'text-[#8B3A1F]'}`}>{netR >= 0 ? '+' : ''}{netR.toFixed(1)}R</span></div>
+            <div><span className="text-[#6E6B65]">Win</span> <span className="font-bold text-[#C49A3C]">{winCount}</span></div>
+            <div><span className="text-[#6E6B65]">Loss</span> <span className="font-bold text-[#8B3A1F]">{lossCount}</span></div>
           </div>
         </div>
       </header>
@@ -182,6 +167,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
             const hasTrade = dayData.trades.length > 0;
             const hasReading = dayData.readings.length > 0;
 
+            // Jika ada trade
             if (hasTrade) {
               const dayTrades = dayData.trades;
               const dayR = dayTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
@@ -213,6 +199,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
               );
             }
 
+            // Jika tidak ada trade tapi ada reading
             if (hasReading) {
               const readingTexts = dayData.readings.map(r => r.notes || r.praPasar || '').filter(t => t.length > 0);
               return (
@@ -233,6 +220,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
               );
             }
 
+            // Tidak ada entri
             return (
               <div key={dayKey} className="rail-row empty">
                 <div className="rail-day">
@@ -248,6 +236,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
             );
           })}
 
+          {/* Review Sabtu */}
           <div className="rail-row review-row">
             <div className="rail-day" style={{ color: "var(--gold)" }}>SAB</div>
             <div className="rail-body">
