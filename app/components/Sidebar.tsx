@@ -40,15 +40,16 @@ const IconChevron = ({ open }: { open: boolean }) => (
 export default function Sidebar({ months }: { months: MonthItem[] }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(true);
-  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const [collapsedMonths, setCollapsedMonths] = useState<Record<string, boolean>>({});
+  const [isYearCollapsed, setIsYearCollapsed] = useState(false); // toggle untuk 2026
 
-  // Load state dari localStorage
+  // Load state sidebar dari localStorage
   useEffect(() => {
     const saved = localStorage.getItem("sidebarOpen");
     if (saved !== null) setIsOpen(saved === "true");
   }, []);
 
-  // Toggle sidebar & simpan state
+  // Toggle sidebar (buka/tutup)
   const toggleSidebar = () => {
     const newState = !isOpen;
     setIsOpen(newState);
@@ -63,18 +64,24 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
     );
   }, [isOpen]);
 
-  const toggleCollapse = (key: string) => {
-    setCollapsed(prev => ({ ...prev, [key]: !prev[key] }));
+  // Toggle collapse untuk bulan
+  const toggleMonth = (key: string) => {
+    setCollapsedMonths(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  // Toggle collapse untuk tahun
+  const toggleYear = () => {
+    setIsYearCollapsed(!isYearCollapsed);
   };
 
   const isActive = (href: string) => pathname === href || (href && pathname?.startsWith(href));
 
   return (
     <>
-      {/* ===== TOMBOL TOGGLE — SELALU DI ATAS ===== */}
+      {/* ===== TOMBOL TOGGLE SIDEBAR — z-index sangat tinggi ===== */}
       <button
         onClick={toggleSidebar}
-        className="fixed top-4 left-4 z-[9999] bg-[#151515] border border-[#2a2a2a] rounded-lg p-2 text-[#aaa] hover:text-white transition text-xl w-10 h-10 flex items-center justify-center"
+        className="fixed top-4 left-4 z-[99999] bg-[#151515] border border-[#2a2a2a] rounded-lg p-2 text-[#aaa] hover:text-white transition text-xl w-10 h-10 flex items-center justify-center"
         aria-label="Toggle Sidebar"
         style={{ pointerEvents: 'auto' }}
       >
@@ -90,61 +97,64 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
 
         <div className="sb-section">Tahun</div>
 
-        <div className="sb-node open">
-          <div className="sb-item">
+        {/* Node 2026 — dengan toggle collapse */}
+        <div className={`sb-node ${isYearCollapsed ? '' : 'open'}`}>
+          <div className="sb-item" onClick={toggleYear}>
             <span className="sb-icon"><IconFolder /></span>
             <span className="sb-label">2026</span>
-            <span className="sb-chevron"><IconChevron open={true} /></span>
+            <span className="sb-chevron"><IconChevron open={!isYearCollapsed} /></span>
           </div>
-          <div className="sb-children">
-            {months.map((month) => {
-              const monthKey = month.key;
-              const isCollapsed = collapsed[monthKey] !== false;
-              const weeks = month.weeks || [];
-              const hasWeeks = weeks.length > 0;
-              const isMonthActive = isActive(`/month/${monthKey}`);
+          {!isYearCollapsed && (
+            <div className="sb-children">
+              {months.map((month) => {
+                const monthKey = month.key;
+                const isCollapsed = collapsedMonths[monthKey] !== false;
+                const weeks = month.weeks || [];
+                const hasWeeks = weeks.length > 0;
+                const isMonthActive = isActive(`/month/${monthKey}`);
 
-              return (
-                <div key={monthKey} className="sb-node open">
-                  <div
-                    className={`sb-item ${isMonthActive ? 'active' : ''}`}
-                    onClick={() => hasWeeks && toggleCollapse(monthKey)}
-                  >
-                    <span className="sb-icon"><IconCalendar /></span>
-                    <span className="sb-label">{month.name}</span>
-                    {hasWeeks && (
-                      <span className="sb-chevron"><IconChevron open={!isCollapsed} /></span>
+                return (
+                  <div key={monthKey} className={`sb-node ${isCollapsed ? '' : 'open'}`}>
+                    <div
+                      className={`sb-item ${isMonthActive ? 'active' : ''}`}
+                      onClick={() => hasWeeks && toggleMonth(monthKey)}
+                    >
+                      <span className="sb-icon"><IconCalendar /></span>
+                      <span className="sb-label">{month.name}</span>
+                      {hasWeeks && (
+                        <span className="sb-chevron"><IconChevron open={!isCollapsed} /></span>
+                      )}
+                    </div>
+                    {hasWeeks && !isCollapsed && (
+                      <div className="sb-children">
+                        {weeks.map((week) => {
+                          const isWeekActive = isActive(week.href);
+                          const isLocked = week.count === 0;
+
+                          return (
+                            <div key={week.key} className="sb-node">
+                              <Link
+                                href={week.href}
+                                className={`sb-item ${isWeekActive ? 'active' : ''} ${isLocked ? 'locked' : ''}`}
+                              >
+                                <span className="sb-icon">
+                                  {isLocked ? <IconLocked /> : <IconFile />}
+                                </span>
+                                <span className="sb-label">Minggu {week.localNumber || week.number}</span>
+                                {!isLocked && week.count > 0 && (
+                                  <span className="sb-badge be">{week.count}</span>
+                                )}
+                              </Link>
+                            </div>
+                          );
+                        })}
+                      </div>
                     )}
                   </div>
-                  {hasWeeks && !isCollapsed && (
-                    <div className="sb-children">
-                      {weeks.map((week) => {
-                        const isWeekActive = isActive(week.href);
-                        const isLocked = week.count === 0;
-
-                        return (
-                          <div key={week.key} className="sb-node">
-                            <Link
-                              href={week.href}
-                              className={`sb-item ${isWeekActive ? 'active' : ''} ${isLocked ? 'locked' : ''}`}
-                            >
-                              <span className="sb-icon">
-                                {isLocked ? <IconLocked /> : <IconFile />}
-                              </span>
-                              <span className="sb-label">Minggu {week.localNumber || week.number}</span>
-                              {!isLocked && week.count > 0 && (
-                                <span className="sb-badge be">{week.count}</span>
-                              )}
-                            </Link>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </aside>
     </>
