@@ -80,7 +80,10 @@ export default async function HomePage() {
       <section>
         <div className="sec-head">
           <h2>2026</h2>
-          {/* Deskripsi di bawah ini dihapus */}
+          <p>
+            Setiap bulan menyimpan minggu-minggunya. Setiap minggu menyimpan hari-harinya.
+            Tidak ada yang dilewatkan, termasuk minggu-minggu yang berjalan buruk.
+          </p>
         </div>
 
         <div className="grid cols-3">
@@ -118,8 +121,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ===== BAGIAN "Mengapa Ini Dibuat" DIHAPUS ===== */}
-      {/* Ink divider juga dihapus agar tidak ada sisa elemen dekoratif */}
+      <div className="ink-divider"></div>
 
       <footer className="site-footer">
         <div className="blade-rule static" style={{ marginBottom: 36 }}></div>
