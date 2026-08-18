@@ -37,7 +37,6 @@ const IconChevron = ({ open }: { open: boolean }) => (
   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" style={{ transform: open ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}><polyline points="9 6 15 12 9 18"/></svg>
 );
 
-// Ikon Estetik untuk Toggle Sidebar (Tutup & Buka)
 const IconSidebarCollapse = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
@@ -60,20 +59,17 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
   const [collapsedMonths, setCollapsedMonths] = useState<Record<string, boolean>>({});
   const [isYearCollapsed, setIsYearCollapsed] = useState(false);
 
-  // Load state sidebar dari localStorage
   useEffect(() => {
     const saved = localStorage.getItem("sidebarOpen");
     if (saved !== null) setIsOpen(saved === "true");
   }, []);
 
-  // Toggle sidebar (buka/tutup)
   const toggleSidebar = () => {
     const newState = !isOpen;
     setIsOpen(newState);
     localStorage.setItem("sidebarOpen", String(newState));
   };
 
-  // Update CSS variable saat isOpen berubah
   useEffect(() => {
     document.documentElement.style.setProperty(
       "--sidebar-width",
@@ -81,12 +77,10 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
     );
   }, [isOpen]);
 
-  // Toggle collapse untuk bulan
   const toggleMonth = (key: string) => {
     setCollapsedMonths(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // Toggle collapse untuk tahun
   const toggleYear = () => {
     setIsYearCollapsed(!isYearCollapsed);
   };
@@ -95,46 +89,24 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
 
   return (
     <>
-      {/* ===== TOMBOL BUKA SIDEBAR (Saat Sidebar Tertutup) ===== */}
+      {/* ===== AREA HOVER KIRI ATAS (Saat Sidebar Tertutup) ===== */}
       {!isOpen && (
-        <button
-          onClick={toggleSidebar}
-          aria-label="Open Sidebar"
-          style={{
-            position: 'fixed',
-            top: '16px',
-            left: '16px',
-            zIndex: 99999,
-            backgroundColor: '#141413',
-            border: '1px solid #2a2a28',
-            color: '#cba358',
-            borderRadius: '8px',
-            width: '36px',
-            height: '36px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
-            transition: 'all 0.2s ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = '#cba358';
-            e.currentTarget.style.backgroundColor = '#1e1e1c';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = '#2a2a28';
-            e.currentTarget.style.backgroundColor = '#141413';
-          }}
+        <div 
+          className="fixed top-0 left-0 w-20 h-20 z-[99999] flex items-start justify-start p-4 group pointer-events-auto"
         >
-          <IconSidebarExpand />
-        </button>
+          <button
+            onClick={toggleSidebar}
+            aria-label="Open Sidebar"
+            className="opacity-0 group-hover:opacity-100 transition-all duration-300 bg-[#141413] border border-[#2a2a28] text-[#cba358] rounded-lg w-9 h-9 flex items-center justify-center cursor-pointer shadow-2xl hover:border-[#cba358] hover:bg-[#1e1e1c]"
+            style={{ boxShadow: '0 4px 14px rgba(0,0,0,0.6)' }}
+          >
+            <IconSidebarExpand />
+          </button>
+        </div>
       )}
 
       {/* ===== SIDEBAR ===== */}
       <aside className={`sb-sidebar ${isOpen ? '' : 'collapsed'}`}>
-        
-        {/* BRAND HEADER — Tulisan & Tombol Tutup Sejajar */}
         <div 
           className="sb-brand" 
           style={{ 
@@ -150,7 +122,6 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
             <span>EL-DOCUMENTARY</span>
           </div>
 
-          {/* Tombol Tutup Sidebar Estetik di Kanan */}
           {isOpen && (
             <button
               onClick={toggleSidebar}
@@ -188,7 +159,6 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
 
         <div className="sb-section">Tahun</div>
 
-        {/* Node 2026 — dengan toggle collapse */}
         <div className={`sb-node ${isYearCollapsed ? '' : 'open'}`}>
           <div className="sb-item" onClick={toggleYear}>
             <span className="sb-icon"><IconFolder /></span>
