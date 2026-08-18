@@ -1,4 +1,5 @@
 'use client';
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -21,21 +22,19 @@ const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'
 
 export default function TopNav() {
   const pathname = usePathname();
-  if (pathname === '/') return null;
+  if (pathname === '/' || !pathname) return null;
 
   const parts = pathname.split('/').filter(Boolean);
   const breadcrumbs: { label: string; href: string }[] = [];
-  let currentPath = '';
 
   for (let i = 0; i < parts.length; i++) {
     const part = parts[i];
-    currentPath += '/' + part;
 
     if (part === 'month') {
       if (i + 1 < parts.length) {
         const slug = parts[i + 1];
         const [year, month] = slug.split('-');
-        const monthName = monthNames[month] || month;
+        const monthName = monthNames[month] || slug;
         breadcrumbs.push({
           label: monthName,
           href: `/month/${slug}`,
@@ -45,7 +44,7 @@ export default function TopNav() {
     } else if (part === 'week') {
       if (i + 1 < parts.length) {
         const weekNum = parts[i + 1];
-        const monthSlug = breadcrumbs[breadcrumbs.length - 1]?.href.split('/').pop() || '';
+        const monthSlug = breadcrumbs[0]?.href.split('/').pop() || '';
         breadcrumbs.push({
           label: `Minggu ${weekNum}`,
           href: `/month/${monthSlug}/week/${weekNum}`,
@@ -56,10 +55,12 @@ export default function TopNav() {
       if (i + 1 < parts.length) {
         const dateStr = parts[i + 1];
         const d = new Date(dateStr);
-        const dayName = dayNames[d.getDay()] || 'Hari';
+        const dayName = isNaN(d.getTime()) ? 'Hari' : dayNames[d.getDay()];
+        const monthSlug = breadcrumbs[0]?.href.split('/').pop() || '';
+        const weekNum = breadcrumbs[1]?.href.split('/').pop() || '';
         breadcrumbs.push({
-          label: `${dayName} ${d.getDate()}`,
-          href: `/month/${breadcrumbs[0]?.href.split('/').pop()}/week/${breadcrumbs[1]?.href.split('/').pop()}/day/${dateStr}`,
+          label: `${dayName} ${isNaN(d.getTime()) ? dateStr : d.getDate()}`,
+          href: `/month/${monthSlug}/week/${weekNum}/day/${dateStr}`,
         });
         i++;
       }
@@ -74,9 +75,10 @@ export default function TopNav() {
   return (
     <nav className="topnav">
       <div className="topnav-crumb">
+        <Link href="/">Beranda</Link>
         {breadcrumbs.map((crumb, index) => (
-          <span key={index}>
-            {index > 0 && <span className="topnav-sep">/</span>}
+          <span key={index} className="flex items-center gap-2">
+            <span className="topnav-sep">/</span>
             {index === breadcrumbs.length - 1 ? (
               <span className="topnav-here">{crumb.label}</span>
             ) : (
