@@ -43,28 +43,10 @@ export default async function HomePage() {
   );
 
   return (
-    <div
-      style={{
-        maxWidth: "1180px",
-        margin: "0 auto",
-        padding: "24px 20px 48px",
-        width: "100%",
-      }}
-    >
+    <div className="page-container" style={{ paddingTop: "20px", paddingBottom: "60px" }}>
       {/* ===== HEADER ===== */}
       <header style={{ marginBottom: "40px" }}>
-        <div
-          style={{
-            fontFamily: "var(--mono)",
-            fontSize: "11px",
-            letterSpacing: "0.14em",
-            textTransform: "uppercase",
-            color: "var(--gold)",
-            marginBottom: "8px",
-          }}
-        >
-          TRADING LOG
-        </div>
+        <div className="eyebrow">TRADING LOG</div>
         <h1
           style={{
             fontFamily: "var(--display)",
@@ -78,14 +60,7 @@ export default async function HomePage() {
         </h1>
       </header>
 
-      <div
-        style={{
-          height: "1px",
-          width: "100%",
-          background: "var(--border-soft)",
-          marginBottom: "32px",
-        }}
-      />
+      <div className="blade-rule" style={{ marginBottom: "32px" }} />
 
       {/* ===== STATISTIK ===== */}
       <section style={{ marginBottom: "48px" }}>
@@ -161,111 +136,20 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ===== FOOTER — SHOKUNIN (KIRI) & KAIZEN (KANAN) ===== */}
-      <footer
-        style={{
-          paddingTop: "32px",
-          borderTop: "1px solid var(--border-soft)",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "24px",
-            marginBottom: "32px",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-              gap: "24px",
-            }}
-            className="md-flex-row"
-          >
-            {/* Kiri — Shokunin */}
-            <div style={{ maxWidth: "480px", textAlign: "left" }}>
-              <h4
-                style={{
-                  fontFamily: "var(--display)",
-                  fontWeight: 600,
-                  fontSize: "18px",
-                  color: "var(--text)",
-                  marginBottom: "4px",
-                }}
-              >
-                "Shokunin 職人."
-              </h4>
-              <p
-                style={{
-                  fontSize: "14px",
-                  color: "var(--text-muted)",
-                  lineHeight: 1.6,
-                }}
-              >
-                Bentuk pelatihan mencari kesempurnaan dengan sadar bahwa itu mustahil dicapai.
-              </p>
-            </div>
+      {/* ===== FOOTER ===== */}
+      <footer className="site-footer" style={{ paddingTop: "32px", marginTop: "0" }}>
+        <div className="blade-rule static" style={{ marginBottom: "36px" }} />
 
-            {/* Kanan — Kaizen */}
-            <div
-              style={{
-                maxWidth: "480px",
-                textAlign: "left",
-              }}
-              className="md-text-right"
-            >
-              <h4
-                style={{
-                  fontFamily: "var(--display)",
-                  fontWeight: 600,
-                  fontSize: "18px",
-                  color: "var(--text)",
-                  marginBottom: "4px",
-                }}
-              >
-                "Kaizen 改善."
-              </h4>
-              <p
-                style={{
-                  fontSize: "14px",
-                  color: "var(--text-muted)",
-                  lineHeight: 1.6,
-                }}
-              >
-                Proses menjadi lebih baik 1% setiap hari — perbaikan berkelanjutan.
-              </p>
-            </div>
+        <div className="footer-quotes">
+          <div className="quote">
+            "Shokunin 職人.<br />Bentuk pelatihan mencari kesempurnaan dengan sadar bahwa itu mustahil dicapai."
           </div>
-
-          <style>{`
-            @media (min-width: 768px) {
-              .md-flex-row {
-                flex-direction: row !important;
-              }
-              .md-text-right {
-                text-align: right !important;
-              }
-            }
-          `}</style>
+          <div className="quote right">
+            "Kaizen 改善.<br />Proses menjadi lebih baik 1% setiap hari — perbaikan berkelanjutan."
+          </div>
         </div>
 
-        <div
-          style={{
-            textAlign: "center",
-            fontFamily: "var(--mono)",
-            fontSize: "11px",
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            color: "var(--text-faint)",
-            paddingTop: "16px",
-            borderTop: "1px solid var(--border-soft)",
-          }}
-        >
-          EL-DOCUMENTARY · JURNAL TRADING · DIPERBARUI SETIAP MINGGU
-        </div>
+        <div className="foot-meta">EL-DOCUMENTARY · JURNAL TRADING · DIPERBARUI SETIAP MINGGU</div>
       </footer>
     </div>
   );
