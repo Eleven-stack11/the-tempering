@@ -98,17 +98,32 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
   return (
     <>
-      <header className="mb-8">
-        <div className="font-['Big_Shoulders'] font-black text-[clamp(28px,4.5vw,52px)] leading-tight">
-          MINGGU {localWeekNumber} · {monthLabel} {startDate.getDate()} – {monthLabel} {endDate.getDate()}
+      {/* ===== HEADER ===== */}
+      <header className="mb-10">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4">
+          {/* Judul kiri */}
+          <div>
+            <div className="font-['Big_Shoulders'] font-black text-[clamp(28px,4.5vw,52px)] leading-tight">
+              MINGGU {localWeekNumber} · {monthLabel} {startDate.getDate()} – {monthLabel} {endDate.getDate()}
+            </div>
+          </div>
+
+          {/* Statistik kanan — tabel kecil rapi */}
+          <div className="flex-shrink-0">
+            <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm font-mono text-[#A6A39C] bg-[#1A1918] border border-[#2C2A27] rounded-lg px-4 py-3 min-w-[180px]">
+              <div className="text-[#6E6B65] uppercase tracking-wider text-[10px]">Trade</div>
+              <div className="text-right font-bold text-[#E8E6E1]">{trades.length}</div>
+              <div className="text-[#6E6B65] uppercase tracking-wider text-[10px]">Net R</div>
+              <div className={`text-right font-bold ${netR >= 0 ? 'text-[#2E5695]' : 'text-[#8B3A1F]'}`}>
+                {netR >= 0 ? '+' : ''}{netR.toFixed(1)}R
+              </div>
+            </div>
+          </div>
         </div>
-        <p className="text-lg md:text-xl text-[#A6A39C] mt-2">
-          {trades.length} trade tercatat minggu ini. Net R {netR >= 0 ? "+" : ""}{netR.toFixed(1)}R
-        </p>
       </header>
 
-      {/* Tesis Pra-Pasar */}
-      <section className="section-spacing border-b border-[#221F1C] pb-8">
+      {/* ===== TESIS PRA-PASAR ===== */}
+      <section className="mb-10 border-b border-[#221F1C] pb-8">
         <div className="eyebrow water text-base md:text-lg">TESIS PRA-PASAR</div>
         <div className="body-copy text-base md:text-lg mt-2">
           {weeklyThesis ? (
@@ -133,8 +148,8 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
       <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
 
-      {/* Minggu Ini */}
-      <section className="section-spacing">
+      {/* ===== MINGGU INI ===== */}
+      <section className="mb-10">
         <div className="sec-head">
           <h2 className="text-3xl md:text-4xl">Minggu Ini</h2>
           <p className="text-base md:text-lg text-[#A6A39C]">
@@ -238,7 +253,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
       <div className="ink-divider"></div>
 
-      {/* Review Mingguan Detail */}
+      {/* ===== REVIEW MINGGUAN ===== */}
       <section>
         <div className="sec-head">
           <h2 className="text-3xl md:text-4xl">Sabtu — Rincian Lengkap</h2>
