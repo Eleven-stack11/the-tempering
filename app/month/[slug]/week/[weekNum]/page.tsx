@@ -52,7 +52,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const localWeekIndex = weeks.findIndex((w) => w.weekNumber === weekNumber);
   const localWeekNumber = localWeekIndex !== -1 ? localWeekIndex + 1 : weekNumber;
 
-  // Sunday trade (bisa non-trade) untuk thesis
+  // Sunday trade untuk thesis
   const sundayDate = new Date(targetWeek.start);
   sundayDate.setDate(sundayDate.getDate() - 1);
   const sundayTrade = allTrades.find((t) => {
@@ -67,23 +67,32 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const psychology = sundayTrade?.psychology || '';
   const chartLesson = sundayTrade?.chartLesson || '';
 
-  // Trade harian (Senin–Jumat) — hanya yang isTrade === true
-  const weekTrades = allTrades.filter((t) => {
+  // ===== SEMUA ENTRI DALAM RENTANG MINGGU =====
+  const allWeekEntries = allTrades.filter((t) => {
     const d = new Date(t.date);
-    return d >= targetWeek.start && d <= targetWeek.end &&
-           d.getDay() >= 1 && d.getDay() <= 5 &&
-           t.isTrade === true;
+    return d >= targetWeek.start && d <= targetWeek.end;
   });
 
-  const dayMap: Record<string, any[]> = {};
-  for (const t of weekTrades) {
+  // Pisahkan trade (isTrade = true) dan update reading (isTrade = false)
+  const trades = allWeekEntries.filter(t => t.isTrade === true);
+  const readings = allWeekEntries.filter(t => t.isTrade === false && t.notes && t.notes.trim().length > 0);
+
+  // Gabungkan dalam dayMap dengan flag
+  const dayMap: Record<string, { trades: any[]; readings: any[] }> = {};
+  for (const t of trades) {
     const key = new Date(t.date).toISOString().split("T")[0];
-    if (!dayMap[key]) dayMap[key] = [];
-    dayMap[key].push(t);
+    if (!dayMap[key]) dayMap[key] = { trades: [], readings: [] };
+    dayMap[key].trades.push(t);
   }
+  for (const r of readings) {
+    const key = new Date(r.date).toISOString().split("T")[0];
+    if (!dayMap[key]) dayMap[key] = { trades: [], readings: [] };
+    dayMap[key].readings.push(r);
+  }
+
   const dayKeys = Object.keys(dayMap).sort();
 
-  const netR = weekTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
+  const netR = trades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
   const startDate = targetWeek.start;
   const endDate = targetWeek.end;
   const monthLabel = monthName.slice(0, 3).toUpperCase();
@@ -92,6 +101,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
   return (
     <>
+      {/* Navigasi */}
       <div className="flex items-center justify-between py-3 px-4 border-b border-[#221F1C] mb-8">
         <Link href={`/month/${slug}`} className="text-sm font-mono text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 uppercase tracking-wider flex items-center gap-1">
           <span>←</span> Kembali ke {monthName}
@@ -102,15 +112,17 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
       </div>
 
       <div className="p-6 max-w-6xl mx-auto">
+        {/* Header */}
         <header className="mb-10 mt-2">
           <div className="font-['Big_Shoulders'] font-black text-[clamp(28px,4.5vw,52px)] leading-tight">
             MINGGU {localWeekNumber} · {monthLabel} {startDate.getDate()} – {monthLabel} {endDate.getDate()}
           </div>
           <p className="text-lg md:text-xl text-[#A6A39C] mt-2">
-            {weekTrades.length} trade tercatat minggu ini. Net R {netR >= 0 ? "+" : ""}{netR.toFixed(1)}R
+            {trades.length} trade tercatat minggu ini. Net R {netR >= 0 ? "+" : ""}{netR.toFixed(1)}R
           </p>
         </header>
 
+        {/* Tesis */}
         <section className="mb-10 border-b border-[#221F1C] pb-8">
           <div className="eyebrow water text-base md:text-lg">TESIS PRA-PASAR</div>
           <div className="body-copy text-base md:text-lg mt-2">
@@ -136,50 +148,87 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
         <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
 
+        {/* ===== MINGGU INI (Senin–Jumat) ===== */}
         <section className="mb-10">
           <div className="sec-head">
             <h2 className="text-3xl md:text-4xl">Minggu Ini</h2>
-            <p className="text-base md:text-lg text-[#A6A39C]">Lima sesi kontak dengan rencana di atas. Hari yang terkunci adalah hari yang tidak dicatat — itu juga adalah data.</p>
+            <p className="text-base md:text-lg text-[#A6A39C]">
+              Lima sesi kontak dengan rencana di atas. Hari yang terkunci adalah hari yang tidak dicatat — itu juga adalah data.
+            </p>
           </div>
 
           <div className="rail text-base md:text-lg">
-            {dayKeys.map((dayKey) => {
-              const d = new Date(dayKey);
-              const dayName = dayNames[d.getDay()];
-              const dayTrades = dayMap[dayKey];
-              const dayR = dayTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
-              const grade = dayTrades[0]?.grade || "B";
-              const daySlug = dayKey;
-
-              return (
-                <Link key={dayKey} href={`/month/${slug}/week/${weekNum}/day/${daySlug}`} className="rail-row linked py-4 md:py-5 px-4 md:px-6">
-                  <div className="rail-day text-base md:text-lg">
-                    {dayName}
-                    <b className="text-2xl md:text-3xl">{d.getDate()}</b>
-                  </div>
-                  <div className="rail-body">
-                    <h4 className="text-lg md:text-xl font-medium">{dayTrades.length} trade — {dayTrades.map(t => t.title).join(", ")}</h4>
-                    <p className="text-base md:text-lg text-[#A6A39C]">{dayTrades.map(t => `${t.instrument} ${t.direction}`).join(" · ")}</p>
-                  </div>
-                  <div className={`seal ${dayR >= 0 ? "win" : "loss"} w-10 h-10 md:w-12 md:h-12 text-base md:text-lg`}>
-                    <span>{grade}</span>
-                  </div>
-                  <div className={`rail-tag text-base md:text-2xl font-bold tracking-wider ${dayR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>
-                    {dayR >= 0 ? "+" : ""}{dayR.toFixed(1)}R
-                  </div>
-                </Link>
-              );
-            })}
-
             {[1, 2, 3, 4, 5].map((dayOffset) => {
               const d = new Date(targetWeek.start);
               d.setDate(d.getDate() + (dayOffset - 1));
               if (d > targetWeek.end) return null;
               const dayKey = d.toISOString().split("T")[0];
-              if (dayMap[dayKey]) return null;
+              const dayData = dayMap[dayKey] || { trades: [], readings: [] };
               const dayName = dayNames[d.getDay()];
+
+              const hasTrade = dayData.trades.length > 0;
+              const hasReading = dayData.readings.length > 0;
+
+              // Jika ada trade, tampilkan sebagai link ke halaman hari
+              if (hasTrade) {
+                const dayTrades = dayData.trades;
+                const dayR = dayTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
+                const grade = dayTrades[0]?.grade || "B";
+                const daySlug = dayKey;
+
+                return (
+                  <Link key={dayKey} href={`/month/${slug}/week/${weekNum}/day/${daySlug}`} className="rail-row linked py-4 md:py-5 px-4 md:px-6">
+                    <div className="rail-day text-base md:text-lg">
+                      {dayName}
+                      <b className="text-2xl md:text-3xl">{d.getDate()}</b>
+                    </div>
+                    <div className="rail-body">
+                      <h4 className="text-lg md:text-xl font-medium">
+                        {dayTrades.length} trade — {dayTrades.map(t => t.title).join(", ")}
+                      </h4>
+                      <p className="text-base md:text-lg text-[#A6A39C]">
+                        {dayTrades.map(t => `${t.instrument} ${t.direction}`).join(" · ")}
+                      </p>
+                      {hasReading && (
+                        <p className="text-sm text-[#6E6B65] mt-1">
+                          📝 + {dayData.readings.length} update reading
+                        </p>
+                      )}
+                    </div>
+                    <div className={`seal ${dayR >= 0 ? "win" : "loss"} w-10 h-10 md:w-12 md:h-12 text-base md:text-lg`}>
+                      <span>{grade}</span>
+                    </div>
+                    <div className={`rail-tag text-base md:text-2xl font-bold tracking-wider ${dayR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>
+                      {dayR >= 0 ? "+" : ""}{dayR.toFixed(1)}R
+                    </div>
+                  </Link>
+                );
+              }
+
+              // Jika tidak ada trade tapi ada reading, tampilkan sebagai update reading
+              if (hasReading) {
+                const readingTexts = dayData.readings.map(r => r.notes || r.praPasar || '').filter(t => t.length > 0);
+                return (
+                  <div key={dayKey} className="rail-row locked py-4 md:py-5 px-4 md:px-6">
+                    <div className="rail-day text-base md:text-lg">
+                      {dayName}
+                      <b className="text-2xl md:text-3xl">{d.getDate()}</b>
+                    </div>
+                    <div className="rail-body">
+                      <h4 className="text-lg md:text-xl font-medium text-[#C49A3C]">📝 Update Reading</h4>
+                      {readingTexts.map((text, idx) => (
+                        <p key={idx} className="text-sm text-[#A6A39C] italic mt-1">“{text.slice(0, 120)}”</p>
+                      ))}
+                    </div>
+                    <div className="rail-tag"></div>
+                    <div className="rail-tag"></div>
+                  </div>
+                );
+              }
+
+              // Tidak ada entri sama sekali
               return (
-                <div key={dayOffset} className="rail-row locked py-4 md:py-5 px-4 md:px-6">
+                <div key={dayKey} className="rail-row locked py-4 md:py-5 px-4 md:px-6">
                   <div className="rail-day text-base md:text-lg">
                     {dayName}
                     <b className="text-2xl md:text-3xl">{d.getDate()}</b>
@@ -193,6 +242,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
               );
             })}
 
+            {/* Review Sabtu */}
             <div className="rail-row review py-4 md:py-5 px-4 md:px-6">
               <div className="rail-day text-base md:text-lg" style={{ color: "var(--gold)" }}>SAB</div>
               <div className="rail-body">
@@ -207,6 +257,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
         <div className="ink-divider"></div>
 
+        {/* Review Mingguan (Psikologi, Pelajaran Chart, Hasil) */}
         <section>
           <div className="sec-head">
             <h2 className="text-3xl md:text-4xl">Sabtu — Rincian Lengkap</h2>
@@ -250,7 +301,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
             <div className="stat-strip">
               <div className="stat">
                 <div className="stat-label text-sm md:text-base">Trade Diambil</div>
-                <div className="stat-value text-3xl md:text-5xl">{weekTrades.length}</div>
+                <div className="stat-value text-3xl md:text-5xl">{trades.length}</div>
               </div>
               <div className="stat">
                 <div className="stat-label text-sm md:text-base">Grade</div>
