@@ -1,5 +1,4 @@
 'use client';
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -22,13 +21,12 @@ const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'
 
 export default function TopNav() {
   const pathname = usePathname();
-
   if (pathname === '/') return null;
 
   const parts = pathname.split('/').filter(Boolean);
   const breadcrumbs: { label: string; href: string }[] = [];
-
   let currentPath = '';
+
   for (let i = 0; i < parts.length; i++) {
     const part = parts[i];
     currentPath += '/' + part;
