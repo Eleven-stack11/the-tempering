@@ -67,14 +67,16 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
 
   return (
     <>
+      {/* Tombol Toggle — z-index lebih tinggi dari sidebar */}
       <button
         onClick={toggle}
-        className="fixed top-4 left-4 z-50 bg-[#151515] border border-[#2a2a2a] rounded-lg p-2 text-[#aaa] hover:text-white transition text-xl w-10 h-10 flex items-center justify-center"
+        className="fixed top-4 left-4 z-[999] bg-[#151515] border border-[#2a2a2a] rounded-lg p-2 text-[#aaa] hover:text-white transition text-xl w-10 h-10 flex items-center justify-center"
         aria-label="Toggle Sidebar"
       >
         {isOpen ? "◀" : "☰"}
       </button>
 
+      {/* Sidebar — z-index lebih rendah dari tombol */}
       <aside className={`sb-sidebar ${isOpen ? '' : 'collapsed'}`}>
         <div className="sb-brand">
           <span className="sb-brand-mark"></span>
@@ -93,7 +95,8 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
             {months.map((month) => {
               const monthKey = month.key;
               const isCollapsed = collapsed[monthKey] !== false;
-              const hasWeeks = month.weeks && month.weeks.length > 0;
+              const weeks = month.weeks || [];
+              const hasWeeks = weeks.length > 0;
               const isMonthActive = isActive(`/month/${monthKey}`);
 
               return (
@@ -108,9 +111,9 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
                       <span className="sb-chevron"><IconChevron open={!isCollapsed} /></span>
                     )}
                   </div>
-                  {hasWeeks && !isCollapsed && month.weeks && (
+                  {hasWeeks && !isCollapsed && (
                     <div className="sb-children">
-                      {month.weeks.map((week) => {
+                      {weeks.map((week) => {
                         const isWeekActive = isActive(week.href);
                         const isLocked = week.count === 0;
 
