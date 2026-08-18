@@ -61,11 +61,14 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
     setCollapsedMonths(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const isActive = (href: string) => pathname === href || (href && pathname?.startsWith(href));
+  const isActive = (href: string) => {
+    if (!pathname) return false;
+    return pathname === href || (href && pathname.startsWith(href));
+  };
 
   return (
     <>
-      {/* ===== TOMBOL TOGGLE — INLINE STYLE KUAT ===== */}
+      {/* ===== TOMBOL TOGGLE — INLINE STYLE, PASTI MUNCUL ===== */}
       <div
         style={{
           position: 'fixed',
