@@ -17,17 +17,15 @@ const monthNames: Record<string, string> = {
   '11': 'November',
   '12': 'Desember',
 };
-
 const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 
 export default function TopNav() {
   const pathname = usePathname();
-
   if (pathname === '/') return null;
 
+  // Build breadcrumb
   const parts = pathname.split('/').filter(Boolean);
   const crumbs: { label: string; href: string }[] = [];
-
   let monthSlug = '';
   let weekNum = '';
 
@@ -37,26 +35,17 @@ export default function TopNav() {
       monthSlug = parts[i + 1];
       const [year, month] = monthSlug.split('-');
       const monthName = monthNames[month] || month;
-      crumbs.push({
-        label: monthName,
-        href: `/month/${monthSlug}`,
-      });
+      crumbs.push({ label: monthName, href: `/month/${monthSlug}` });
       i++;
     } else if (part === 'week' && i + 1 < parts.length) {
       weekNum = parts[i + 1];
-      crumbs.push({
-        label: `Minggu ${weekNum}`,
-        href: `/month/${monthSlug}/week/${weekNum}`,
-      });
+      crumbs.push({ label: `Minggu ${weekNum}`, href: `/month/${monthSlug}/week/${weekNum}` });
       i++;
     } else if (part === 'day' && i + 1 < parts.length) {
       const dateStr = parts[i + 1];
       const d = new Date(dateStr);
       const dayName = dayNames[d.getDay()] || 'Hari';
-      crumbs.push({
-        label: `${dayName} ${d.getDate()}`,
-        href: `/month/${monthSlug}/week/${weekNum}/day/${dateStr}`,
-      });
+      crumbs.push({ label: `${dayName} ${d.getDate()}`, href: `/month/${monthSlug}/week/${weekNum}/day/${dateStr}` });
       i++;
     }
   }
