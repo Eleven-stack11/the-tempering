@@ -80,6 +80,8 @@ export default async function HomePage() {
       <section>
         <div className="sec-head">
           <h2>2026</h2>
+          {/* Deskripsi di bawah ini dihapus */}
+        </div>
 
         <div className="grid cols-3">
           {monthKeys.map((key) => {
@@ -116,12 +118,13 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <div className="ink-divider"></div>
+      {/* ===== BAGIAN "Mengapa Ini Dibuat" DIHAPUS ===== */}
+      {/* Ink divider juga dihapus agar tidak ada sisa elemen dekoratif */}
 
       <footer className="site-footer">
         <div className="blade-rule static" style={{ marginBottom: 36 }}></div>
         <div className="quote">
-          "Shokunin 職人, bentuk pelatihan mencari kesempurnaan meskipun tau bahwa itu tidak mungkin dicapai"
+          "Pedang tidak mengingat dulunya ia besi.<br />Catatan ini yang mengingatnya."
         </div>
         <div className="foot-meta">EL-DOCUMENTARY · JURNAL TRADING · DIPERBARUI SETIAP MINGGU</div>
       </footer>
