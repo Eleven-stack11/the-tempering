@@ -38,7 +38,6 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
 
   const allTrades = await fetchTrades();
 
-  // ===== FILTER: hanya trade (isTrade = true) =====
   const trades = allTrades.filter((t) => {
     const d = new Date(t.date);
     return !isNaN(d.getTime()) && d.getFullYear() === yearNum && d.getMonth() === monthIndex && t.isTrade === true;
@@ -88,6 +87,7 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
   const description = monthlyNote || defaultDesc;
 
   return (
+    <>
       <header className="mb-8">
         <div className="eyebrow steel">BULAN {String(monthIndex + 1).padStart(2, "0")} · {year}</div>
         <h1 className="font-['Big_Shoulders'] font-black text-[clamp(44px,7vw,80px)] leading-tight">
@@ -192,6 +192,6 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
           </div>
         </div>
       </section>
-    </div>
+    </>
   );
 }
