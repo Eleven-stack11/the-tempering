@@ -120,11 +120,11 @@ export default async function HomePage() {
       <footer className="site-footer">
         <div className="blade-rule static" style={{ marginBottom: 36 }}></div>
 
-        <div className="flex flex-col md:flex-row justify-between gap-6 mb-8">
-          <div className="quote max-w-[480px] text-left">
+        <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-8">
+          <div className="quote" style={{ maxWidth: '480px', margin: 0, textAlign: 'left' }}>
             "Shokunin 職人.<br />Bentuk pelatihan mencari kesempurnaan dengan sadar bahwa itu mustahil dicapai."
           </div>
-          <div className="quote max-w-[480px] text-left md:text-right">
+          <div className="quote" style={{ maxWidth: '480px', margin: 0, textAlign: 'right' }}>
             "Kaizen 改善.<br />Proses menjadi lebih baik 1% setiap hari — perbaikan berkelanjutan."
           </div>
         </div>
