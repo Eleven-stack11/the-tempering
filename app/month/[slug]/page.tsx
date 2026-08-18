@@ -88,19 +88,6 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
   const description = monthlyNote || defaultDesc;
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <div className="flex justify-end items-center mb-4">
-        <Link href="/" className="font-mono text-xs uppercase tracking-widest text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 flex items-center gap-1.5">
-          <span>←</span> Beranda
-        </Link>
-      </div>
-
-      <div className="mb-4">
-        <Link href="/" className="inline-flex items-center gap-1 text-sm font-mono text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 uppercase tracking-wider">
-          <span>←</span> Kembali ke 2026
-        </Link>
-      </div>
-
       <header className="mb-8">
         <div className="eyebrow steel">BULAN {String(monthIndex + 1).padStart(2, "0")} · {year}</div>
         <h1 className="font-['Big_Shoulders'] font-black text-[clamp(44px,7vw,80px)] leading-tight">
