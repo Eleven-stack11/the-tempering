@@ -84,7 +84,7 @@ export default async function RootLayout({
           }}
         >
           <TopNav />
-          <div style={{ marginTop: "16px" }}>{children}</div>
+          {children}
         </main>
       </body>
     </html>
