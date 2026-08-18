@@ -142,9 +142,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
         <section className="mb-10">
           <div className="sec-head">
             <h2 className="text-3xl md:text-4xl">Minggu Ini</h2>
-            <p className="text-base md:text-lg text-[#A6A39C]">
-              Lima sesi kontak dengan rencana di atas. Hari yang terkunci adalah hari yang tidak dicatat — itu juga adalah data.
-            </p>
           </div>
 
           <div className="rail text-base md:text-lg">
