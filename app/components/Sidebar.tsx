@@ -20,6 +20,7 @@ interface MonthItem {
   weeks?: WeekItem[];
 }
 
+// ===== IKON SVG =====
 const IconFolder = () => (
   <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="0"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
 );
@@ -64,19 +65,19 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
 
   return (
     <>
-      <button
-        onClick={toggleSidebar}
-        className="fixed top-4 left-4 z-[99999] bg-[#151515] border border-[#2a2a2a] rounded-lg p-2 text-[#aaa] hover:text-white transition text-xl w-10 h-10 flex items-center justify-center"
-        aria-label="Toggle Sidebar"
-        style={{ pointerEvents: 'auto' }}
-      >
-        {isOpen ? "◀" : "☰"}
-      </button>
-
+      {/* ===== SIDEBAR ===== */}
       <aside className={`sb-sidebar ${isOpen ? '' : 'collapsed'}`}>
+        {/* Header dengan toggle di dalamnya */}
         <div className="sb-brand">
           <span className="sb-brand-mark"></span>
           <span>EL-DOCUMENTARY</span>
+          <button
+            onClick={toggleSidebar}
+            className="sb-toggle-btn"
+            aria-label="Toggle Sidebar"
+          >
+            {isOpen ? "◀" : "☰"}
+          </button>
         </div>
 
         <div className="sb-section">Tahun</div>
