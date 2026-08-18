@@ -44,8 +44,8 @@ export default async function HomePage() {
 
   return (
     <div className="max-w-[1180px] mx-auto px-4 md:px-8 py-6">
-      {/* Header */}
-      <header className="mb-8">
+      {/* ===== HEADER ===== */}
+      <header className="mb-10">
         <div className="font-mono text-xs tracking-widest text-[#C49A3C] uppercase mb-2">
           TRADING LOG
         </div>
@@ -56,7 +56,7 @@ export default async function HomePage() {
 
       <div className="h-[1px] bg-[#221F1C] w-full mb-8" />
 
-      {/* Grid 4 Kolom Sesi/Statistik */}
+      {/* ===== STATISTIK ===== */}
       <section className="mb-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="bg-[#1A1918] border border-[#2C2A27] rounded-lg p-5">
@@ -102,7 +102,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Kartu Bulan */}
+      {/* ===== 2026 & BULAN ===== */}
       <section className="mb-16">
         <h2 className="font-['Big_Shoulders'] text-3xl font-bold text-white mb-4">
           2026
@@ -130,7 +130,6 @@ export default async function HomePage() {
                   {monthTrades.length} trade tercatat
                 </p>
 
-                {/* Teks terpisah rapi kiri-kanan */}
                 <div className="flex items-center justify-between pt-3 border-t border-[#221F1C] font-mono text-xs">
                   <span className="text-[#A6A39C]">
                     <b className="text-white font-bold">{monthTrades.length}</b> trade
@@ -154,10 +153,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Footer & Filosofi Kiri-Kanan */}
+      {/* ===== FOOTER — SHOKUNIN (KIRI) & KAIZEN (KANAN) ===== */}
       <footer className="pt-8 border-t border-[#221F1C]">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-          {/* Kiri */}
+          {/* Kiri — Shokunin */}
           <div className="text-left">
             <h4 className="text-base font-semibold text-white mb-1">
               "Shokunin 職人."
@@ -167,8 +166,8 @@ export default async function HomePage() {
             </p>
           </div>
 
-          {/* Kanan */}
-          <div className="text-right">
+          {/* Kanan — Kaizen */}
+          <div className="text-left md:text-right">
             <h4 className="text-base font-semibold text-white mb-1">
               "Kaizen 改善."
             </h4>
@@ -178,7 +177,6 @@ export default async function HomePage() {
           </div>
         </div>
 
-        {/* Tagline Bawah Full-Width Center */}
         <div className="text-center font-mono text-[11px] tracking-widest text-[#6E6B65] uppercase pt-4 border-t border-[#221F1C]/50">
           EL-DOCUMENTARY · JURNAL TRADING · DIPERBARUI SETIAP MINGGU
         </div>
