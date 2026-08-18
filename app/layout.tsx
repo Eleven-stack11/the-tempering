@@ -79,12 +79,11 @@ export default async function RootLayout({
           className="min-h-screen transition-all duration-300 ease-in-out"
           style={{
             marginLeft: "var(--sidebar-width, 260px)",
-            padding: "0",
-            maxWidth: "calc(100% - var(--sidebar-width, 260px) + 40px)",
+            maxWidth: "calc(100% - var(--sidebar-width, 260px))",
           }}
         >
           <TopNav />
-          <div className="max-w-6xl mx-auto px-4 sm:px-8 md:px-12 py-6 md:py-8">
+          <div className="page-container py-6 md:py-8">
             {children}
           </div>
         </main>
