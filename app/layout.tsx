@@ -24,7 +24,7 @@ export default async function RootLayout({
       month: number;
       name: string;
       count: number;
-      weeks: Record<number, number>;
+      weeks: Record<string, number>;
     }
   > = {};
 
@@ -73,19 +73,11 @@ export default async function RootLayout({
 
   return (
     <html lang="id">
-      <body className="bg-[#0F0F0E] text-[#E8E6E1] antialiased">
+      <body>
         <Sidebar months={monthList} />
-        <main
-          className="min-h-screen transition-all duration-300 ease-in-out"
-          style={{
-            marginLeft: "var(--sidebar-width, 260px)",
-            maxWidth: "calc(100% - var(--sidebar-width, 260px))",
-          }}
-        >
+        <main className="main-content">
           <TopNav />
-          <div className="page-container py-6 md:py-8">
-            {children}
-          </div>
+          {children}
         </main>
       </body>
     </html>
