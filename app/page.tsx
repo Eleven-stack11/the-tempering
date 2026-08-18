@@ -116,7 +116,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ===== FOOTER ===== */}
       <footer className="site-footer">
         <div className="blade-rule static" style={{ marginBottom: 36 }}></div>
 
