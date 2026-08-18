@@ -25,19 +25,15 @@ export default function TopNav() {
 
   if (pathname === '/') return null;
 
-  // Parse pathname untuk breadcrumb
   const parts = pathname.split('/').filter(Boolean);
   const breadcrumbs: { label: string; href: string }[] = [];
 
-  // Selalu ada link ke home (tidak ditampilkan sebagai crumb, tapi tombol Beranda terpisah)
   let currentPath = '';
-
   for (let i = 0; i < parts.length; i++) {
     const part = parts[i];
     currentPath += '/' + part;
 
     if (part === 'month') {
-      // next part is slug: 2026-08
       if (i + 1 < parts.length) {
         const slug = parts[i + 1];
         const [year, month] = slug.split('-');
@@ -46,37 +42,32 @@ export default function TopNav() {
           label: monthName,
           href: `/month/${slug}`,
         });
-        i++; // skip slug
+        i++;
       }
     } else if (part === 'week') {
       if (i + 1 < parts.length) {
         const weekNum = parts[i + 1];
-        // Cari bulan dari breadcrumbs sebelumnya
-        const monthCrumb = breadcrumbs[breadcrumbs.length - 1];
-        const monthSlug = monthCrumb ? monthCrumb.href.split('/').pop() : '';
-        // Untuk label, kita bisa tampilkan "Minggu 2" atau "Minggu 32" — kita tampilkan angka saja
+        const monthSlug = breadcrumbs[breadcrumbs.length - 1]?.href.split('/').pop() || '';
         breadcrumbs.push({
           label: `Minggu ${weekNum}`,
           href: `/month/${monthSlug}/week/${weekNum}`,
         });
-        i++; // skip weekNum
+        i++;
       }
     } else if (part === 'day') {
       if (i + 1 < parts.length) {
         const dateStr = parts[i + 1];
         const d = new Date(dateStr);
         const dayName = dayNames[d.getDay()] || 'Hari';
-        const dayLabel = `${dayName} ${d.getDate()}`;
         breadcrumbs.push({
-          label: dayLabel,
+          label: `${dayName} ${d.getDate()}`,
           href: `/month/${breadcrumbs[0]?.href.split('/').pop()}/week/${breadcrumbs[1]?.href.split('/').pop()}/day/${dateStr}`,
         });
-        i++; // skip date
+        i++;
       }
     }
   }
 
-  // Jika breadcrumbs kosong, fallback ke label terakhir
   if (breadcrumbs.length === 0) {
     const last = parts[parts.length - 1] || 'Halaman';
     breadcrumbs.push({ label: last, href: '#' });
