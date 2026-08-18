@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 interface WeekItem {
   key: string;
   number: number;
-  localNumber: number;
+  localNumber?: number;
   count: number;
   href: string;
 }
@@ -33,9 +33,6 @@ const IconFile = () => (
 const IconLocked = () => (
   <svg viewBox="0 0 24 24"><rect x="4" y="9" width="16" height="11"/><path d="M8 9V6a4 4 0 0 1 8 0v3"/></svg>
 );
-const IconCircle = () => (
-  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>
-);
 const IconChevron = ({ open }: { open: boolean }) => (
   <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
 );
@@ -48,7 +45,6 @@ const Badge = ({ grade, result }: { grade?: string; result?: string }) => {
   return <span className={`sb-badge ${cls}`}>{grade === 'A' || grade === 'A+' ? 'A' : grade === 'B' ? 'B' : 'L'}</span>;
 };
 
-// ===== SIDEBAR =====
 export default function Sidebar({ months }: { months: MonthItem[] }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(true);
@@ -59,7 +55,7 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
     if (saved !== null) setIsOpen(saved === "true");
   }, []);
 
-  const toggleSidebar = () => {
+  const toggle = () => {
     setIsOpen(!isOpen);
     localStorage.setItem("sidebarOpen", String(!isOpen));
   };
@@ -75,13 +71,12 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
     setCollapsed(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // Cek active
   const isActive = (href: string) => pathname === href || (href && pathname?.startsWith(href));
 
   return (
     <>
       <button
-        onClick={toggleSidebar}
+        onClick={toggle}
         className="fixed top-4 left-4 z-50 bg-[#151515] border border-[#2a2a2a] rounded-lg p-2 text-[#aaa] hover:text-white transition text-xl w-10 h-10 flex items-center justify-center"
         aria-label="Toggle Sidebar"
       >
@@ -133,7 +128,6 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
                       <div className="sb-children">
                         {month.weeks.map((week) => {
                           const isWeekActive = isActive(week.href);
-                          const hasDays = false; // belum ada data hari di sidebar
                           const isLocked = week.count === 0;
 
                           return (
@@ -145,7 +139,7 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
                                 <span className="sb-icon">
                                   {isLocked ? <IconLocked /> : <IconFile />}
                                 </span>
-                                <span className="sb-label">Minggu {week.localNumber}</span>
+                                <span className="sb-label">Minggu {week.localNumber || week.number}</span>
                                 {!isLocked && week.count > 0 && (
                                   <span className="sb-badge be">{week.count}</span>
                                 )}
