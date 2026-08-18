@@ -42,16 +42,20 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
   const [isOpen, setIsOpen] = useState(true);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
 
+  // Load state dari localStorage
   useEffect(() => {
     const saved = localStorage.getItem("sidebarOpen");
     if (saved !== null) setIsOpen(saved === "true");
   }, []);
 
-  const toggle = () => {
-    setIsOpen(!isOpen);
-    localStorage.setItem("sidebarOpen", String(!isOpen));
+  // Toggle sidebar & simpan state
+  const toggleSidebar = () => {
+    const newState = !isOpen;
+    setIsOpen(newState);
+    localStorage.setItem("sidebarOpen", String(newState));
   };
 
+  // Update CSS variable saat isOpen berubah
   useEffect(() => {
     document.documentElement.style.setProperty(
       "--sidebar-width",
@@ -67,16 +71,17 @@ export default function Sidebar({ months }: { months: MonthItem[] }) {
 
   return (
     <>
-      {/* Tombol Toggle — z-index lebih tinggi dari sidebar */}
+      {/* ===== TOMBOL TOGGLE — SELALU DI ATAS ===== */}
       <button
-        onClick={toggle}
-        className="fixed top-4 left-4 z-[999] bg-[#151515] border border-[#2a2a2a] rounded-lg p-2 text-[#aaa] hover:text-white transition text-xl w-10 h-10 flex items-center justify-center"
+        onClick={toggleSidebar}
+        className="fixed top-4 left-4 z-[9999] bg-[#151515] border border-[#2a2a2a] rounded-lg p-2 text-[#aaa] hover:text-white transition text-xl w-10 h-10 flex items-center justify-center"
         aria-label="Toggle Sidebar"
+        style={{ pointerEvents: 'auto' }}
       >
         {isOpen ? "◀" : "☰"}
       </button>
 
-      {/* Sidebar — z-index lebih rendah dari tombol */}
+      {/* ===== SIDEBAR ===== */}
       <aside className={`sb-sidebar ${isOpen ? '' : 'collapsed'}`}>
         <div className="sb-brand">
           <span className="sb-brand-mark"></span>
