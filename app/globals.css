@@ -259,10 +259,12 @@ body {
 .stat .stat-value.water { color: var(--water-bright); }
 
 /* ----- Rail ----- */
+/* ----- Rail (daftar minggu/hari) ----- */
 .rail {
   border: 1px solid var(--border-soft);
   margin-bottom: 64px;
 }
+
 .rail-row {
   display: grid;
   grid-template-columns: 120px 1fr auto auto;
@@ -324,6 +326,49 @@ body {
   color: var(--text-faint);
   margin-left: 8px;
   font-weight: 400;
+}
+
+/* ===== PERBAIKAN: BADGE & R ===== */
+.rail-badge {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(45deg);
+  border: 1.5px solid var(--steel);
+  color: var(--steel);
+}
+.rail-badge span {
+  transform: rotate(-45deg);
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 13px;
+}
+.rail-badge.win {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.rail-badge.loss {
+  border-color: var(--rust);
+  color: var(--rust);
+}
+
+.rail-r {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 15px;
+  min-width: 56px;
+  text-align: right;
+  flex-shrink: 0;
+  color: var(--text); /* putih terang untuk default */
+}
+.rail-r.win {
+  color: var(--gold); /* emas terang */
+}
+.rail-r.loss {
+  color: var(--rust); /* merah karat */
 }
 
 /* ----- Seal ----- */
