@@ -101,40 +101,71 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   return (
     <>
       {/* ===== HEADER: SEJAJAR LURUS KIRI & KANAN (1 BARIS HORIZONTAL) ===== */}
-      <header className="flex flex-row justify-between items-center w-full mt-4 mb-12 pb-5 border-b border-[#221F1C]">
+      <header
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: '100%',
+          marginTop: '1rem',
+          marginBottom: '3rem',
+          paddingBottom: '1.25rem',
+          borderBottom: '1px solid #221F1C'
+        }}
+      >
         {/* Judul Kiri */}
-        <div className="font-['Big_Shoulders'] font-black text-[clamp(28px,4.5vw,52px)] leading-tight text-white whitespace-nowrap">
+        <div
+          style={{
+            fontFamily: "'Big Shoulders', sans-serif",
+            fontWeight: 900,
+            fontSize: '1.75rem',
+            letterSpacing: '0.025em',
+            color: '#FFFFFF',
+            whiteSpace: 'nowrap'
+          }}
+        >
           MINGGU {localWeekNumber} · {monthLabel} {startDate.getDate()} – {monthLabel} {endDate.getDate()}
         </div>
 
         {/* Data Trade Kanan — Mengisi Ruang Kosong Kanan */}
-        <div className="flex items-center gap-3 font-mono text-sm text-[#A6A39C] whitespace-nowrap flex-shrink-0">
+        <div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.85rem',
+            fontFamily: "'IBM Plex Mono', monospace",
+            fontSize: '0.875rem',
+            color: '#A6A39C',
+            whiteSpace: 'nowrap'
+          }}
+        >
           <span>
-            <span className="text-[#6E6B65]">Trade </span>
-            <strong className="text-[#E8E6E1] font-bold">{trades.length}</strong>
+            <span style={{ color: '#6E6B65' }}>Trade </span>
+            <strong style={{ color: '#E8E6E1', fontWeight: 700 }}>{trades.length}</strong>
           </span>
 
-          <span className="text-[#56534E]">·</span>
+          <span style={{ color: '#56534E' }}>·</span>
 
           <span>
-            <span className="text-[#6E6B65]">Net R </span>
-            <strong className={`font-bold ${netR >= 0 ? 'text-[#2E5695]' : 'text-[#8B3A1F]'}`}>
+            <span style={{ color: '#6E6B65' }}>Net R </span>
+            <strong style={{ color: netR >= 0 ? '#2E5695' : '#8B3A1F', fontWeight: 700 }}>
               {netR >= 0 ? '+' : ''}{netR.toFixed(1)}R
             </strong>
           </span>
 
-          <span className="text-[#56534E]">·</span>
+          <span style={{ color: '#56534E' }}>·</span>
 
           <span>
-            <span className="text-[#6E6B65]">Win </span>
-            <strong className="text-[#C49A3C] font-bold">{winCount}</strong>
+            <span style={{ color: '#6E6B65' }}>Win </span>
+            <strong style={{ color: '#C49A3C', fontWeight: 700 }}>{winCount}</strong>
           </span>
 
-          <span className="text-[#56534E]">·</span>
+          <span style={{ color: '#56534E' }}>·</span>
 
           <span>
-            <span className="text-[#6E6B65]">Loss </span>
-            <strong className="text-[#8B3A1F] font-bold">{lossCount}</strong>
+            <span style={{ color: '#6E6B65' }}>Loss </span>
+            <strong style={{ color: '#8B3A1F', fontWeight: 700 }}>{lossCount}</strong>
           </span>
         </div>
       </header>
@@ -162,8 +193,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           </div>
         )}
       </section>
-
-      <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
 
       {/* ===== MINGGU INI ===== */}
       <section className="mb-12">
