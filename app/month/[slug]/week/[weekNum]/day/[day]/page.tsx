@@ -60,16 +60,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
 
   return (
     <>
-      <header className="mb-4">
-        <Link
-          href={`/month/${slug}/week/${weekNum}`}
-          className="inline-flex items-center gap-1 text-sm font-mono text-[#A6A39C] hover:text-[#C49A3C] transition-colors duration-200 uppercase tracking-wider"
-        >
-          <span>←</span> Kembali ke Minggu {weekNum}
-        </Link>
-      </header>
-
-      {/* DAY HERO */}
+      {/* DAY HERO — tanpa tombol "Kembali ke Minggu" */}
       <div className="day-hero">
         <div className="day-hero-date">
           {dayNames[d.getDay()].toUpperCase()} · {d.getDate()} {monthName} {year} · {sessionDisplay}
