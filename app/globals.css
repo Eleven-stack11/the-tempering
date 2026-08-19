@@ -835,10 +835,11 @@ details.transcript .transcript-body {
 .day-hero-title .result-loss { color: var(--rust); }
 .day-meta-table {
   display: grid;
-  grid-template-columns: repeat(4,1fr);
+  grid-template-columns: repeat(4, 1fr);
   border: 1px solid var(--border);
   background: var(--surface);
-  max-width: 720px;
+  width: 100%;       /* ← pakai lebar penuh container */
+  max-width: 100%;   /* ← tidak ada batasan */
 }
 .day-meta-cell { padding: 12px 16px; border-right: 1px solid var(--border); }
 .day-meta-cell:last-child { border-right: none; }
