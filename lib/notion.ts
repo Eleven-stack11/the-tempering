@@ -38,33 +38,34 @@ function parseRR(value: any): { value: number; result: 'Win' | 'Loss' | 'Scratch
   return { value: 0, result: 'Scratch' };
 }
 
-// ===== HELPER: Ambil Instrumen dari Berbagai Kemungkinan Nama Properti =====
+// ===== HELPER: Ambil Instrument dari Berbagai Tipe =====
 function getInstrument(page: any): string {
-  // Coba beberapa kemungkinan nama properti
-  const possibleNames = ['Instrument', 'Aa Instrument', 'Instrument (Select)', 'Instrumen'];
-  for (const name of possibleNames) {
+  // Coba sebagai select
+  const selectProp = page.properties.Instrument;
+  if (selectProp) {
+    if (selectProp.type === 'select' && selectProp.select?.name) {
+      return selectProp.select.name;
+    }
+    if (selectProp.type === 'rich_text' && selectProp.rich_text?.[0]?.plain_text) {
+      return selectProp.rich_text[0].plain_text.trim();
+    }
+    if (selectProp.type === 'title' && selectProp.title?.[0]?.plain_text) {
+      return selectProp.title[0].plain_text.trim();
+    }
+  }
+  // Coba properti lain yang mungkin
+  const altNames = ['Aa Instrument', 'Instrument (Select)', 'Instrumen', 'Symbol', 'Ticker'];
+  for (const name of altNames) {
     const prop = page.properties[name];
-    if (prop && prop.type === 'select' && prop.select?.name) {
-      return prop.select.name;
-    }
-    if (prop && prop.type === 'rich_text' && prop.rich_text?.[0]?.plain_text) {
-      return prop.rich_text[0].plain_text;
-    }
-  }
-  // Fallback: cari property yang mengandung kata "Instrument" atau "Instrumen"
-  const keys = Object.keys(page.properties);
-  for (const key of keys) {
-    if (key.toLowerCase().includes('instrument') || key.toLowerCase().includes('instrumen')) {
-      const prop = page.properties[key];
-      if (prop.type === 'select' && prop.select?.name) {
-        return prop.select.name;
-      }
+    if (prop) {
+      if (prop.type === 'select' && prop.select?.name) return prop.select.name;
       if (prop.type === 'rich_text' && prop.rich_text?.[0]?.plain_text) {
-        return prop.rich_text[0].plain_text;
+        const val = prop.rich_text[0].plain_text.trim();
+        if (val) return val;
       }
     }
   }
-  return 'NQ'; // fallback terakhir
+  return 'NQ';
 }
 
 export async function fetchTrades(): Promise<any[]> {
@@ -93,19 +94,27 @@ export async function fetchTrades(): Promise<any[]> {
 
     const data = await res.json();
 
-    // ===== DEBUG: Log properti yang tersedia di Notion =====
+    // ===== LOG: Cek tipe & nilai Instrument =====
     if (data.results && data.results.length > 0) {
-      console.log("🔍 Properti tersedia:", Object.keys(data.results[0].properties).join(', '));
+      const first = data.results[0];
+      const instrProp = first.properties.Instrument;
+      console.log("🔍 Instrument property type:", instrProp?.type);
+      console.log("🔍 Instrument value:", 
+        instrProp?.select?.name || 
+        instrProp?.rich_text?.[0]?.plain_text || 
+        instrProp?.title?.[0]?.plain_text || 
+        'TIDAK ADA'
+      );
     }
 
     return data.results.map((page: any) => {
       const date = page.properties.Date?.date?.start || '';
 
-      // === AMBIL INSTRUMEN DENGAN HELPER ===
+      // === AMBIL INSTRUMEN (support select & rich_text) ===
       const instrument = getInstrument(page);
       const positionRaw = page.properties.Position?.select?.name || '';
 
-      // RR: ambil nilai mentah
+      // RR
       let rrRaw = null;
       const rrProp = page.properties.RR;
       if (rrProp) {
@@ -116,13 +125,13 @@ export async function fetchTrades(): Promise<any[]> {
         else if (rrProp.type === 'title') rrRaw = rrProp.title?.[0]?.plain_text;
       }
 
-      // === DETEKSI TRADE ===
+      // DETEKSI TRADE
       const hasInstrument = instrument.length > 0 && instrument !== 'NQ';
       const hasPosition = positionRaw.trim().length > 0;
       const hasRR = rrRaw !== null && rrRaw !== undefined && String(rrRaw).trim().length > 0;
       const isTrade = hasInstrument || hasPosition || hasRR;
 
-      // === PROPERTI LAIN ===
+      // PROPERTI LAIN
       const praPasar = getRichText(page, 'Pra-pasar');
       const eksekusi = getRichText(page, 'Eksekusi');
       const monthlyNote = getRichText(page, 'Monthly Note');
