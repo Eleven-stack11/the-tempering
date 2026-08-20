@@ -97,7 +97,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
   return (
     <>
-      {/* ===== HEADER: JUDUL KIRI, STATISTIK KANAN (INLINE STYLE) ===== */}
+      {/* ===== HEADER: JUDUL KIRI (UKURAN LEBIH KECIL), STATISTIK KANAN ===== */}
       <header
         style={{
           display: 'flex',
@@ -105,9 +105,9 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           justifyContent: 'space-between',
           alignItems: 'center',
           width: '100%',
-          marginTop: '1rem',
-          marginBottom: '3rem',
-          paddingBottom: '1.25rem',
+          marginTop: '0.5rem',
+          marginBottom: '2rem',
+          paddingBottom: '1rem',
           borderBottom: '1px solid #221F1C',
         }}
       >
@@ -115,7 +115,7 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           style={{
             fontFamily: "'Big Shoulders', sans-serif",
             fontWeight: 900,
-            fontSize: 'clamp(28px, 4.5vw, 52px)',
+            fontSize: '1.5rem', /* ← DIPERKECIL dari clamp(28px, 4.5vw, 52px) */
             letterSpacing: '0.025em',
             color: '#FFFFFF',
             whiteSpace: 'nowrap',
@@ -128,9 +128,9 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.85rem',
+            gap: '0.75rem',
             fontFamily: "'IBM Plex Mono', monospace",
-            fontSize: '0.875rem',
+            fontSize: '0.8rem',
             color: '#A6A39C',
             whiteSpace: 'nowrap',
             flexShrink: 0,
