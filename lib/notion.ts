@@ -1,15 +1,47 @@
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
 const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID;
 
-function getRichText(page: any, propName: string): string {
+// ===== Helper untuk ambil teks dari berbagai tipe properti =====
+function getText(page: any, propName: string): string {
   const prop = page.properties[propName];
   if (!prop) return '';
-  if (prop.type === 'rich_text') {
-    return prop.rich_text?.[0]?.plain_text || '';
+
+  // Rich text atau Title
+  if (prop.type === 'rich_text' || prop.type === 'title') {
+    const textArr = prop.rich_text || prop.title || [];
+    return textArr.map((t: any) => t.plain_text).join('') || '';
   }
-  if (prop.type === 'title') {
-    return prop.title?.[0]?.plain_text || '';
+
+  // Select
+  if (prop.type === 'select') {
+    return prop.select?.name || '';
   }
+
+  // Multi-select (ambil nilai pertama)
+  if (prop.type === 'multi_select') {
+    return prop.multi_select?.map((s: any) => s.name).join(', ') || '';
+  }
+
+  // Number → string
+  if (prop.type === 'number') {
+    return String(prop.number || '');
+  }
+
+  // Checkbox → string
+  if (prop.type === 'checkbox') {
+    return prop.checkbox ? 'Ya' : 'Tidak';
+  }
+
+  // URL
+  if (prop.type === 'url') {
+    return prop.url || '';
+  }
+
+  // Email, phone, dll.
+  if (prop.type === 'email' || prop.type === 'phone_number') {
+    return prop[prop.type] || '';
+  }
+
   return '';
 }
 
@@ -38,36 +70,6 @@ function parseRR(value: any): { value: number; result: 'Win' | 'Loss' | 'Scratch
   return { value: 0, result: 'Scratch' };
 }
 
-// ===== HELPER: Ambil Instrument dari Berbagai Tipe =====
-function getInstrument(page: any): string {
-  // Coba sebagai select
-  const selectProp = page.properties.Instrument;
-  if (selectProp) {
-    if (selectProp.type === 'select' && selectProp.select?.name) {
-      return selectProp.select.name;
-    }
-    if (selectProp.type === 'rich_text' && selectProp.rich_text?.[0]?.plain_text) {
-      return selectProp.rich_text[0].plain_text.trim();
-    }
-    if (selectProp.type === 'title' && selectProp.title?.[0]?.plain_text) {
-      return selectProp.title[0].plain_text.trim();
-    }
-  }
-  // Coba properti lain yang mungkin
-  const altNames = ['Aa Instrument', 'Instrument (Select)', 'Instrumen', 'Symbol', 'Ticker'];
-  for (const name of altNames) {
-    const prop = page.properties[name];
-    if (prop) {
-      if (prop.type === 'select' && prop.select?.name) return prop.select.name;
-      if (prop.type === 'rich_text' && prop.rich_text?.[0]?.plain_text) {
-        const val = prop.rich_text[0].plain_text.trim();
-        if (val) return val;
-      }
-    }
-  }
-  return 'NQ';
-}
-
 export async function fetchTrades(): Promise<any[]> {
   if (!NOTION_TOKEN || !NOTION_DATABASE_ID) {
     console.warn("Notion credentials missing");
@@ -94,27 +96,26 @@ export async function fetchTrades(): Promise<any[]> {
 
     const data = await res.json();
 
-    // ===== LOG: Cek tipe & nilai Instrument =====
+    // ===== LOG: Cek nilai Pra-pasar & Eksekusi =====
     if (data.results && data.results.length > 0) {
-      const first = data.results[0];
-      const instrProp = first.properties.Instrument;
-      console.log("🔍 Instrument property type:", instrProp?.type);
-      console.log("🔍 Instrument value:", 
-        instrProp?.select?.name || 
-        instrProp?.rich_text?.[0]?.plain_text || 
-        instrProp?.title?.[0]?.plain_text || 
-        'TIDAK ADA'
-      );
+      console.log("🔍 Properti tersedia:", Object.keys(data.results[0].properties).join(', '));
+      for (let i = 0; i < Math.min(data.results.length, 3); i++) {
+        const page = data.results[i];
+        const date = page.properties.Date?.date?.start || '?';
+        const pra = getText(page, 'Pra-pasar');
+        const eks = getText(page, 'Eksekusi');
+        console.log(`🔍 Record ${i+1} (${date}): Pra-pasar="${pra}" | Eksekusi="${eks}"`);
+      }
     }
 
     return data.results.map((page: any) => {
       const date = page.properties.Date?.date?.start || '';
 
-      // === AMBIL INSTRUMEN (support select & rich_text) ===
-      const instrument = getInstrument(page);
-      const positionRaw = page.properties.Position?.select?.name || '';
+      // === AMBIL INSTRUMEN ===
+      const instrument = getText(page, 'Instrument') || getText(page, 'Aa Instrument') || 'NQ';
+      const positionRaw = getText(page, 'Position');
 
-      // RR
+      // === AMBIL RR ===
       let rrRaw = null;
       const rrProp = page.properties.RR;
       if (rrProp) {
@@ -125,34 +126,35 @@ export async function fetchTrades(): Promise<any[]> {
         else if (rrProp.type === 'title') rrRaw = rrProp.title?.[0]?.plain_text;
       }
 
-      // DETEKSI TRADE
+      // === DETEKSI TRADE ===
       const hasInstrument = instrument.length > 0 && instrument !== 'NQ';
       const hasPosition = positionRaw.trim().length > 0;
       const hasRR = rrRaw !== null && rrRaw !== undefined && String(rrRaw).trim().length > 0;
       const isTrade = hasInstrument || hasPosition || hasRR;
 
-      // PROPERTI LAIN
-      const praPasar = getRichText(page, 'Pra-pasar');
-      const eksekusi = getRichText(page, 'Eksekusi');
-      const monthlyNote = getRichText(page, 'Monthly Note');
-      const weeklyThesis = getRichText(page, 'Weekly Thesis');
-      const psychology = getRichText(page, 'Psikologi');
-      const chartLesson = getRichText(page, 'Pelajaran Chart');
+      // === PROPERTI LAIN (pakai getText) ===
+      const praPasar = getText(page, 'Pra-pasar');
+      const eksekusi = getText(page, 'Eksekusi');
+      const monthlyNote = getText(page, 'Monthly Note');
+      const weeklyThesis = getText(page, 'Weekly Thesis');
+      const psychology = getText(page, 'Psikologi');
+      const chartLesson = getText(page, 'Pelajaran Chart');
+      const details = getText(page, 'Details') || '';
 
-      const session = page.properties.Session?.select?.name || page.properties.Time?.select?.name || 'LONDON';
-      const time = page.properties.Time?.select?.name || page.properties.Session?.select?.name || '';
-      const youtubeLink = page.properties.YouTube?.url || '';
-      const status = page.properties.Status?.select?.name || 'Entered';
+      const session = getText(page, 'Session') || getText(page, 'Time') || 'LONDON';
+      const time = getText(page, 'Time') || getText(page, 'Session') || '';
+      const youtubeLink = getText(page, 'YouTube') || '';
+      const status = getText(page, 'Status') || 'Entered';
 
       const halfRisk = page.properties['Half risk (if not...)']?.checkbox || false;
-      const setupGrade = page.properties['Setup Grade']?.select?.name || 'B';
+      const setupGrade = getText(page, 'Setup Grade') || 'B';
 
-      const dailyFilter = page.properties['Daily filter']?.select?.name || '';
-      const h4Filter = page.properties['4H filter']?.select?.name || '';
-      const h1Filter = page.properties['1H close filter']?.select?.name || '';
-      const m15Filter = page.properties['15M filter']?.select?.name || '';
-      const m5Filter = page.properties['5M filter']?.select?.name || '';
-      const m3Filter = page.properties['3M filter']?.select?.name || '';
+      const dailyFilter = getText(page, 'Daily filter') || '';
+      const h4Filter = getText(page, '4H filter') || '';
+      const h1Filter = getText(page, '1H close filter') || '';
+      const m15Filter = getText(page, '15M filter') || '';
+      const m5Filter = getText(page, '5M filter') || '';
+      const m3Filter = getText(page, '3M filter') || '';
 
       const triggerParts = [];
       if (dailyFilter) triggerParts.push(`Daily:${dailyFilter}`);
@@ -173,17 +175,20 @@ export async function fetchTrades(): Promise<any[]> {
       else if (setupGrade === 'B' || setupGrade === 'B+') grade = 'B';
       else if (setupGrade === 'C') grade = 'C';
 
+      // === TITLE: gunakan details, atau position+instrument ===
+      const title = details || `${positionRaw || instrument} ${instrument}`.trim() || 'Untitled';
+
       return {
         id: page.id,
         date,
-        title: `${positionRaw || instrument} ${instrument}`.trim() || 'Untitled',
-        instrument: instrument,
+        title,
+        instrument,
         direction: positionRaw === 'Short' ? 'Short' : (positionRaw || 'Long'),
         trigger,
         result: rrData.result,
         grade,
         r: rrData.value,
-        notes: praPasar || eksekusi || '',
+        notes: praPasar || eksekusi || details || '',
         praPasar,
         eksekusi,
         monthlyNote,
