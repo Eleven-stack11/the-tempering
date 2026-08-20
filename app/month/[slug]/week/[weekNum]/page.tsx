@@ -52,7 +52,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const localWeekIndex = weeks.findIndex((w) => w.weekNumber === weekNumber);
   const localWeekNumber = localWeekIndex !== -1 ? localWeekIndex + 1 : weekNumber;
 
-  // Sunday trade untuk thesis
   const sundayDate = new Date(targetWeek.start);
   sundayDate.setDate(sundayDate.getDate() - 1);
   const sundayTrade = allTrades.find((t) => {
@@ -67,7 +66,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const psychology = sundayTrade?.psychology || '';
   const chartLesson = sundayTrade?.chartLesson || '';
 
-  // Semua entri dalam rentang minggu
   const allWeekEntries = allTrades.filter((t) => {
     const d = new Date(t.date);
     return d >= targetWeek.start && d <= targetWeek.end;
@@ -76,7 +74,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const trades = allWeekEntries.filter(t => t.isTrade === true);
   const readings = allWeekEntries.filter(t => t.isTrade === false && t.notes && t.notes.trim().length > 0);
 
-  // Gabungkan dalam dayMap
   const dayMap: Record<string, { trades: any[]; readings: any[] }> = {};
   for (const t of trades) {
     const key = new Date(t.date).toISOString().split("T")[0];
@@ -100,19 +97,66 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
   return (
     <>
-      {/* ===== HEADER: SEJAJAR LURUS KIRI & KANAN ===== */}
-      <header className="flex flex-row justify-between items-center w-full mt-4 mb-12 pb-5 border-b border-[#221F1C]">
-        <div className="font-['Big_Shoulders'] font-black text-[clamp(28px,4.5vw,52px)] leading-tight text-white whitespace-nowrap">
+      {/* ===== HEADER: JUDUL KIRI, STATISTIK KANAN (INLINE STYLE) ===== */}
+      <header
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: '100%',
+          marginTop: '1rem',
+          marginBottom: '3rem',
+          paddingBottom: '1.25rem',
+          borderBottom: '1px solid #221F1C',
+        }}
+      >
+        <div
+          style={{
+            fontFamily: "'Big Shoulders', sans-serif",
+            fontWeight: 900,
+            fontSize: 'clamp(28px, 4.5vw, 52px)',
+            letterSpacing: '0.025em',
+            color: '#FFFFFF',
+            whiteSpace: 'nowrap',
+          }}
+        >
           MINGGU {localWeekNumber} · {monthLabel} {startDate.getDate()} – {monthLabel} {endDate.getDate()}
         </div>
-        <div className="flex items-center gap-3 font-mono text-sm text-[#A6A39C] whitespace-nowrap flex-shrink-0">
-          <span><span className="text-[#6E6B65]">Trade </span><strong className="text-[#E8E6E1] font-bold">{trades.length}</strong></span>
-          <span className="text-[#56534E]">·</span>
-          <span><span className="text-[#6E6B65]">Net R </span><strong className={`font-bold ${netR >= 0 ? 'text-[#2E5695]' : 'text-[#8B3A1F]'}`}>{netR >= 0 ? '+' : ''}{netR.toFixed(1)}R</strong></span>
-          <span className="text-[#56534E]">·</span>
-          <span><span className="text-[#6E6B65]">Win </span><strong className="text-[#C49A3C] font-bold">{winCount}</strong></span>
-          <span className="text-[#56534E]">·</span>
-          <span><span className="text-[#6E6B65]">Loss </span><strong className="text-[#8B3A1F] font-bold">{lossCount}</strong></span>
+
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.85rem',
+            fontFamily: "'IBM Plex Mono', monospace",
+            fontSize: '0.875rem',
+            color: '#A6A39C',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+          }}
+        >
+          <span>
+            <span style={{ color: '#6E6B65' }}>Trade </span>
+            <strong style={{ color: '#E8E6E1', fontWeight: 700 }}>{trades.length}</strong>
+          </span>
+          <span style={{ color: '#56534E' }}>·</span>
+          <span>
+            <span style={{ color: '#6E6B65' }}>Net R </span>
+            <strong style={{ color: netR >= 0 ? '#2E5695' : '#8B3A1F', fontWeight: 700 }}>
+              {netR >= 0 ? '+' : ''}{netR.toFixed(1)}R
+            </strong>
+          </span>
+          <span style={{ color: '#56534E' }}>·</span>
+          <span>
+            <span style={{ color: '#6E6B65' }}>Win </span>
+            <strong style={{ color: '#C49A3C', fontWeight: 700 }}>{winCount}</strong>
+          </span>
+          <span style={{ color: '#56534E' }}>·</span>
+          <span>
+            <span style={{ color: '#6E6B65' }}>Loss </span>
+            <strong style={{ color: '#8B3A1F', fontWeight: 700 }}>{lossCount}</strong>
+          </span>
         </div>
       </header>
 
@@ -178,8 +222,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
                   <div className="rail-body">
                     <h4>{dayTrades.length} trade — {dayTrades.map(t => t.title).join(", ")}</h4>
                     <p>{dayTrades.map(t => `${t.instrument} ${t.direction}`).join(" · ")}</p>
-
-                    {/* ===== CATATAN DARI TRADE (Pra-pasar / Eksekusi / Notes) ===== */}
                     {dayTrades.some(t => t.praPasar || t.eksekusi || t.notes) && (
                       <div className="mt-1 text-sm text-[#A6A39C] italic border-l-2 border-[#56534E] pl-2">
                         {dayTrades.map((t, idx) => {
@@ -188,7 +230,6 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
                         })}
                       </div>
                     )}
-
                     {hasReading && (
                       <p className="text-sm text-[#6E6B65] mt-1">📝 + {dayData.readings.length} update reading</p>
                     )}
