@@ -157,9 +157,6 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
           </div>
         </div>
 
-        <div className="text-[#A6A39C] text-base max-w-3xl mt-6 leading-relaxed">
-          <p>✏️ Kesimpulan jujur — kenapa grade ini, dan perbaikan untuk lain kali.</p>
-        </div>
       </section>
     </>
   );
