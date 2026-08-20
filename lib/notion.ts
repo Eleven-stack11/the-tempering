@@ -38,6 +38,35 @@ function parseRR(value: any): { value: number; result: 'Win' | 'Loss' | 'Scratch
   return { value: 0, result: 'Scratch' };
 }
 
+// ===== HELPER: Ambil Instrumen dari Berbagai Kemungkinan Nama Properti =====
+function getInstrument(page: any): string {
+  // Coba beberapa kemungkinan nama properti
+  const possibleNames = ['Instrument', 'Aa Instrument', 'Instrument (Select)', 'Instrumen'];
+  for (const name of possibleNames) {
+    const prop = page.properties[name];
+    if (prop && prop.type === 'select' && prop.select?.name) {
+      return prop.select.name;
+    }
+    if (prop && prop.type === 'rich_text' && prop.rich_text?.[0]?.plain_text) {
+      return prop.rich_text[0].plain_text;
+    }
+  }
+  // Fallback: cari property yang mengandung kata "Instrument" atau "Instrumen"
+  const keys = Object.keys(page.properties);
+  for (const key of keys) {
+    if (key.toLowerCase().includes('instrument') || key.toLowerCase().includes('instrumen')) {
+      const prop = page.properties[key];
+      if (prop.type === 'select' && prop.select?.name) {
+        return prop.select.name;
+      }
+      if (prop.type === 'rich_text' && prop.rich_text?.[0]?.plain_text) {
+        return prop.rich_text[0].plain_text;
+      }
+    }
+  }
+  return 'NQ'; // fallback terakhir
+}
+
 export async function fetchTrades(): Promise<any[]> {
   if (!NOTION_TOKEN || !NOTION_DATABASE_ID) {
     console.warn("Notion credentials missing");
@@ -64,14 +93,19 @@ export async function fetchTrades(): Promise<any[]> {
 
     const data = await res.json();
 
+    // ===== DEBUG: Log properti yang tersedia di Notion =====
+    if (data.results && data.results.length > 0) {
+      console.log("🔍 Properti tersedia:", Object.keys(data.results[0].properties).join(', '));
+    }
+
     return data.results.map((page: any) => {
       const date = page.properties.Date?.date?.start || '';
 
-      // === AMBIL NILAI PROPERTI (bukan hanya keberadaan) ===
-      const instrumentRaw = page.properties.Instrument?.select?.name || '';
+      // === AMBIL INSTRUMEN DENGAN HELPER ===
+      const instrument = getInstrument(page);
       const positionRaw = page.properties.Position?.select?.name || '';
 
-      // RR: ambil nilai mentah (bisa dari select, multi_select, atau rich_text)
+      // RR: ambil nilai mentah
       let rrRaw = null;
       const rrProp = page.properties.RR;
       if (rrProp) {
@@ -82,8 +116,8 @@ export async function fetchTrades(): Promise<any[]> {
         else if (rrProp.type === 'title') rrRaw = rrProp.title?.[0]?.plain_text;
       }
 
-      // === DETEKSI TRADE: hanya jika salah satu nilai terisi ===
-      const hasInstrument = instrumentRaw.trim().length > 0;
+      // === DETEKSI TRADE ===
+      const hasInstrument = instrument.length > 0 && instrument !== 'NQ';
       const hasPosition = positionRaw.trim().length > 0;
       const hasRR = rrRaw !== null && rrRaw !== undefined && String(rrRaw).trim().length > 0;
       const isTrade = hasInstrument || hasPosition || hasRR;
@@ -133,8 +167,8 @@ export async function fetchTrades(): Promise<any[]> {
       return {
         id: page.id,
         date,
-        title: `${positionRaw || instrumentRaw} ${instrumentRaw || 'NQ'}`.trim() || 'Untitled',
-        instrument: instrumentRaw || 'NQ',
+        title: `${positionRaw || instrument} ${instrument}`.trim() || 'Untitled',
+        instrument: instrument,
         direction: positionRaw === 'Short' ? 'Short' : (positionRaw || 'Long'),
         trigger,
         result: rrData.result,
@@ -151,7 +185,7 @@ export async function fetchTrades(): Promise<any[]> {
         weeklyThesis,
         psychology,
         chartLesson,
-        isTrade, // <-- sudah benar
+        isTrade,
         dailyFilter,
         h4Filter,
         h1Filter,
