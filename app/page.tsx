@@ -41,6 +41,19 @@ export default async function HomePage() {
     0
   );
 
+  // Bulan-bulan yang sudah ada data
+  const existingMonths = monthKeys.map(key => key.split('-')[1]);
+  // Semua bulan yang mungkin (09–12 untuk sisa tahun)
+  const allFutureMonths = ['09', '10', '11', '12'];
+  // Bulan yang belum ada data -> akan ditampilkan sebagai locked
+  const lockedMonths = allFutureMonths.filter(m => !existingMonths.includes(m));
+  const lockedMonthNames: Record<string, string> = {
+    '09': 'September',
+    '10': 'Oktober',
+    '11': 'November',
+    '12': 'Desember',
+  };
+
   return (
     <>
       <header style={{ marginBottom: "40px" }}>
@@ -83,6 +96,8 @@ export default async function HomePage() {
             const [, month] = key.split("-");
             const monthName = monthNames[month] || month;
             const monthTrades = monthMap[key];
+            // Ambil instrumen unik untuk bulan ini
+            const instruments = [...new Set(monthTrades.map(t => t.instrument))];
             return (
               <Link key={key} href={`/month/${key}`} className="tile">
                 <div className="tile-eyebrow">
@@ -93,22 +108,23 @@ export default async function HomePage() {
                 <p>{monthTrades.length} trade tercatat</p>
                 <div className="tile-stats">
                   <span><b>{monthTrades.length}</b> trade</span>
-                  {(() => {
-  const instruments = [...new Set(monthTrades.map(t => t.instrument))];
-  return <span><b>{instruments.join(' / ')}</b></span>;
-})()}
+                  <span><b>{instruments.join(' / ')}</b></span>
                 </div>
               </Link>
             );
           })}
-          <div className="tile locked">
-            <div className="tile-eyebrow">
-              <span>BULAN 09</span>
-              <span className="lock-icon">🔒</span>
+
+          {/* Locked future months — hanya tampilkan jika belum ada data */}
+          {lockedMonths.map((m) => (
+            <div key={m} className="tile locked">
+              <div className="tile-eyebrow">
+                <span>BULAN {m}</span>
+                <span className="lock-icon">🔒</span>
+              </div>
+              <h3>{lockedMonthNames[m]}</h3>
+              <p>Belum ditempa.</p>
             </div>
-            <h3>September</h3>
-            <p>Belum ditempa.</p>
-          </div>
+          ))}
         </div>
       </section>
 
