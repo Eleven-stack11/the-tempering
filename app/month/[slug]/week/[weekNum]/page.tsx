@@ -93,13 +93,12 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const endDate = targetWeek.end;
   const startMonthLabel = startDate.toLocaleString('id', { month: 'short' }).toUpperCase();
   const endMonthLabel = endDate.toLocaleString('id', { month: 'short' }).toUpperCase();
-  const monthLabel = startMonthLabel === endMonthLabel ? startMonthLabel : `${startMonthLabel}–${endMonthLabel}`;
 
   const youtubeId = getYoutubeId(weeklyYoutube);
 
   return (
     <>
-      {/* ===== HEADER: JUDUL KIRI (UKURAN LEBIH KECIL), STATISTIK KANAN ===== */}
+      {/* ===== HEADER: JUDUL KIRI, STATISTIK KANAN ===== */}
       <header
         style={{
           display: 'flex',
@@ -117,13 +116,13 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           style={{
             fontFamily: "'Big Shoulders', sans-serif",
             fontWeight: 900,
-            fontSize: '1.5rem', /* ← DIPERKECIL dari clamp(28px, 4.5vw, 52px) */
+            fontSize: '1.5rem',
             letterSpacing: '0.025em',
             color: '#FFFFFF',
             whiteSpace: 'nowrap',
           }}
         >
-          MINGGU {localWeekNumber} · {monthLabel} {startDate.getDate()} – {monthLabel} {endDate.getDate()}
+          MINGGU {localWeekNumber} · {startMonthLabel} {startDate.getDate()} – {endMonthLabel} {endDate.getDate()}
         </div>
 
         <div
