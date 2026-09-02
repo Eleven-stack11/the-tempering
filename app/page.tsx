@@ -93,7 +93,10 @@ export default async function HomePage() {
                 <p>{monthTrades.length} trade tercatat</p>
                 <div className="tile-stats">
                   <span><b>{monthTrades.length}</b> trade</span>
-                  <span><b>NQ / ES</b></span>
+                  {(() => {
+  const instruments = [...new Set(monthTrades.map(t => t.instrument))];
+  return <span><b>{instruments.join(' / ')}</b></span>;
+})()}
                 </div>
               </Link>
             );
