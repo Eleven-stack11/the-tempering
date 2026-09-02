@@ -91,7 +91,9 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const lossCount = trades.filter(t => t.result === "Loss").length;
   const startDate = targetWeek.start;
   const endDate = targetWeek.end;
-  const monthLabel = monthName.slice(0, 3).toUpperCase();
+  const startMonthLabel = startDate.toLocaleString('id', { month: 'short' }).toUpperCase();
+  const endMonthLabel = endDate.toLocaleString('id', { month: 'short' }).toUpperCase();
+  const monthLabel = startMonthLabel === endMonthLabel ? startMonthLabel : `${startMonthLabel}–${endMonthLabel}`;
 
   const youtubeId = getYoutubeId(weeklyYoutube);
 
