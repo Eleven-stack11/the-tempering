@@ -41,24 +41,35 @@ export default async function HomePage() {
     0
   );
 
+  // Hitung jumlah pelajaran chart yang tercatat
+  const lessonCount = allTrades.filter(
+    (t) => t.chartLesson && t.chartLesson.trim().length > 0
+  ).length;
+
   // Bulan-bulan yang sudah ada data
-  const existingMonths = monthKeys.map(key => key.split('-')[1]);
-  // Semua bulan yang mungkin (09–12 untuk sisa tahun)
-  const allFutureMonths = ['09', '10', '11', '12'];
-  // Bulan yang belum ada data -> akan ditampilkan sebagai locked
-  const lockedMonths = allFutureMonths.filter(m => !existingMonths.includes(m));
+  const existingMonths = monthKeys.map((key) => key.split("-")[1]);
+  const allFutureMonths = ["09", "10", "11", "12"];
+  const lockedMonths = allFutureMonths.filter((m) => !existingMonths.includes(m));
   const lockedMonthNames: Record<string, string> = {
-    '09': 'September',
-    '10': 'Oktober',
-    '11': 'November',
-    '12': 'Desember',
+    "09": "September",
+    "10": "Oktober",
+    "11": "November",
+    "12": "Desember",
   };
 
   return (
     <>
       <header style={{ marginBottom: "40px" }}>
         <div className="eyebrow">TRADING LOG</div>
-        <h1 style={{ fontFamily: "var(--display)", fontWeight: 900, fontSize: "clamp(48px, 8vw, 80px)", lineHeight: "1", color: "var(--text)" }}>
+        <h1
+          style={{
+            fontFamily: "var(--display)",
+            fontWeight: 900,
+            fontSize: "clamp(48px, 8vw, 80px)",
+            lineHeight: "1",
+            color: "var(--text)",
+          }}
+        >
           <em style={{ fontStyle: "normal", color: "var(--water-bright)" }}>Journey</em>
         </h1>
       </header>
@@ -90,14 +101,23 @@ export default async function HomePage() {
       </section>
 
       <section style={{ marginBottom: "64px" }}>
-        <h2 style={{ fontFamily: "var(--display)", fontWeight: 700, fontSize: "clamp(28px, 3vw, 40px)", color: "var(--text)", marginBottom: "16px" }}>2026</h2>
+        <h2
+          style={{
+            fontFamily: "var(--display)",
+            fontWeight: 700,
+            fontSize: "clamp(28px, 3vw, 40px)",
+            color: "var(--text)",
+            marginBottom: "16px",
+          }}
+        >
+          2026
+        </h2>
         <div className="grid cols-3">
           {monthKeys.map((key) => {
             const [, month] = key.split("-");
             const monthName = monthNames[month] || month;
             const monthTrades = monthMap[key];
-            // Ambil instrumen unik untuk bulan ini
-            const instruments = [...new Set(monthTrades.map(t => t.instrument))];
+            const instruments = [...new Set(monthTrades.map((t) => t.instrument))];
             return (
               <Link key={key} href={`/month/${key}`} className="tile">
                 <div className="tile-eyebrow">
@@ -107,14 +127,17 @@ export default async function HomePage() {
                 <h3>{monthName}</h3>
                 <p>{monthTrades.length} trade tercatat</p>
                 <div className="tile-stats">
-                  <span><b>{monthTrades.length}</b> trade</span>
-                  <span><b>{instruments.join(' / ')}</b></span>
+                  <span>
+                    <b>{monthTrades.length}</b> trade
+                  </span>
+                  <span>
+                    <b>{instruments.join(" / ")}</b>
+                  </span>
                 </div>
               </Link>
             );
           })}
 
-          {/* Locked future months — hanya tampilkan jika belum ada data */}
           {lockedMonths.map((m) => (
             <div key={m} className="tile locked">
               <div className="tile-eyebrow">
@@ -126,6 +149,49 @@ export default async function HomePage() {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* ===== COMPILED LESSONS ===== */}
+      <section style={{ marginBottom: "64px" }}>
+        <h2
+          style={{
+            fontFamily: "var(--display)",
+            fontWeight: 700,
+            fontSize: "clamp(28px, 3vw, 40px)",
+            color: "var(--text)",
+            marginBottom: "16px",
+          }}
+        >
+          Pelajaran Chart
+        </h2>
+        <Link
+          href="/lessons"
+          className="tile"
+          style={{
+            display: "block",
+            textDecoration: "none",
+            border: "1px solid var(--border-soft)",
+            background: "var(--surface)",
+          }}
+        >
+          <div className="tile-eyebrow">
+            <span>COMPILED LESSONS</span>
+            <span className="tile-arrow">→</span>
+          </div>
+          <h3>Semua Pelajaran dalam Satu Halaman</h3>
+          <p>
+            Kumpulan pelajaran chart dari setiap trade — diurutkan dari yang terbaru.
+            Tempat untuk melihat pola dan perkembangan sepanjang perjalanan.
+          </p>
+          <div className="tile-stats">
+            <span>
+              <b>{lessonCount}</b> pelajaran tercatat
+            </span>
+            <span>
+              <b>→ Buka</b>
+            </span>
+          </div>
+        </Link>
       </section>
 
       <footer className="site-footer" style={{ paddingTop: "32px", marginTop: "0" }}>
