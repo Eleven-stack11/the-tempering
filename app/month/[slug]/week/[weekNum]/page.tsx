@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { fetchTrades, getWeeksOfMonth } from "@/lib/notion";
+import { fetchTrades, getWeeksOfMonth, getAssetType } from "@/lib/notion";
 
 export const revalidate = 60;
 
@@ -35,8 +35,17 @@ function getYoutubeId(url: string): string | null {
   return null;
 }
 
-export default async function WeekPage({ params }: { params: Promise<{ slug: string; weekNum: string }> }) {
+export default async function WeekPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string; weekNum: string }>;
+  searchParams: Promise<{ type?: string }>;
+}) {
   const { slug, weekNum } = await params;
+  const sp = await searchParams;
+  const assetType: "futures" | "forex" = sp.type === "forex" ? "forex" : "futures";
+
   const [year, month] = slug.split("-");
   const yearNum = parseInt(year);
   const monthIndex = parseInt(month) - 1;
@@ -52,27 +61,37 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
   const localWeekIndex = weeks.findIndex((w) => w.weekNumber === weekNumber);
   const localWeekNumber = localWeekIndex !== -1 ? localWeekIndex + 1 : weekNumber;
 
+  // Sunday trade untuk thesis
   const sundayDate = new Date(targetWeek.start);
   sundayDate.setDate(sundayDate.getDate() - 1);
   const sundayTrade = allTrades.find((t) => {
     const d = new Date(t.date);
-    return d.getFullYear() === sundayDate.getFullYear() &&
-           d.getMonth() === sundayDate.getMonth() &&
-           d.getDate() === sundayDate.getDate();
+    return (
+      d.getFullYear() === sundayDate.getFullYear() &&
+      d.getMonth() === sundayDate.getMonth() &&
+      d.getDate() === sundayDate.getDate()
+    );
   });
 
-  const weeklyThesis = sundayTrade?.weeklyThesis || sundayTrade?.notes || '';
-  const weeklyYoutube = sundayTrade?.link || '';
-  const psychology = sundayTrade?.psychology || '';
-  const chartLesson = sundayTrade?.chartLesson || '';
+  const weeklyThesis = sundayTrade?.weeklyThesis || sundayTrade?.notes || "";
+  const weeklyYoutube = sundayTrade?.link || "";
+  const psychology = sundayTrade?.psychology || "";
+  const chartLesson = sundayTrade?.chartLesson || "";
 
+  // Filter by week + assetType
   const allWeekEntries = allTrades.filter((t) => {
     const d = new Date(t.date);
-    return d >= targetWeek.start && d <= targetWeek.end;
+    return (
+      d >= targetWeek.start &&
+      d <= targetWeek.end &&
+      getAssetType(t.instrument) === assetType
+    );
   });
 
-  const trades = allWeekEntries.filter(t => t.isTrade === true);
-  const readings = allWeekEntries.filter(t => t.isTrade === false && t.notes && t.notes.trim().length > 0);
+  const trades = allWeekEntries.filter((t) => t.isTrade === true);
+  const readings = allWeekEntries.filter(
+    (t) => t.isTrade === false && t.notes && t.notes.trim().length > 0
+  );
 
   const dayMap: Record<string, { trades: any[]; readings: any[] }> = {};
   for (const t of trades) {
@@ -86,13 +105,20 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
     dayMap[key].readings.push(r);
   }
 
-  const netR = trades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
-  const winCount = trades.filter(t => t.result === "Win").length;
-  const lossCount = trades.filter(t => t.result === "Loss").length;
+  const netR = trades.reduce(
+    (sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0),
+    0
+  );
+  const winCount = trades.filter((t) => t.result === "Win").length;
+  const lossCount = trades.filter((t) => t.result === "Loss").length;
   const startDate = targetWeek.start;
   const endDate = targetWeek.end;
-  const startMonthLabel = startDate.toLocaleString('id', { month: 'short' }).toUpperCase();
-  const endMonthLabel = endDate.toLocaleString('id', { month: 'short' }).toUpperCase();
+  const startMonthLabel = startDate
+    .toLocaleString("id", { month: "short" })
+    .toUpperCase();
+  const endMonthLabel = endDate
+    .toLocaleString("id", { month: "short" })
+    .toUpperCase();
 
   const youtubeId = getYoutubeId(weeklyYoutube);
 
@@ -101,65 +127,101 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
       {/* ===== HEADER: JUDUL KIRI, STATISTIK KANAN ===== */}
       <header
         style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          width: '100%',
-          marginTop: '0.5rem',
-          marginBottom: '2rem',
-          paddingBottom: '1rem',
-          borderBottom: '1px solid #221F1C',
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "100%",
+          marginTop: "0.5rem",
+          paddingBottom: "1rem",
+          borderBottom: "1px solid #221F1C",
         }}
       >
         <div
           style={{
             fontFamily: "'Big Shoulders', sans-serif",
             fontWeight: 900,
-            fontSize: '1.5rem',
-            letterSpacing: '0.025em',
-            color: '#FFFFFF',
-            whiteSpace: 'nowrap',
+            fontSize: "1.5rem",
+            letterSpacing: "0.025em",
+            color: "#FFFFFF",
+            whiteSpace: "nowrap",
           }}
         >
-          MINGGU {localWeekNumber} · {startMonthLabel} {startDate.getDate()} – {endMonthLabel} {endDate.getDate()}
+          MINGGU {localWeekNumber} · {startMonthLabel} {startDate.getDate()} –{" "}
+          {endMonthLabel} {endDate.getDate()}
         </div>
 
         <div
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
+            display: "flex",
+            alignItems: "center",
+            gap: "0.75rem",
             fontFamily: "'IBM Plex Mono', monospace",
-            fontSize: '0.8rem',
-            color: '#A6A39C',
-            whiteSpace: 'nowrap',
+            fontSize: "0.8rem",
+            color: "#A6A39C",
+            whiteSpace: "nowrap",
             flexShrink: 0,
           }}
         >
           <span>
-            <span style={{ color: '#6E6B65' }}>Trade </span>
-            <strong style={{ color: '#E8E6E1', fontWeight: 700 }}>{trades.length}</strong>
-          </span>
-          <span style={{ color: '#56534E' }}>·</span>
-          <span>
-            <span style={{ color: '#6E6B65' }}>Net R </span>
-            <strong style={{ color: netR >= 0 ? '#2E5695' : '#8B3A1F', fontWeight: 700 }}>
-              {netR >= 0 ? '+' : ''}{netR.toFixed(1)}R
+            <span style={{ color: "#6E6B65" }}>Trade </span>
+            <strong style={{ color: "#E8E6E1", fontWeight: 700 }}>
+              {trades.length}
             </strong>
           </span>
-          <span style={{ color: '#56534E' }}>·</span>
+          <span style={{ color: "#56534E" }}>·</span>
           <span>
-            <span style={{ color: '#6E6B65' }}>Win </span>
-            <strong style={{ color: '#C49A3C', fontWeight: 700 }}>{winCount}</strong>
+            <span style={{ color: "#6E6B65" }}>Net R </span>
+            <strong
+              style={{
+                color: netR >= 0 ? "#2E5695" : "#8B3A1F",
+                fontWeight: 700,
+              }}
+            >
+              {netR >= 0 ? "+" : ""}
+              {netR.toFixed(1)}R
+            </strong>
           </span>
-          <span style={{ color: '#56534E' }}>·</span>
+          <span style={{ color: "#56534E" }}>·</span>
           <span>
-            <span style={{ color: '#6E6B65' }}>Loss </span>
-            <strong style={{ color: '#8B3A1F', fontWeight: 700 }}>{lossCount}</strong>
+            <span style={{ color: "#6E6B65" }}>Win </span>
+            <strong style={{ color: "#C49A3C", fontWeight: 700 }}>
+              {winCount}
+            </strong>
+          </span>
+          <span style={{ color: "#56534E" }}>·</span>
+          <span>
+            <span style={{ color: "#6E6B65" }}>Loss </span>
+            <strong style={{ color: "#8B3A1F", fontWeight: 700 }}>
+              {lossCount}
+            </strong>
           </span>
         </div>
       </header>
+
+      {/* Tabs */}
+      <div className="flex gap-2 mt-4 mb-8">
+        <Link
+          href={`/month/${slug}/week/${weekNum}?type=futures`}
+          className={`px-4 py-2 rounded-md font-mono text-xs uppercase tracking-wider border transition-colors ${
+            assetType === "futures"
+              ? "bg-[#201F1C] border-[#C49A3C] text-[#C49A3C]"
+              : "border-[#2C2A27] text-[#A6A39C] hover:border-[#56534E] hover:text-[#E8E6E1]"
+          }`}
+        >
+          Futures
+        </Link>
+        <Link
+          href={`/month/${slug}/week/${weekNum}?type=forex`}
+          className={`px-4 py-2 rounded-md font-mono text-xs uppercase tracking-wider border transition-colors ${
+            assetType === "forex"
+              ? "bg-[#201F1C] border-[#C49A3C] text-[#C49A3C]"
+              : "border-[#2C2A27] text-[#A6A39C] hover:border-[#56534E] hover:text-[#E8E6E1]"
+          }`}
+        >
+          Forex
+        </Link>
+      </div>
 
       {/* ===== TESIS PRA-PASAR ===== */}
       <section className="mb-12 border-b border-[#221F1C] pb-10">
@@ -180,7 +242,9 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
                 allowFullScreen
               />
             </div>
-            <div className="text-sm text-[#A6A39C] mt-2 text-center">📹 Weekly Thesis — klik play untuk menonton</div>
+            <div className="text-sm text-[#A6A39C] mt-2 text-center">
+              📹 Weekly Thesis — klik play untuk menonton
+            </div>
           </div>
         )}
       </section>
@@ -192,7 +256,8 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
         <div className="sec-head mb-6">
           <h2 className="text-3xl md:text-4xl">Minggu Ini</h2>
           <p className="text-base md:text-lg text-[#A6A39C] mt-1">
-            Lima sesi kontak dengan rencana di atas. Hari yang terkunci adalah hari yang tidak dicatat — itu juga adalah data.
+            Lima sesi kontak dengan rencana di atas. Hari yang terkunci adalah hari
+            yang tidak dicatat — itu juga adalah data.
           </p>
         </div>
 
@@ -210,43 +275,64 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
 
             if (hasTrade) {
               const dayTrades = dayData.trades;
-              const dayR = dayTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
+              const dayR = dayTrades.reduce(
+                (sum, t) =>
+                  sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0),
+                0
+              );
               const grade = dayTrades[0]?.grade || "B";
               const daySlug = dayKey;
+              const href = `/month/${slug}/week/${weekNum}/day/${daySlug}?type=${assetType}`;
 
               return (
-                <Link key={dayKey} href={`/month/${slug}/week/${weekNum}/day/${daySlug}`} className="rail-row linked">
+                <Link key={dayKey} href={href} className="rail-row linked">
                   <div className="rail-day">
                     {dayName}
                     <b>{d.getDate()}</b>
                   </div>
                   <div className="rail-body">
-                    <h4>{dayTrades.length} trade — {dayTrades.map(t => t.title).join(", ")}</h4>
-                    <p>{dayTrades.map(t => `${t.instrument} ${t.direction}`).join(" · ")}</p>
-                    {dayTrades.some(t => t.praPasar || t.eksekusi || t.notes) && (
+                    <h4>
+                      {dayTrades.length} trade —{" "}
+                      {dayTrades.map((t) => t.title).join(", ")}
+                    </h4>
+                    <p>
+                      {dayTrades
+                        .map((t) => `${t.instrument} ${t.direction}`)
+                        .join(" · ")}
+                    </p>
+                    {dayTrades.some((t) => t.praPasar || t.eksekusi || t.notes) && (
                       <div className="mt-1 text-sm text-[#A6A39C] italic border-l-2 border-[#56534E] pl-2">
                         {dayTrades.map((t, idx) => {
-                          const note = t.praPasar || t.eksekusi || t.notes || '';
-                          return note ? <p key={idx} className="whitespace-pre-wrap break-words">“{note.slice(0, 150)}”</p> : null;
+                          const note = t.praPasar || t.eksekusi || t.notes || "";
+                          return note ? (
+                            <p key={idx} className="whitespace-pre-wrap break-words">
+                              "{note.slice(0, 150)}"
+                            </p>
+                          ) : null;
                         })}
                       </div>
                     )}
                     {hasReading && (
-                      <p className="text-sm text-[#6E6B65] mt-1">📝 + {dayData.readings.length} update reading</p>
+                      <p className="text-sm text-[#6E6B65] mt-1">
+                        📝 + {dayData.readings.length} update reading
+                      </p>
                     )}
                   </div>
                   <div className={`rail-badge ${dayR >= 0 ? "win" : "loss"}`}>
                     <span>{grade}</span>
                   </div>
                   <div className={`rail-r ${dayR >= 0 ? "win" : "loss"}`}>
-                    {dayR >= 0 ? "+" : ""}{dayR.toFixed(1)}R
+                    {dayR >= 0 ? "+" : ""}
+                    {dayR.toFixed(1)}R
                   </div>
                 </Link>
               );
             }
 
             if (hasReading) {
-              const readingTexts = dayData.readings.map(r => r.notes || r.praPasar || '').filter(t => t.length > 0);
+              const readingTexts = dayData.readings
+                .map((r) => r.notes || r.praPasar || "")
+                .filter((t) => t.length > 0);
               return (
                 <div key={dayKey} className="rail-row empty">
                   <div className="rail-day">
@@ -256,7 +342,12 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
                   <div className="rail-body">
                     <h4 className="text-[#C49A3C]">📝 Update Reading</h4>
                     {readingTexts.map((text, idx) => (
-                      <p key={idx} className="text-sm text-[#A6A39C] italic mt-1 whitespace-pre-wrap break-words">“{text}”</p>
+                      <p
+                        key={idx}
+                        className="text-sm text-[#A6A39C] italic mt-1 whitespace-pre-wrap break-words"
+                      >
+                        "{text}"
+                      </p>
                     ))}
                   </div>
                   <div></div>
@@ -281,10 +372,15 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           })}
 
           <div className="rail-row review-row">
-            <div className="rail-day" style={{ color: "var(--gold)" }}>SAB</div>
+            <div className="rail-day" style={{ color: "var(--gold)" }}>
+              SAB
+            </div>
             <div className="rail-body">
               <h4 style={{ color: "var(--gold)" }}>Review Mingguan</h4>
-              <p>Rincian lengkap di bawah — tidak ada halaman terpisah, semuanya ada di halaman ini</p>
+              <p>
+                Rincian lengkap di bawah — tidak ada halaman terpisah, semuanya ada
+                di halaman ini
+              </p>
             </div>
             <div></div>
             <div></div>
@@ -299,7 +395,8 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
         <div className="sec-head mb-6">
           <h2 className="text-3xl md:text-4xl">Sabtu — Rincian Lengkap</h2>
           <p className="text-base md:text-lg text-[#A6A39C] mt-1">
-            Tesis hari Minggu dibandingkan dengan apa yang benar-benar terjadi. Tidak ada revisi rencana setelah kejadian.
+            Tesis hari Minggu dibandingkan dengan apa yang benar-benar terjadi.
+            Tidak ada revisi rencana setelah kejadian.
           </p>
         </div>
 
@@ -309,7 +406,9 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
             {psychology ? (
               <p className="text-lg md:text-xl">{psychology}</p>
             ) : (
-              <p className="text-[#6E6B65] italic text-base md:text-lg">Belum ada catatan psikologi.</p>
+              <p className="text-[#6E6B65] italic text-base md:text-lg">
+                Belum ada catatan psikologi.
+              </p>
             )}
           </div>
           <div className="body-copy text-base md:text-lg mt-2">
@@ -326,12 +425,15 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
           <div className="body-copy text-base md:text-lg mt-2">
             {chartLesson ? (
               <div className="whitespace-pre-wrap text-[#E8E6E1]">
-                <p className="text-lg md:text-xl font-medium">✏️ Satu pelajaran utama:</p>
+                <p className="text-lg md:text-xl font-medium">
+                  ✏️ Satu pelajaran utama:
+                </p>
                 <p>{chartLesson}</p>
               </div>
             ) : (
               <p className="text-[#6E6B65] italic">
-                <strong>✏️ Satu pelajaran utama, jangan lebih dari itu.</strong> Belum diisi.
+                <strong>✏️ Satu pelajaran utama, jangan lebih dari itu.</strong>{" "}
+                Belum diisi.
               </p>
             )}
           </div>
@@ -351,7 +453,8 @@ export default async function WeekPage({ params }: { params: Promise<{ slug: str
             <div className="stat">
               <div className="stat-label">Net R</div>
               <div className={`stat-value ${netR >= 0 ? "water" : "rust"}`}>
-                {netR >= 0 ? "+" : ""}{netR.toFixed(1)}R
+                {netR >= 0 ? "+" : ""}
+                {netR.toFixed(1)}R
               </div>
             </div>
             <div className="stat">
