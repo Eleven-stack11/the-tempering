@@ -6,42 +6,16 @@ function getText(page: any, propName: string): string {
   const prop = page.properties[propName];
   if (!prop) return '';
 
-  // Rich text atau Title
   if (prop.type === 'rich_text' || prop.type === 'title') {
     const textArr = prop.rich_text || prop.title || [];
     return textArr.map((t: any) => t.plain_text).join('') || '';
   }
-
-  // Select
-  if (prop.type === 'select') {
-    return prop.select?.name || '';
-  }
-
-  // Multi-select (ambil nilai pertama)
-  if (prop.type === 'multi_select') {
-    return prop.multi_select?.map((s: any) => s.name).join(', ') || '';
-  }
-
-  // Number → string
-  if (prop.type === 'number') {
-    return String(prop.number || '');
-  }
-
-  // Checkbox → string
-  if (prop.type === 'checkbox') {
-    return prop.checkbox ? 'Ya' : 'Tidak';
-  }
-
-  // URL
-  if (prop.type === 'url') {
-    return prop.url || '';
-  }
-
-  // Email, phone, dll.
-  if (prop.type === 'email' || prop.type === 'phone_number') {
-    return prop[prop.type] || '';
-  }
-
+  if (prop.type === 'select') return prop.select?.name || '';
+  if (prop.type === 'multi_select') return prop.multi_select?.map((s: any) => s.name).join(', ') || '';
+  if (prop.type === 'number') return String(prop.number || '');
+  if (prop.type === 'checkbox') return prop.checkbox ? 'Ya' : 'Tidak';
+  if (prop.type === 'url') return prop.url || '';
+  if (prop.type === 'email' || prop.type === 'phone_number') return prop[prop.type] || '';
   return '';
 }
 
@@ -96,26 +70,12 @@ export async function fetchTrades(): Promise<any[]> {
 
     const data = await res.json();
 
-    // ===== LOG: Cek nilai Pra-pasar & Eksekusi =====
-    if (data.results && data.results.length > 0) {
-      console.log("🔍 Properti tersedia:", Object.keys(data.results[0].properties).join(', '));
-      for (let i = 0; i < Math.min(data.results.length, 3); i++) {
-        const page = data.results[i];
-        const date = page.properties.Date?.date?.start || '?';
-        const pra = getText(page, 'Pra-pasar');
-        const eks = getText(page, 'Eksekusi');
-        console.log(`🔍 Record ${i+1} (${date}): Pra-pasar="${pra}" | Eksekusi="${eks}"`);
-      }
-    }
-
     return data.results.map((page: any) => {
       const date = page.properties.Date?.date?.start || '';
 
-      // === AMBIL INSTRUMEN ===
       const instrument = getText(page, 'Instrument') || getText(page, 'Aa Instrument') || 'NQ';
       const positionRaw = getText(page, 'Position');
 
-      // === AMBIL RR ===
       let rrRaw = null;
       const rrProp = page.properties.RR;
       if (rrProp) {
@@ -126,13 +86,11 @@ export async function fetchTrades(): Promise<any[]> {
         else if (rrProp.type === 'title') rrRaw = rrProp.title?.[0]?.plain_text;
       }
 
-      // === DETEKSI TRADE ===
       const hasInstrument = instrument.length > 0 && instrument !== 'NQ';
       const hasPosition = positionRaw.trim().length > 0;
       const hasRR = rrRaw !== null && rrRaw !== undefined && String(rrRaw).trim().length > 0;
       const isTrade = hasInstrument || hasPosition || hasRR;
 
-      // === PROPERTI LAIN (pakai getText) ===
       const praPasar = getText(page, 'Pra-pasar');
       const eksekusi = getText(page, 'Eksekusi');
       const monthlyNote = getText(page, 'Monthly Note');
@@ -175,7 +133,6 @@ export async function fetchTrades(): Promise<any[]> {
       else if (setupGrade === 'B' || setupGrade === 'B+') grade = 'B';
       else if (setupGrade === 'C') grade = 'C';
 
-      // === TITLE: gunakan details, atau position+instrument ===
       const title = details || `${positionRaw || instrument} ${instrument}`.trim() || 'Untitled';
 
       return {
@@ -245,4 +202,29 @@ export function getWeeksOfMonth(year: number, monthIndex: number): Array<{ weekN
     current.setDate(current.getDate() + 7);
   }
   return weeks;
+}
+
+// ===== ASSET TYPE CLASSIFICATION =====
+const FUTURES_INSTRUMENTS = new Set([
+  'NQ', 'ES', 'YM', 'RTY', 'MNQ', 'MES', 'MYM', 'M2K',
+  'CL', 'GC', 'SI', 'NG', 'HG', 'ZB', 'ZN', 'ZF', 'ZT',
+]);
+
+const FOREX_INSTRUMENTS = new Set([
+  'EU', 'GU', 'UJ', 'AU', 'UC', 'NU',
+  'EJ', 'GJ', 'AJ', 'NJ', 'CJ',
+  'CH', 'ECH', 'UCH',
+]);
+
+export function getAssetType(instrument: string): 'futures' | 'forex' | 'other' {
+  const upper = (instrument || '').toUpperCase().trim();
+  if (FUTURES_INSTRUMENTS.has(upper)) return 'futures';
+  if (FOREX_INSTRUMENTS.has(upper)) return 'forex';
+  for (const f of FUTURES_INSTRUMENTS) {
+    if (upper.startsWith(f)) return 'futures';
+  }
+  for (const f of FOREX_INSTRUMENTS) {
+    if (upper.startsWith(f)) return 'forex';
+  }
+  return 'other';
 }
