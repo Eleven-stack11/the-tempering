@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { fetchTrades, getWeeksOfMonth } from "@/lib/notion";
+import { fetchTrades, getWeeksOfMonth, getAssetType } from "@/lib/notion";
 
 export const revalidate = 60;
 
@@ -19,14 +19,24 @@ const monthNames: Record<string, string> = {
   december: "Desember",
 };
 
-export default async function MonthPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function MonthPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ type?: string }>;
+}) {
   const { slug } = await params;
+  const sp = await searchParams;
+  const assetType: "futures" | "forex" = sp.type === "forex" ? "forex" : "futures";
+
   const parts = slug.split("-");
   if (parts.length !== 2) return <div>Format bulan tidak valid.</div>;
   const [year, month] = parts;
   const yearNum = parseInt(year);
   const monthIndex = parseInt(month) - 1;
-  if (isNaN(yearNum) || isNaN(monthIndex) || monthIndex < 0 || monthIndex > 11) return <div>Bulan tidak valid.</div>;
+  if (isNaN(yearNum) || isNaN(monthIndex) || monthIndex < 0 || monthIndex > 11)
+    return <div>Bulan tidak valid.</div>;
 
   const monthKey = Object.keys(monthNames)[monthIndex];
   const monthName = monthNames[monthKey];
@@ -34,8 +44,15 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
   const allTrades = await fetchTrades();
   const trades = allTrades.filter((t) => {
     const d = new Date(t.date);
-    return !isNaN(d.getTime()) && d.getFullYear() === yearNum && d.getMonth() === monthIndex && t.isTrade === true;
+    return (
+      !isNaN(d.getTime()) &&
+      d.getFullYear() === yearNum &&
+      d.getMonth() === monthIndex &&
+      t.isTrade === true &&
+      getAssetType(t.instrument) === assetType
+    );
   });
+
   if (trades.length === 0) notFound();
 
   const weeks = getWeeksOfMonth(yearNum, monthIndex);
@@ -57,58 +74,159 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
   const enteredCount = trades.filter((t) => t.status === "Entered").length;
   const missedCount = trades.filter((t) => t.status === "Missed").length;
   const totalConsidered = enteredCount + missedCount;
-  const executionRate = totalConsidered > 0 ? Math.round((enteredCount / totalConsidered) * 100) : 0;
-  const violations = trades.filter((t) => t.notes?.toLowerCase().includes("pelanggaran")).length;
-  const netR = trades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
+  const executionRate =
+    totalConsidered > 0 ? Math.round((enteredCount / totalConsidered) * 100) : 0;
+  const violations = trades.filter((t) =>
+    t.notes?.toLowerCase().includes("pelanggaran")
+  ).length;
+  const netR = trades.reduce(
+    (sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0),
+    0
+  );
 
-  let monthlyNote = '';
+  let monthlyNote = "";
   for (const t of trades) {
     if (t.monthlyNote && t.monthlyNote.trim().length > 0) {
       monthlyNote = t.monthlyNote;
       break;
     }
   }
-  const defaultDesc = "Bacaan hari Minggu, lima sesi kontak dengan pasar, dan pertanggungjawaban jujur hari Sabtu.";
+  const defaultDesc =
+    "Bacaan hari Minggu, lima sesi kontak dengan pasar, dan pertanggungjawaban jujur hari Sabtu.";
   const description = monthlyNote || defaultDesc;
 
   return (
     <>
-      <header className="mb-8">
-        <div className="eyebrow steel">BULAN {String(monthIndex + 1).padStart(2, "0")} · {year}</div>
-        <h1 className="font-['Big_Shoulders'] font-black text-[clamp(44px,7vw,80px)] leading-tight">{monthName}</h1>
-        <p className="text-[#A6A39C] text-lg">{totalSessions} trade tercatat · Net R {netR >= 0 ? "+" : ""}{netR.toFixed(1)}R</p>
+      <header className="mb-6">
+        <div className="eyebrow steel">
+          BULAN {String(monthIndex + 1).padStart(2, "0")} · {year} · {assetType.toUpperCase()}
+        </div>
+        <h1 className="font-['Big_Shoulders'] font-black text-[clamp(44px,7vw,80px)] leading-tight">
+          {monthName}
+        </h1>
+        <p className="text-[#A6A39C] text-lg">
+          {totalSessions} trade tercatat · Net R {netR >= 0 ? "+" : ""}
+          {netR.toFixed(1)}R
+        </p>
       </header>
+
+      {/* Tabs */}
+      <div className="flex gap-2 mb-8">
+        <Link
+          href={`/month/${slug}?type=futures`}
+          className={`px-4 py-2 rounded-md font-mono text-xs uppercase tracking-wider border transition-colors ${
+            assetType === "futures"
+              ? "bg-[#201F1C] border-[#C49A3C] text-[#C49A3C]"
+              : "border-[#2C2A27] text-[#A6A39C] hover:border-[#56534E] hover:text-[#E8E6E1]"
+          }`}
+        >
+          Futures
+        </Link>
+        <Link
+          href={`/month/${slug}?type=forex`}
+          className={`px-4 py-2 rounded-md font-mono text-xs uppercase tracking-wider border transition-colors ${
+            assetType === "forex"
+              ? "bg-[#201F1C] border-[#C49A3C] text-[#C49A3C]"
+              : "border-[#2C2A27] text-[#A6A39C] hover:border-[#56534E] hover:text-[#E8E6E1]"
+          }`}
+        >
+          Forex
+        </Link>
+      </div>
 
       <section className="mb-8">
         <div className="stat-strip">
-          <div className="stat"><div className="stat-label">Sesi Tercatat</div><div className="stat-value">{totalSessions}</div></div>
-          <div className="stat"><div className="stat-label">Diambil vs Miss</div><div className="stat-value text-[#2E5695]">{enteredCount} / {missedCount}</div><div className="text-xs text-[#6E6B65] font-mono mt-1">{executionRate}% diambil</div></div>
-          <div className="stat"><div className="stat-label">Pelanggaran</div><div className="stat-value rust">{violations}</div></div>
-          <div className="stat"><div className="stat-label">Net R</div><div className={`stat-value ${netR >= 0 ? "water" : "rust"}`}>{netR >= 0 ? "+" : ""}{netR.toFixed(1)}R</div></div>
+          <div className="stat">
+            <div className="stat-label">Sesi Tercatat</div>
+            <div className="stat-value">{totalSessions}</div>
+          </div>
+          <div className="stat">
+            <div className="stat-label">Diambil vs Miss</div>
+            <div className="stat-value text-[#2E5695]">
+              {enteredCount} / {missedCount}
+            </div>
+            <div className="text-xs text-[#6E6B65] font-mono mt-1">
+              {executionRate}% diambil
+            </div>
+          </div>
+          <div className="stat">
+            <div className="stat-label">Pelanggaran</div>
+            <div className="stat-value rust">{violations}</div>
+          </div>
+          <div className="stat">
+            <div className="stat-label">Net R</div>
+            <div className={`stat-value ${netR >= 0 ? "water" : "rust"}`}>
+              {netR >= 0 ? "+" : ""}
+              {netR.toFixed(1)}R
+            </div>
+          </div>
         </div>
       </section>
 
       <div className="blade-rule on-scroll" style={{ marginBottom: 40 }}></div>
 
       <section>
-        <div className="sec-head"><h2>Minggu-Minggu</h2><p>{description}</p></div>
+        <div className="sec-head">
+          <h2>Minggu-Minggu</h2>
+          <p>{description}</p>
+        </div>
         <div className="rail">
           {weeks.map((week, idx) => {
             const weekTrades = tradeGroups[week.weekNumber] || [];
-            const weekR = weekTrades.reduce((sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0), 0);
+            const weekR = weekTrades.reduce(
+              (sum, t) => sum + (t.result === "Win" ? t.r : t.result === "Loss" ? -t.r : 0),
+              0
+            );
             const startDay = week.start.getDate();
             const endDay = week.end.getDate();
-            const monthLabel = monthName.slice(0, 3).toUpperCase();
-            const dateRange = `${startDay}–${endDay} ${monthName} ${year}`;
+            const startMonthLabel = week.start
+              .toLocaleString("id", { month: "short" })
+              .toUpperCase();
+            const endMonthLabel = week.end
+              .toLocaleString("id", { month: "short" })
+              .toUpperCase();
+            const dateRange = `${startMonthLabel} ${startDay}–${endMonthLabel} ${endDay}`;
             const hasTrade = weekTrades.length > 0;
             const localWeekNumber = idx + 1;
+            const href = `/month/${slug}/week/${week.weekNumber}?type=${assetType}`;
+
             return (
-              <Link key={week.weekNumber} href={`/month/${slug}/week/${week.weekNumber}`} className={`rail-row ${hasTrade ? "linked" : "locked"}`}>
-                <div className="rail-day">{monthLabel}<b>{startDay}–{endDay}</b></div>
-                <div className="rail-body"><h4>Minggu {localWeekNumber}{!hasTrade && " — belum ditempa"}</h4><p>{dateRange} · {weekTrades.length} trade</p></div>
+              <Link
+                key={week.weekNumber}
+                href={href}
+                className={`rail-row ${hasTrade ? "linked" : "locked"}`}
+              >
+                <div className="rail-day">
+                  {startMonthLabel}
+                  <b>
+                    {startDay}–{endDay}
+                  </b>
+                </div>
+                <div className="rail-body">
+                  <h4>
+                    Minggu {localWeekNumber}
+                    {!hasTrade && " — belum ditempa"}
+                  </h4>
+                  <p>
+                    {dateRange} · {weekTrades.length} trade
+                  </p>
+                </div>
                 {hasTrade ? (
-                  <><div className="rail-tag">{weekTrades.length} TRADE</div><div className={`rail-tag ${weekR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}>{weekR >= 0 ? "+" : ""}{weekR.toFixed(1)}R</div></>
-                ) : (<><div className="rail-tag"></div><div className="rail-tag"></div></>)}
+                  <>
+                    <div className="rail-tag">{weekTrades.length} TRADE</div>
+                    <div
+                      className={`rail-tag ${weekR >= 0 ? "text-[#2E5695]" : "text-[#8B3A1F]"}`}
+                    >
+                      {weekR >= 0 ? "+" : ""}
+                      {weekR.toFixed(1)}R
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="rail-tag"></div>
+                    <div className="rail-tag"></div>
+                  </>
+                )}
               </Link>
             );
           })}
@@ -118,10 +236,11 @@ export default async function MonthPage({ params }: { params: Promise<{ slug: st
       <div className="ink-divider"></div>
 
       <section>
-        <div className="sec-head"><h2>Catatan Bulanan</h2></div>
+        <div className="sec-head">
+          <h2>Catatan Bulanan</h2>
+        </div>
         <div className="max-w-2xl text-[#A6A39C] text-base leading-relaxed mb-12">
-          <p>{monthlyNote || "✏️ Tidak ada catatan bulanan. Isi properti `Monthly Note` di Notion."}</p>
-          <div className="placeholder-note mt-3">✏️ Untuk mengubah catatan, isi properti <code>Monthly Note</code> (Rich Text) di database Notion.</div>
+          <p>{monthlyNote || "✏️ Tidak ada catatan bulanan."}</p>
         </div>
       </section>
     </>
